@@ -9,7 +9,7 @@
   {
     "rota": "/planos",
     "status": 200,
-    "links": 22,
+    "links": 23,
     "botoes": 1,
     "mortos": []
   },
@@ -23,29 +23,29 @@
   {
     "rota": "/checkout/iniciante",
     "status": 200,
-    "links": 13,
-    "botoes": 2,
+    "links": 14,
+    "botoes": 3,
     "mortos": []
   },
   {
     "rota": "/checkout/profissional",
     "status": 200,
-    "links": 13,
-    "botoes": 2,
+    "links": 14,
+    "botoes": 3,
     "mortos": []
   },
   {
     "rota": "/checkout/completo",
     "status": 200,
-    "links": 13,
-    "botoes": 2,
+    "links": 14,
+    "botoes": 3,
     "mortos": []
   },
   {
     "rota": "/entrar",
     "status": 200,
-    "links": 10,
-    "botoes": 2,
+    "links": 11,
+    "botoes": 3,
     "mortos": []
   },
   {
@@ -86,15 +86,15 @@
   {
     "rota": "/admin",
     "status": 200,
-    "links": 10,
-    "botoes": 2,
+    "links": 11,
+    "botoes": 3,
     "mortos": []
   },
   {
     "rota": "/aluna",
     "status": 200,
-    "links": 10,
-    "botoes": 2,
+    "links": 11,
+    "botoes": 3,
     "mortos": []
   }
 ]
