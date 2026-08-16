@@ -2043,9 +2043,18 @@ button.lista__item:hover {
 
 /* Campo obrigatório ainda vazio: um fio âmbar à esquerda, não um alerta
    vermelho. Falta preencher não é erro. */
-.grupo-ajuste__campos .campo:has([aria-invalid='true']) {
+/* Campo que falta preencher: um fio ambar discreto. Nao e erro -- a pessoa
+   so ainda nao chegou nele. */
+.grupo-ajuste__campos .campo:has([data-pendente]) {
   padding-inline-start: var(--space-4);
-  border-inline-start: 3px solid var(--warning);
+  border-inline-start: 2px solid color-mix(in srgb, var(--warning) 55%, transparent);
+}
+
+.campo__pendente {
+  margin-inline-start: var(--space-2);
+  font-size: var(--size-small);
+  font-weight: 400;
+  color: var(--warning);
 }
 
 /* ===========================================================================

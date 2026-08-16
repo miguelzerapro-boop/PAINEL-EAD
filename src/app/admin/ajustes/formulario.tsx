@@ -70,11 +70,13 @@ export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> })
                   <span className="campo__rotulo">
                     {item.label}
                     {item.is_required ? ' *' : ''}
-                    {vazioObrigatorio ? (
-                      <span className="campo__erro" style={{ marginInlineStart: 'var(--space-2)' }}>
-                        pendente
-                      </span>
-                    ) : null}
+                    {/*
+                      "pendente" nao e erro: e um campo que ainda nao foi
+                      preenchido. Vermelho com borda vermelha faz a tela
+                      parecer que algo quebrou quando a responsavel so ainda
+                      nao chegou naquele campo.
+                    */}
+                    {vazioObrigatorio ? <span className="campo__pendente">falta preencher</span> : null}
                   </span>
                   {longo ? (
                     <textarea
@@ -82,14 +84,14 @@ export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> })
                       name={`ajuste.${item.key}`}
                       defaultValue={typeof item.value === 'string' ? item.value : ''}
                       rows={6}
-                      aria-invalid={vazioObrigatorio || undefined}
+                      data-pendente={vazioObrigatorio || undefined}
                     />
                   ) : (
                     <input
                       className="entrada"
                       name={`ajuste.${item.key}`}
                       defaultValue={typeof item.value === 'string' ? item.value : ''}
-                      aria-invalid={vazioObrigatorio || undefined}
+                      data-pendente={vazioObrigatorio || undefined}
                     />
                   )}
                   {item.description ? <span className="campo__dica">{item.description}</span> : null}
