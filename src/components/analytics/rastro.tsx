@@ -28,7 +28,52 @@ import {
  */
 
 const CHAVE_SESSAO = 'funil:sessao'
+const CHAVE_UTM = 'funil:utm'
+const CHAVE_ORIGEM = 'funil:origem'
 const PREFIXO_ENVIADO = 'funil:enviado:'
+
+/**
+ * AS UTMs PRECISAM SOBREVIVER À JORNADA INTEIRA.
+ *
+ * O anúncio leva para /diagnostico?utm_source=... . Dali a pessoa passa pelo
+ * resultado, pela landing comercial e pelo checkout — e em nenhuma dessas
+ * páginas a query string original existe mais. Ler a URL do momento fazia o
+ * `checkout_start` chegar sem origem nenhuma, e a campanha inteira parecia
+ * não converter.
+ *
+ * Agora a primeira página da visita guarda as UTMs e a origem (`referrer`), e
+ * todo evento seguinte carrega as mesmas. Só a PRIMEIRA gravação vale: se a
+ * pessoa navegar depois para uma URL com outra UTM dentro da mesma sessão, a
+ * origem que trouxe ela continua sendo a que conta.
+ */
+function guardarOrigemUmaVez() {
+  try {
+    if (sessionStorage.getItem(CHAVE_UTM) !== null) return
+
+    const utm = extrairUtm(new URLSearchParams(window.location.search))
+    sessionStorage.setItem(CHAVE_UTM, JSON.stringify(utm))
+    sessionStorage.setItem(
+      CHAVE_ORIGEM,
+      JSON.stringify({
+        referrer: document.referrer || null,
+        entrada: window.location.pathname,
+      }),
+    )
+  } catch {
+    /* storage bloqueado: segue sem memória de origem */
+  }
+}
+
+function origemDaSessao(): { utm: Record<string, string>; entrada: string | null } {
+  try {
+    guardarOrigemUmaVez()
+    const utm = JSON.parse(sessionStorage.getItem(CHAVE_UTM) ?? '{}')
+    const origem = JSON.parse(sessionStorage.getItem(CHAVE_ORIGEM) ?? '{}')
+    return { utm, entrada: origem.entrada ?? null }
+  } catch {
+    return { utm: extrairUtm(new URLSearchParams(window.location.search)), entrada: null }
+  }
+}
 
 /** Id de sessão anônimo, só para ligar as etapas de uma mesma visita. */
 function sessaoAtual(): string {
@@ -76,14 +121,18 @@ export function registrar(nome: NomeDeEvento, props: PropsDoEvento = {}) {
       marcarEnviado(nome)
     }
 
+    // UTMs da PRIMEIRA página da visita, não da atual — ver
+    // `guardarOrigemUmaVez` acima.
+    const origem = origemDaSessao()
+
     const corpo = JSON.stringify({
       nome,
       sessionId: sessaoAtual(),
       path: window.location.pathname,
       referrer: document.referrer || undefined,
       device: tipoDeAparelho(window.innerWidth),
-      utm: extrairUtm(new URLSearchParams(window.location.search)),
-      props,
+      utm: origem.utm,
+      props: { ...props, entrada: origem.entrada ?? undefined },
       leadId: props.leadId ?? undefined,
     })
 
@@ -103,6 +152,24 @@ export function registrar(nome: NomeDeEvento, props: PropsDoEvento = {}) {
   } catch {
     /* medir nunca pode quebrar navegar */
   }
+}
+
+/**
+ * GUARDA A ORIGEM ASSIM QUE A VISITA COMEÇA.
+ *
+ * Fica montado no layout raiz, em toda página. Sem ele, a captura só
+ * acontecia no primeiro evento registrado — e a primeira página da jornada é
+ * o quiz, que não registrava evento nenhum. Resultado medido: nenhum dos 7
+ * eventos do funil carregava a UTM, e a campanha inteira parecia não
+ * converter.
+ *
+ * Não envia nada. Só lê a URL e grava.
+ */
+export function CapturaDeOrigem() {
+  useEffect(() => {
+    guardarOrigemUmaVez()
+  }, [])
+  return null
 }
 
 /**

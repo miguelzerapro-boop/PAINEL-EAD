@@ -17,6 +17,7 @@ export const EVENTO = {
   LANDING_VIEW: 'landing_view',
   DIAGNOSTIC_CTA_CLICK: 'diagnostic_cta_click',
   QUIZ_START: 'quiz_start',
+  QUIZ_ANSWER: 'quiz_answer',
   QUIZ_COMPLETE: 'quiz_complete',
   QUIZ_RESULT_VIEW: 'quiz_result_view',
   SALES_LANDING_VIEW: 'sales_landing_view',
@@ -31,16 +32,25 @@ export const EVENTO = {
 
 export type NomeDeEvento = (typeof EVENTO)[keyof typeof EVENTO]
 
-/** Ordem do funil, para o painel montar a queda etapa a etapa. */
+/**
+ * Ordem do funil, para o painel montar a queda etapa a etapa.
+ *
+ * A JORNADA PRINCIPAL COMEÇA NO QUIZ, não na home. O link de campanha aponta
+ * para /diagnostico: a pessoa responde, vê o resultado e só então chega na
+ * landing comercial. A home institucional existe para marca, busca e login, e
+ * fica FORA desta lista para não distorcer a conversão de quem veio do
+ * anúncio.
+ */
 export const FUNIL: NomeDeEvento[] = [
-  EVENTO.LANDING_VIEW,
-  EVENTO.DIAGNOSTIC_CTA_CLICK,
   EVENTO.QUIZ_START,
+  EVENTO.QUIZ_ANSWER,
   EVENTO.QUIZ_COMPLETE,
   EVENTO.QUIZ_RESULT_VIEW,
   EVENTO.SALES_LANDING_VIEW,
+  EVENTO.PLAN_VIEW,
   EVENTO.PLAN_SELECT,
   EVENTO.CHECKOUT_START,
+  EVENTO.PAYMENT_PENDING,
   EVENTO.PAYMENT_APPROVED,
   EVENTO.ENROLLMENT_CREATED,
   EVENTO.COURSE_STARTED,
@@ -50,6 +60,7 @@ export const ROTULO: Record<NomeDeEvento, string> = {
   landing_view: 'Entradas na landing',
   diagnostic_cta_click: 'Clique no diagnóstico',
   quiz_start: 'Quiz iniciado',
+  quiz_answer: 'Perguntas respondidas',
   quiz_complete: 'Quiz concluído',
   quiz_result_view: 'Resultado visto',
   sales_landing_view: 'Planos visualizados',

@@ -651,3 +651,204 @@
   font-size: var(--size-small);
   color: var(--text-secondary);
 }
+
+/* ===========================================================================
+   A TELA DE RESULTADO
+
+   O momento mais importante do funil: a pessoa respondeu sete perguntas e
+   está esperando uma resposta. A versão anterior devolvia um rótulo, um
+   título e um botão soltos num branco enorme.
+
+   Duas colunas: à esquerda o que ela é (o momento, a leitura), à direita o
+   que vem agora (o cartão de próximo passo). Sem inventar diagnóstico
+   nenhum — o nome e a descrição do momento saem do banco.
+   =========================================================================== */
+
+.resultado {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  background:
+    radial-gradient(90% 120% at 15% 0%, rgba(198, 60, 255, 0.14), transparent 65%),
+    var(--surface-soft);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.resultado__grade {
+  display: grid;
+  gap: clamp(2rem, 1rem + 4vw, 3.5rem);
+  align-items: start;
+}
+
+.resultado__grade > * {
+  min-width: 0;
+}
+
+@media (min-width: 62rem) {
+  .resultado__grade {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.resultado__rotulo {
+  margin-block-start: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+}
+
+.resultado__titulo {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.4rem + 3.4vw, 3.75rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--brand-deep);
+  text-wrap: balance;
+}
+
+.resultado__descricao {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  max-inline-size: var(--measure-sales);
+}
+
+/* A leitura do resultado. Fio de marca à esquerda em vez de caixa. */
+.resultado__leitura {
+  margin-block-start: var(--space-6);
+  padding-inline-start: var(--space-5);
+  border-inline-start: 3px solid var(--brand-primary);
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: var(--measure-sales);
+  line-height: var(--leading-body);
+}
+
+.resultado__leitura strong {
+  color: var(--text-primary);
+}
+
+/* --- Cartão do próximo passo ---------------------------------------------- */
+
+.resultado__cartao {
+  padding: var(--space-6);
+  background: var(--purple-950);
+  color: var(--text-on-dark);
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-erguida);
+}
+
+.resultado__cartao-rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--lilac-300);
+}
+
+.resultado__cartao-titulo {
+  margin-block-start: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  line-height: var(--leading-title);
+}
+
+.resultado__cartao-texto {
+  margin-block-start: var(--space-3);
+  font-size: var(--size-small);
+  line-height: var(--leading-body);
+  color: color-mix(in srgb, var(--text-on-dark) 82%, transparent);
+}
+
+.resultado__passos {
+  counter-reset: rpasso;
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.resultado__passos li {
+  counter-increment: rpasso;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  font-size: var(--size-small);
+}
+
+.resultado__passos li::before {
+  content: counter(rpasso);
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--neon-lilac) 55%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  color: var(--lilac-300);
+}
+
+.resultado__garantia {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+/* --- Campo de senha, com o botão mostrar/ocultar -------------------------- */
+
+.campo-senha {
+  position: relative;
+  display: block;
+}
+
+.campo-senha .entrada {
+  inline-size: 100%;
+  padding-inline-end: 5.5rem;
+}
+
+.campo-senha__olho {
+  position: absolute;
+  inset-inline-end: var(--space-2);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  min-height: 2.25rem;
+  padding-inline: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--brand-primary);
+  font: inherit;
+  font-size: var(--size-small);
+  cursor: pointer;
+}
+
+.campo-senha__olho:hover {
+  background: var(--surface-purple);
+}
+
+.entrar__rodape,
+.checkout__ja-tem {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.fechamento-escuro__discreto {
+  font-size: var(--size-small);
+  color: color-mix(in srgb, var(--text-on-dark) 65%, transparent);
+}
+
+.fechamento-escuro__discreto:hover {
+  color: var(--text-on-dark);
+}

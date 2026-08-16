@@ -3,6 +3,9 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { registrar } from '@/components/analytics/rastro'
+import { EVENTO } from '@/lib/analytics/eventos'
+
 export type QuizPergunta = {
   id: string
   prompt: string
@@ -208,6 +211,15 @@ export function QuizForm({
   async function enviar() {
     setEnviando(true)
     setErro(null)
+
+    /*
+     * `quiz_answer` sai UMA vez, no fim, com a contagem — não a cada clique.
+     * Um evento por alternativa encheria a tabela de ruído, e gravar a
+     * resposta em si seria guardar dado da pessoa em analytics.
+     */
+    registrar(EVENTO.QUIZ_ANSWER, { respondidas: Object.keys(respostas).length })
+    registrar(EVENTO.QUIZ_COMPLETE, {})
+
     try {
       const resposta = await fetch('/api/diagnostico', {
         method: 'POST',
@@ -265,7 +277,12 @@ export function QuizForm({
           <button
             type="button"
             className="botao botao--primario botao--grande"
-            onClick={() => setFase('respondendo')}
+            onClick={() => {
+              // Primeira etapa do funil oficial: a campanha entra por aqui,
+              // não pela home.
+              registrar(EVENTO.QUIZ_START, {})
+              setFase('respondendo')
+            }}
           >
             Começar meu diagnóstico
           </button>

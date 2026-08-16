@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 
 import { AjudaDoDiagnostico, SecaoDePlanos } from '@/components/comercial/secao-de-planos'
@@ -86,16 +87,21 @@ export default async function PlanosPage({
                 você quer <em>evoluir.</em>
               </h1>
 
+              {/*
+                A frase muda conforme o diagnóstico, o PREÇO NÃO. Variar valor
+                por resultado de quiz seria discriminação, não personalização —
+                e os três planos aparecem para todas, sem esconder nenhum.
+              */}
               {momento ? (
                 <p className="capa__apoio">
-                  Seu diagnóstico indica <strong>{momento.nome}</strong>. Veja as opções
-                  disponíveis para começar e continuar evoluindo — o conteúdo e os valores são
-                  os mesmos para todas.
+                  Seu diagnóstico está pronto: <strong>{momento.nome}</strong>. Agora escolha
+                  como quer continuar sua formação — os três planos abrem a mesma formação,
+                  e o que muda é até onde você vai.
                 </p>
               ) : (
                 <p className="capa__apoio">
-                  Seu diagnóstico mostrou seu momento. Agora escolha o nível de acesso que
-                  combina com o que você quer aprender.
+                  Três planos, a mesma formação. O que muda é quantos capítulos você libera —
+                  e dá para começar pelos fundamentos e avançar depois.
                 </p>
               )}
 
@@ -178,8 +184,16 @@ export default async function PlanosPage({
           </div>
         </section>
 
-        {/* ================================= DIAGNÓSTICO COMO APOIO ======= */}
-        <AjudaDoDiagnostico />
+        {/*
+          O BLOCO "FAÇA O DIAGNÓSTICO" NÃO ENTRA AQUI QUANDO ELA JÁ FEZ.
+
+          Esta é a landing que recebe quem acabou de responder o quiz.
+          Oferecer "faça o diagnóstico" de novo, em destaque, seria mandar a
+          pessoa refazer o que ela terminou há trinta segundos. Sem o token,
+          alguém chegou pela home ou por link direto — aí o convite faz
+          sentido.
+        */}
+        {momento ? null : <AjudaDoDiagnostico />}
 
         {/* =============================================== CTA FINAL ====== */}
         {/*
@@ -197,9 +211,17 @@ export default async function PlanosPage({
 
             <div className="fechamento-escuro__acoes">
               <a className="botao botao--cta" href="#planos">
-                Ver planos
+                Escolher meu plano
               </a>
             </div>
+
+            {/* Refazer o diagnóstico existe, mas discreto: quem chegou aqui
+                pelo quiz já respondeu. */}
+            <p style={{ marginBlockStart: 'var(--space-5)' }}>
+              <Link className="fechamento-escuro__discreto" href="/diagnostico">
+                Refazer o diagnóstico
+              </Link>
+            </p>
 
             <span className="fechamento-escuro__fio" aria-hidden="true" />
           </div>

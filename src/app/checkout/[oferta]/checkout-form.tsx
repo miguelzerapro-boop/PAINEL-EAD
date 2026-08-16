@@ -13,7 +13,8 @@ export function CheckoutForm({
   /** Só liga o link quando a política de reembolso já foi redigida no painel. */
   temReembolso?: boolean
 }) {
-  const [dados, setDados] = useState({ name: '', email: '', phone: '', document: '' })
+  const [dados, setDados] = useState({ name: '', email: '', phone: '', document: '', password: '' })
+  const [mostrarSenha, setMostrarSenha] = useState(false)
 
   /**
    * Chave de idempotência fixa por visita à tela.
@@ -31,11 +32,14 @@ export function CheckoutForm({
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState<string | null>(null)
 
+  const senhaCurta = dados.password.length > 0 && dados.password.length < 8
+
   const valido =
     dados.name.trim().length >= 2 &&
     /\S+@\S+\.\S+/.test(dados.email) &&
     dados.phone.replace(/\D/g, '').length >= 10 &&
     dados.document.replace(/\D/g, '').length === 11 &&
+    dados.password.length >= 8 &&
     aceite
 
   async function enviar(evento: React.FormEvent) {
@@ -47,7 +51,12 @@ export function CheckoutForm({
       const resposta = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ offerSlug, buyer: dados, couponCode: cupom || undefined, idempotencyKey }),
+        body: JSON.stringify({
+          offerSlug,
+          buyer: dados,
+          couponCode: cupom || undefined,
+          idempotencyKey,
+        }),
       })
 
       const corpo = await resposta.json()
@@ -83,7 +92,7 @@ export function CheckoutForm({
           value={dados.email}
           onChange={(e) => setDados({ ...dados, email: e.target.value })}
         />
-        <span className="campo__dica">É por aqui que você recebe o acesso.</span>
+        <span className="campo__dica">É com ele que você entra na área de estudos.</span>
       </label>
 
       <label className="campo">
@@ -109,6 +118,46 @@ export function CheckoutForm({
           onChange={(e) => setDados({ ...dados, document: e.target.value })}
         />
         <span className="campo__dica">Exigido pelo Mercado Pago para emitir o pagamento.</span>
+      </label>
+
+      {/*
+        A SENHA É CRIADA AQUI.
+
+        Antes o acesso vinha por link mágico no e-mail, e quem tentava entrar
+        duas vezes seguidas esbarrava no limite de envio do provedor e ficava
+        sem acesso sem entender por quê. Agora a aluna escolhe a senha na
+        compra e entra com ela sempre — e-mail e senha, nada mais.
+
+        A senha vai direto para o Supabase, que faz o hash. Nenhuma tabela
+        nossa guarda senha.
+      */}
+      <label className="campo">
+        <span className="campo__rotulo">Crie uma senha</span>
+        <span className="campo-senha">
+          <input
+            className="entrada"
+            type={mostrarSenha ? 'text' : 'password'}
+            autoComplete="new-password"
+            minLength={8}
+            required
+            value={dados.password}
+            onChange={(e) => setDados({ ...dados, password: e.target.value })}
+            aria-invalid={senhaCurta ? 'true' : undefined}
+          />
+          <button
+            type="button"
+            className="campo-senha__olho"
+            onClick={() => setMostrarSenha((v) => !v)}
+            aria-pressed={mostrarSenha}
+          >
+            {mostrarSenha ? 'Ocultar' : 'Mostrar'}
+          </button>
+        </span>
+        <span className={senhaCurta ? 'campo__erro' : 'campo__dica'}>
+          {senhaCurta
+            ? 'A senha precisa ter pelo menos 8 caracteres.'
+            : 'Mínimo de 8 caracteres. É com ela que você vai entrar depois.'}
+        </span>
       </label>
 
       <label className="campo">
@@ -138,9 +187,13 @@ export function CheckoutForm({
         </p>
       ) : null}
 
-      <button className="botao botao--primario botao--bloco" disabled={!valido || enviando || disabled}>
+      <button className="botao botao--cta botao--bloco" disabled={!valido || enviando || disabled}>
         {enviando ? 'Abrindo pagamento…' : 'Continuar para o pagamento'}
       </button>
+
+      <p className="checkout__ja-tem">
+        Já comprou antes? <Link href="/entrar">Entre com seu e-mail e senha</Link>.
+      </p>
     </form>
   )
 }

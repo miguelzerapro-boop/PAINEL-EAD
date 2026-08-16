@@ -1,44 +1,58 @@
 'use client'
 
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { getBrowserClient } from '@/lib/supabase/browser'
 
+/**
+ * ENTRADA POR E-MAIL E SENHA.
+ *
+ * Substituiu o link mágico. O motivo é prático: o link dependia de e-mail
+ * chegando na hora, e o plano gratuito do Supabase limita o envio a poucas
+ * mensagens por hora — quem tentava entrar duas vezes seguidas ficava sem
+ * acesso, sem entender por quê. A senha é definida na própria compra, então
+ * não há passo extra para a aluna.
+ *
+ * A senha nunca passa por aqui em texto para lugar nenhum além do Supabase,
+ * que faz o hash. Não guardamos senha em tabela nossa.
+ */
 export function LoginForm({ proximo }: { proximo: string }) {
+  const router = useRouter()
   const [email, setEmail] = useState('')
-  const [estado, setEstado] = useState<'idle' | 'enviando' | 'enviado'>('idle')
+  const [senha, setSenha] = useState('')
+  const [mostrarSenha, setMostrarSenha] = useState(false)
+  const [estado, setEstado] = useState<'idle' | 'entrando'>('idle')
   const [erro, setErro] = useState<string | null>(null)
+
+  const valido = /\S+@\S+\.\S+/.test(email) && senha.length >= 8
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault()
-    setEstado('enviando')
+    setEstado('entrando')
     setErro(null)
 
-    const { error } = await getBrowserClient().auth.signInWithOtp({
-      email: email.trim(),
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?proximo=${encodeURIComponent(proximo)}`,
-      },
+    const { error } = await getBrowserClient().auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password: senha,
     })
 
     if (error) {
-      setErro('Não conseguimos enviar o link agora. Tente de novo em alguns instantes.')
+      /*
+       * A mensagem é a MESMA para e-mail inexistente e senha errada, de
+       * propósito: dizer "este e-mail não tem conta" entrega para qualquer
+       * um a lista de quem comprou.
+       */
+      setErro('E-mail ou senha incorretos. Confira e tente de novo.')
       setEstado('idle')
       return
     }
-    setEstado('enviado')
-  }
 
-  if (estado === 'enviado') {
-    return (
-      <div className="aviso" data-tone="success">
-        <p className="aviso__titulo">Link enviado</p>
-        <p>
-          Enviamos um link de acesso para <strong>{email}</strong>. Abra o e-mail neste mesmo
-          aparelho para entrar. O link vale por 1 hora.
-        </p>
-      </div>
-    )
+    // `refresh` antes do `push` para o servidor já enxergar a sessão nova —
+    // sem isso o middleware devolve para o login em uma volta.
+    router.refresh()
+    router.push(proximo)
   }
 
   return (
@@ -54,7 +68,31 @@ export function LoginForm({ proximo }: { proximo: string }) {
           onChange={(e) => setEmail(e.target.value)}
           aria-invalid={erro ? 'true' : undefined}
         />
-        <span className="campo__dica">Use o mesmo e-mail da sua inscrição.</span>
+        <span className="campo__dica">O mesmo e-mail que você usou na compra.</span>
+      </label>
+
+      <label className="campo">
+        <span className="campo__rotulo">Sua senha</span>
+        <span className="campo-senha">
+          <input
+            className="entrada"
+            type={mostrarSenha ? 'text' : 'password'}
+            autoComplete="current-password"
+            required
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            aria-invalid={erro ? 'true' : undefined}
+          />
+          <button
+            type="button"
+            className="campo-senha__olho"
+            onClick={() => setMostrarSenha((v) => !v)}
+            aria-pressed={mostrarSenha}
+          >
+            {mostrarSenha ? 'Ocultar' : 'Mostrar'}
+          </button>
+        </span>
+        <span className="campo__dica">A que você criou ao escolher seu plano.</span>
       </label>
 
       {erro ? (
@@ -63,12 +101,13 @@ export function LoginForm({ proximo }: { proximo: string }) {
         </p>
       ) : null}
 
-      <button
-        className="botao botao--primario botao--bloco"
-        disabled={estado === 'enviando' || !/\S+@\S+\.\S+/.test(email)}
-      >
-        {estado === 'enviando' ? 'Enviando…' : 'Receber link de acesso'}
+      <button className="botao botao--cta botao--bloco" disabled={estado === 'entrando' || !valido}>
+        {estado === 'entrando' ? 'Entrando…' : 'Entrar'}
       </button>
+
+      <p className="entrar__rodape">
+        Ainda não tem acesso? <Link href="/#planos">Escolha seu plano</Link>.
+      </p>
     </form>
   )
 }

@@ -113,19 +113,74 @@ export default async function ResultadoPage({
           </Trilho>
         </section>
 
-        <section className="section">
-          <div className="page editorial">
-            <p className="editorial__rotulo">
-              {lead?.name ? `${lead.name.split(' ')[0]}, seu momento é` : 'Seu momento é'}
-            </p>
+        {/* ================================================================ */}
+        {/* O RESULTADO                                                      */}
+        {/* ================================================================ */}
+        {/*
+          A versão anterior era um rótulo, um título e um botão soltos num
+          branco enorme. O momento mais importante do funil — a pessoa acabou
+          de responder sete perguntas e está esperando uma resposta — não
+          dizia nada de volta.
 
-            <div>
-              <h1>{outcome?.name ?? 'Ainda estou pesquisando'}</h1>
+          O QUE ESTA TELA PODE E NÃO PODE DIZER:
+
+          Pode reconhecer o que ela respondeu e nomear o momento dela. Isso
+          saiu do quiz, é medição, não invenção.
+
+          NÃO pode afirmar que ela vai ganhar dinheiro, que vai virar
+          profissional em X semanas, nem inventar um problema que o quiz não
+          mediu. "Percebi algo preocupante" seria exatamente isso: alarme
+          fabricado para vender. O que a tela faz é honesto e continua
+          empático — reconhece o ponto de partida e diz que existe caminho.
+        */}
+        <section className="resultado">
+          <div className="page resultado__grade">
+            <div className="resultado__coluna">
+              <p className="capa__chapeu">
+                {lead?.name ? `${lead.name.split(' ')[0]}, seu diagnóstico está pronto` : 'Seu diagnóstico está pronto'}
+              </p>
+
+              <p className="resultado__rotulo">Seu momento é</p>
+              <h1 className="resultado__titulo">{outcome?.name ?? 'Ainda estou pesquisando'}</h1>
+
               {outcome?.description ? (
-                <p className="lead" style={{ marginBlockStart: 'var(--space-4)' }}>{outcome.description}</p>
+                <p className="resultado__descricao">{outcome.description}</p>
               ) : null}
 
-              <div style={{ marginBlockStart: 'var(--space-6)', maxWidth: 'var(--measure-sales)' }}>
+              <div className="resultado__leitura">
+                <p>
+                  Estar aqui não é atraso. É o ponto de partida — e ele existe para todo mundo
+                  que começa.
+                </p>
+                <p>
+                  <strong>O que muda daqui pra frente é ter uma ordem.</strong> Em vez de
+                  juntar aula solta, você segue capítulos organizados por etapa, sabendo
+                  sempre qual é o próximo.
+                </p>
+              </div>
+            </div>
+
+            <aside className="resultado__cartao">
+              <p className="resultado__cartao-rotulo">Próximo passo</p>
+              <p className="resultado__cartao-titulo">Escolha até onde quer ir agora</p>
+              <p className="resultado__cartao-texto">
+                São três planos com a mesma formação. O que muda é quantos capítulos você
+                libera — e dá para começar pelos fundamentos e avançar depois.
+              </p>
+
+              <ol className="resultado__passos" role="list">
+                <li>Compare os três planos</li>
+                <li>Escolha o seu</li>
+                <li>Comece a estudar</li>
+              </ol>
+            </aside>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="page editorial">
+            <div>
+              <div style={{ maxWidth: 'var(--measure-sales)' }}>
                 {temPlanos ? (
                   /*
                    * Existe plano publicado com preço: o passo seguinte é ver
@@ -136,18 +191,52 @@ export default async function ResultadoPage({
                    * quer conversar antes de comprar não fica sem caminho.
                    */
                   <>
-                    <Link className="botao botao--cta" href={`/planos?d=${encodeURIComponent(d)}`}>
-                      Ver planos e preços
+                    {/*
+                      O CTA leva para a LANDING COMERCIAL, não direto para o
+                      checkout: a pessoa precisa comparar antes de escolher.
+                      O token viaja junto para a landing reconhecer de qual
+                      diagnóstico ela veio.
+                    */}
+                    <Link
+                      className="botao botao--cta botao--grande"
+                      href={`/planos?d=${encodeURIComponent(d)}`}
+                    >
+                      <span>Ver planos e preços</span>
+                      <svg
+                        className="botao__seta"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M4 10h11" />
+                        <path d="m10 5 5 5-5 5" />
+                      </svg>
                     </Link>
+
+                    <p className="resultado__garantia">
+                      Pagamento único. Sem mensalidade.
+                    </p>
+
+                    {/*
+                      WhatsApp fora do caminho principal, por decisão de
+                      escopo: ele não entra entre quiz, planos e checkout. Fica
+                      como ajuda, discreto.
+                    */}
                     {whatsapp.available ? (
-                      <p style={{ marginBlockStart: 'var(--space-4)' }}>
+                      <p style={{ marginBlockStart: 'var(--space-5)' }}>
                         <a
                           className="resultado__secundario"
                           href={whatsapp.href}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          Prefiro tirar uma dúvida no WhatsApp
+                          Precisa de ajuda? Fale com a gente
                         </a>
                       </p>
                     ) : null}

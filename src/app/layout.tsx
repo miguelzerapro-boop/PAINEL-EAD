@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google'
 
+import { CapturaDeOrigem } from '@/components/analytics/rastro'
 import { MARCA } from '@/lib/marca'
 
 import './globals.css'
@@ -63,6 +64,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#conteudo">
           Ir para o conteúdo
         </a>
+        {/* Guarda UTM e origem na PRIMEIRA página da visita — que na campanha
+            é o quiz, não a home. Não envia nada. */}
+        <CapturaDeOrigem />
         {children}
       </body>
     </html>
