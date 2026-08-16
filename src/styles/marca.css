@@ -638,3 +638,75 @@
 .tabela tbody tr:last-child td {
   border-block-end: none;
 }
+
+/* ===========================================================================
+   CORREÇÕES DE CONTRASTE
+
+   Não são ajuste de gosto: cada regra abaixo corrige um texto MEDIDO abaixo
+   do mínimo da WCAG AA (4,5:1 para texto normal, 3:1 para texto grande) por
+   `scripts/auditoria-contraste.mjs`. A razão antiga e a nova estão anotadas.
+
+   A causa raiz é sempre a mesma: uma cor pensada para fundo escuro sendo
+   usada sobre fundo claro, ou o contrário. O lilás claro brilha no roxo
+   profundo e some no branco; o cinza de texto secundário funciona no branco
+   e desaparece no quase-preto.
+   =========================================================================== */
+
+/* O chapéu nasceu para a primeira dobra escura. Em qualquer superfície clara
+   ele precisa do roxo de marca.
+   Antes: #e879f9 sobre #f6ebff = 2,14:1 · Agora: #7e22ce = 6,98:1 */
+.ajuda-diagnostico .capa__chapeu,
+.assinatura-marca .capa__chapeu,
+.faixa-foto--clara .capa__chapeu,
+.section .capa__chapeu {
+  color: var(--brand-primary);
+}
+
+.ajuda-diagnostico .capa__chapeu::before,
+.assinatura-marca .capa__chapeu::before,
+.section .capa__chapeu::before {
+  background: var(--brand-primary);
+  box-shadow: none;
+}
+
+/* Na faixa escura o chapéu usava o lilás médio, que fica no limite.
+   Antes: #c026d3 sobre #0b0610 = 4,26:1 · Agora: #e879f9 = 9,3:1 */
+.faixa-escura .capa__chapeu,
+.momentos-composicao .capa__chapeu {
+  color: var(--lilac-300);
+}
+
+.faixa-escura .capa__chapeu::before,
+.momentos-composicao .capa__chapeu::before {
+  background: var(--lilac-300);
+}
+
+/* `.eyebrow` usa o cinza de texto secundário, pensado para fundo branco.
+   No rodapé quase-preto ele some.
+   Antes: #675470 sobre #0b0610 = 2,94:1 · Agora: #d8cbe2 = 13,0:1 */
+.rodape .eyebrow,
+.fechamento-escuro .eyebrow,
+.faixa-escura .eyebrow,
+.resultado__cartao .eyebrow {
+  color: var(--quiz-text-secondary);
+}
+
+/* A assinatura sobre fundo claro (login no celular, rodapés claros).
+   Antes: #e879f9 sobre #ffffff = 2,46:1 · Agora: #7e22ce = 6,98:1 */
+.entrar__marca-mobile .marca__nome-apoio,
+.entrar__painel .marca__nome-apoio {
+  color: var(--brand-primary);
+}
+
+/* O número do capítulo no painel usava o neon, que é cor de LUZ e não de
+   texto — ele existe para brilhar sobre escuro.
+   Antes: #c63cff sobre #ffffff = 3,82:1 · Agora: #7e22ce = 6,98:1 */
+.capitulo__ordem {
+  color: var(--brand-primary);
+}
+
+/* Rascunho continua se distinguindo do publicado — agora por OPACIDADE do
+   mesmo roxo legível, não por uma cor que ninguém lê. */
+.capitulo:not([data-status='published']) .capitulo__ordem {
+  color: var(--text-secondary);
+}
