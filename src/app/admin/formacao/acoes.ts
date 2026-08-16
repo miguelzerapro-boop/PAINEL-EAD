@@ -839,3 +839,108 @@ function traduzirErro(mensagem: string, codigo?: string) {
   console.error('[formacao]', mensagem)
   return 'Não foi possível salvar. Revise os campos.'
 }
+
+/* ===========================================================================
+   CAPA DA AULA
+   =========================================================================== */
+
+/** Só imagem, e pequena: capa não é arquivo grande. */
+const CAPA_MIMES = ['image/webp', 'image/jpeg', 'image/png'] as const
+const CAPA_BYTES_MAX = 8 * 1024 * 1024
+
+/**
+ * Guarda a capa da aula.
+ *
+ * A imagem SOBE por aqui — ao contrário do vídeo, que vai direto do navegador
+ * para o Storage. A diferença é o tamanho: uma capa tem dezenas de KB, então
+ * atravessar a Server Action é barato e evita ter que assinar um upload só
+ * para isso.
+ *
+ * Vale tanto para a imagem enviada quanto para o quadro tirado do vídeo: o
+ * navegador desenha o quadro num canvas e manda o resultado como imagem. O
+ * vídeo nunca é reenviado.
+ *
+ * O MIME é conferido no servidor. O que o navegador declara é sugestão — quem
+ * decide o que entra no bucket é esta função.
+ */
+export async function salvarCapaDaAula(formData: FormData): Promise<ResultadoAcao> {
+  const lessonId = String(formData.get('lessonId') ?? '')
+  const arquivo = formData.get('capa')
+
+  if (!lessonId) {
+    return { ok: false, message: 'Salve o título da aula antes de escolher a capa.' }
+  }
+  if (!(arquivo instanceof File) || arquivo.size === 0) {
+    return { ok: false, message: 'Nenhuma imagem foi recebida. Tente escolher de novo.' }
+  }
+  if (!CAPA_MIMES.includes(arquivo.type as (typeof CAPA_MIMES)[number])) {
+    return { ok: false, message: 'A capa precisa ser uma imagem JPG, PNG ou WebP.' }
+  }
+  if (arquivo.size > CAPA_BYTES_MAX) {
+    return { ok: false, message: 'A imagem precisa ter no máximo 8 MB.' }
+  }
+
+  const db = createAdminClient()
+
+  const { data: aula } = await db
+    .from('lessons')
+    .select('id, course_id')
+    .eq('id', lessonId)
+    .maybeSingle()
+
+  if (!aula) return { ok: false, message: 'Esta aula não foi encontrada.' }
+
+  /*
+   * A permissão é conferida DEPOIS de descobrir a qual curso a aula pertence:
+   * `exigirEquipeDoCurso` precisa do curso para decidir se uma instrutora tem
+   * acesso àquele conteúdo. Até aqui nada foi gravado.
+   */
+  try {
+    await exigirEquipeDoCurso(aula.course_id)
+  } catch (e) {
+    return { ok: false, message: mensagemDeErro(e, 'Você não tem acesso a esta aula.') }
+  }
+
+  const extensao = arquivo.type === 'image/png' ? 'png' : arquivo.type === 'image/jpeg' ? 'jpg' : 'webp'
+  const caminho = `aulas/${lessonId}/capa-${Date.now()}.${extensao}`
+
+  const { error: erroUpload } = await db.storage
+    .from('cms-media')
+    .upload(caminho, arquivo, { contentType: arquivo.type, upsert: true })
+
+  if (erroUpload) {
+    console.error('[capa] upload falhou:', erroUpload.message)
+    return { ok: false, message: 'Não foi possível guardar a capa. Tente de novo.' }
+  }
+
+  const { data: midia, error: erroMidia } = await db
+    .from('media_assets')
+    .insert({
+      bucket: 'cms-media',
+      path: caminho,
+      kind: 'image',
+      mime_type: arquivo.type,
+      byte_size: arquivo.size,
+      alt: 'Capa da aula',
+    })
+    .select('id')
+    .single()
+
+  if (erroMidia || !midia) {
+    console.error('[capa] registro falhou:', erroMidia?.message)
+    return { ok: false, message: 'A imagem subiu, mas não foi possível ligá-la à aula.' }
+  }
+
+  const { error: erroAula } = await db
+    .from('lessons')
+    .update({ video_thumbnail_id: midia.id })
+    .eq('id', lessonId)
+
+  if (erroAula) {
+    console.error('[capa] vínculo falhou:', erroAula.message)
+    return { ok: false, message: 'Não foi possível ligar a capa a esta aula.' }
+  }
+
+  revalidatePath(`/admin/formacao/aula/${lessonId}`)
+  return { ok: true, id: midia.id }
+}

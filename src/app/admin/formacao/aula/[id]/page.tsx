@@ -72,6 +72,7 @@ export default async function AulaPage({
                 releaseAt: aula.releaseAt,
                 releaseDays: aula.releaseDays,
                 video: aula.video ? { nome: aula.video.nome, bytes: aula.video.bytes } : null,
+                capa: aula.capa,
               }
             : null
         }

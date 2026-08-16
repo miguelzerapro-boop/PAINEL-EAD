@@ -74,8 +74,13 @@ export default async function AdminQuizPage() {
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 'var(--space-4)' }}>
           <h2>Perguntas</h2>
-          <Link className="botao botao--secundario" href={`/admin/perguntas-quiz/novo?pai=${quiz.id}`}>
-            Nova pergunta
+          {/*
+            Aponta para o construtor, não para o cadastro genérico. O caminho
+            antigo (`/admin/perguntas-quiz/novo` + `/admin/opcoes-quiz`) fazia
+            a pergunta nascer numa tela e as alternativas em outra.
+          */}
+          <Link className="botao botao--cta" href="/admin/quiz/pergunta/nova">
+            + Nova pergunta
           </Link>
         </div>
 
@@ -86,15 +91,15 @@ export default async function AdminQuizPage() {
                 <span className="mono" style={{ marginInlineEnd: 'var(--space-3)' }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <Link href={`/admin/perguntas-quiz/${p.id}`} style={{ fontWeight: 600 }}>
+                <Link href={`/admin/quiz/pergunta/${p.id}`} style={{ fontWeight: 600 }}>
                   {p.prompt}
                 </Link>
                 <p className="palheta__meta">
                   {p.type === 'multiple'
                     ? `múltipla escolha · até ${p.max_selections ?? 'sem limite'}`
                     : 'escolha única'}{' '}
-                  · {(p.quiz_options ?? []).length} alternativas ·{' '}
-                  <Link href={`/admin/opcoes-quiz?pai=${p.id}`}>editar alternativas</Link>
+                  · {(p.quiz_options ?? []).length}{' '}
+                  {(p.quiz_options ?? []).length === 1 ? 'resposta' : 'respostas'}
                 </p>
               </div>
               <span className="mono">{p.status}</span>

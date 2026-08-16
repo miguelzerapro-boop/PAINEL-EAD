@@ -1265,3 +1265,317 @@ button.lista__item:hover {
     justify-self: start;
   }
 }
+
+/* ===========================================================================
+   CAPA DA AULA
+
+   Fica na mesma tela do vídeo. Duas colunas: a prévia à esquerda (o que a
+   aluna vai ver) e as opções à direita. Sem capa, o selo da marca ocupa o
+   lugar — nunca uma imagem quebrada.
+   =========================================================================== */
+
+.capa-aula {
+  margin-block-start: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-soft);
+}
+
+.capa-aula__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+}
+
+.capa-aula__ajuda {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.capa-aula__grade {
+  display: grid;
+  gap: var(--space-5);
+  margin-block-start: var(--space-5);
+  align-items: start;
+}
+
+@media (min-width: 40rem) {
+  .capa-aula__grade {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  }
+}
+
+.capa-aula__previa {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--surface-main);
+  border: 1px solid var(--border-subtle);
+}
+
+.capa-aula__imagem {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.capa-aula__vazia {
+  block-size: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-3);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  background: var(--surface-purple);
+}
+
+.capa-aula__selo {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.capa-aula__opcoes {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+/* O <label> que embrulha o input de arquivo precisa parecer botão. */
+.capa-aula__botao {
+  cursor: pointer;
+}
+
+.capa-aula__nota {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+  max-inline-size: 40ch;
+}
+
+/* --- Seletor de momento --------------------------------------------------- */
+
+.capa-aula__seletor {
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--border-subtle);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.capa-aula__video {
+  inline-size: 100%;
+  max-block-size: 22rem;
+  border-radius: var(--radius-media);
+  background: #000;
+}
+
+.capa-aula__linha input[type='range'] {
+  inline-size: 100%;
+  margin-block-start: var(--space-2);
+  accent-color: var(--brand-primary);
+  /* Alvo confortável no celular: a barra fina do padrão é difícil de pegar. */
+  block-size: var(--target-min);
+}
+
+.capa-aula__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.capa-aula__estado {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-small);
+  color: var(--brand-primary);
+}
+
+/* ===========================================================================
+   CONSTRUTOR DE PERGUNTA
+
+   Duas colunas: o formulário à esquerda, o que a aluna vê à direita. No
+   celular o preview vai para baixo — mas continua presente, porque é ele que
+   responde "o que eu estou criando?".
+   =========================================================================== */
+
+.editor-pergunta {
+  display: grid;
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.editor-pergunta > * {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .editor-pergunta {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  }
+
+  .editor-pergunta__previa {
+    position: sticky;
+    top: var(--space-5);
+  }
+}
+
+.editor-pergunta__campos {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.editor-pergunta__subtitulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  margin-block-start: var(--space-3);
+}
+
+.editor-pergunta__acoes {
+  display: flex;
+  gap: var(--space-3);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+/* --- Uma resposta --------------------------------------------------------- */
+
+.respostas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.resposta {
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+.resposta__linha {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.resposta__numero {
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+}
+
+.resposta__botoes {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.resposta__acao {
+  min-inline-size: var(--target-min);
+  min-block-size: var(--target-min);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.resposta__acao:hover:not(:disabled) {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+.resposta__acao:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.resposta__acao--remover:hover:not(:disabled) {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.resposta__diagnostico {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: var(--space-4);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px dashed var(--border-subtle);
+}
+
+@media (min-width: 44rem) {
+  .resposta__diagnostico {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.campo--linha {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* --- O preview ------------------------------------------------------------ */
+
+.previa-quiz {
+  margin-block-start: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-cartao);
+  /* Fundo escuro porque o quiz público é escuro: o preview tem que parecer
+     com o que a aluna vê, não com o painel. */
+  background: var(--quiz-bg);
+  color: var(--quiz-text);
+  border: 1px solid var(--quiz-border);
+}
+
+.previa-quiz__pergunta {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  line-height: var(--leading-title);
+  text-wrap: pretty;
+}
+
+.previa-quiz__ajuda {
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  color: var(--quiz-text-secondary);
+}
+
+.previa-quiz__opcoes {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.previa-quiz__opcao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--quiz-border);
+  border-radius: var(--radius-control);
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.previa-quiz__marca {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  border: 2px solid var(--quiz-lilac);
+}
+
+.campo__ok {
+  font-size: var(--size-small);
+  color: var(--success);
+}

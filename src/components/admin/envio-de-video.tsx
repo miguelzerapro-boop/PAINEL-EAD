@@ -71,6 +71,7 @@ export function EnvioDeVideo({
   videoAtual,
   onAulaCriada,
   onVideoEnviado,
+  aoEscolherArquivo,
 }: {
   lessonId: string | null
   moduleId: string
@@ -78,6 +79,12 @@ export function EnvioDeVideo({
   videoAtual: VideoAtual
   onAulaCriada?: (id: string) => void
   onVideoEnviado?: () => void
+  /**
+   * Avisa o formulário qual arquivo foi escolhido, para o seletor de capa
+   * poder tirar um quadro dele SEM baixar o vídeo de novo do servidor.
+   * O arquivo nunca sai daqui: quem lê os bytes é o <video> do navegador.
+   */
+  aoEscolherArquivo?: (arquivo: File | null) => void
 }) {
   const [etapa, setEtapa] = useState<Etapa>({ nome: 'ocioso' })
   const [arquivo, setArquivo] = useState<File | null>(null)
@@ -127,6 +134,7 @@ export function EnvioDeVideo({
   const enviar = useCallback(
     async (file: File, opcoes: { recomecar?: boolean } = {}) => {
       setArquivo(file)
+      aoEscolherArquivo?.(file)
 
       /* 1 — o que dá para saber sem tocar na rede ------------------------- */
       setEtapa({ nome: 'verificando' })
@@ -275,7 +283,7 @@ export function EnvioDeVideo({
       envioRef.current = envio
       await envio.iniciar()
     },
-    [lessonId, moduleId, tituloDaAula, onAulaCriada, confirmarNoServidor],
+    [lessonId, moduleId, tituloDaAula, onAulaCriada, confirmarNoServidor, aoEscolherArquivo],
   )
 
   /* ---------------------------------------------------------------------- */

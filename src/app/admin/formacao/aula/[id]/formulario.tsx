@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 import { EnvioDeVideo, type VideoAtual } from '@/components/admin/envio-de-video'
+import { SeletorDeCapa } from '@/components/admin/seletor-de-capa'
 import { publicarAula, salvarAula } from '../../acoes'
 
 /**
@@ -36,6 +37,8 @@ type AulaExistente = {
   releaseAt: string | null
   releaseDays: number | null
   video: VideoAtual
+  /** URL pública da capa já escolhida, se houver. */
+  capa: string | null
 }
 
 type Aviso = { tom: 'ok' | 'erro' | 'info'; texto: string } | null
@@ -68,6 +71,13 @@ export function FormularioDeAula({
   const [video, setVideo] = useState<VideoAtual>(aula?.video ?? null)
   const [status, setStatus] = useState(aula?.status ?? 'draft')
   const [aviso, setAviso] = useState<Aviso>(null)
+
+  /*
+   * O arquivo de vídeo desta visita. Só existe enquanto a página não
+   * recarrega — e é justamente por isso que a capa por quadro é oferecida
+   * agora: com o arquivo em mãos, o quadro sai sem baixar nada do servidor.
+   */
+  const [arquivoDeVideo, setArquivoDeVideo] = useState<File | null>(null)
 
   const tituloValido = titulo.trim().length >= 2
 
@@ -210,6 +220,12 @@ export function FormularioDeAula({
             })
             router.refresh()
           }}
+          /*
+           * O arquivo escolhido sobe para cá para o seletor de capa poder
+           * tirar um quadro dele. Os bytes não saem do navegador: quem os lê
+           * é o <video> local.
+           */
+          aoEscolherArquivo={setArquivoDeVideo}
         />
         {!tituloValido ? (
           <span className="campo__dica">
@@ -217,6 +233,17 @@ export function FormularioDeAula({
           </span>
         ) : null}
       </div>
+
+      {/*
+        A capa vem logo abaixo do vídeo, na MESMA tela. Antes ela exigiria
+        salvar a aula, procurá-la de novo, abrir a mídia e voltar — quatro
+        telas para um detalhe que se resolve em dois cliques aqui.
+      */}
+      <SeletorDeCapa
+        lessonId={lessonId}
+        arquivoDeVideo={arquivoDeVideo}
+        capaAtual={aula?.capa ?? null}
+      />
 
       <div className="form-aula__linha">
         <label className="campo">

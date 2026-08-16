@@ -251,7 +251,7 @@ export async function getAulaParaEdicao(lessonId: string) {
   const { data } = await db
     .from('lessons')
     .select(
-      'id, module_id, course_id, title, description, position, status, is_free, content_type, duration_seconds, release_mode, release_at, release_days, video_provider, video_asset_id, media_assets:video_asset_id (path, byte_size, mime_type)',
+      'id, module_id, course_id, title, description, position, status, is_free, content_type, duration_seconds, release_mode, release_at, release_days, video_provider, video_asset_id, media_assets:video_asset_id (path, byte_size, mime_type), capa:video_thumbnail_id (bucket, path)',
     )
     .eq('id', lessonId)
     .maybeSingle()
@@ -290,7 +290,19 @@ export async function getAulaParaEdicao(lessonId: string) {
           nome: envio?.file_name ?? null,
         }
       : null,
+    /*
+     * A capa vira URL pública aqui, e não no componente: `cms-media` é um
+     * bucket público, então basta montar o endereço. Deixar isso para o
+     * cliente espalharia o formato da URL do Storage pela interface.
+     */
+    capa: capaUrl(data.capa as { bucket?: string; path?: string } | null),
   }
+}
+
+function capaUrl(capa: { bucket?: string; path?: string } | null): string | null {
+  if (!capa?.path) return null
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+  return `${base}/storage/v1/object/public/${capa.bucket ?? 'cms-media'}/${capa.path}`
 }
 
 /** Próxima posição livre dentro do capítulo. Evita duas aulas na mesma ordem. */
