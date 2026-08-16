@@ -82,15 +82,46 @@
   min-width: 0;
 }
 
-/*
-   O destaque é de COR, não de tamanho: borda de marca, fundo levemente roxo e
-   uma sombra mais funda. Ampliar o cartão desalinharia os três preços, que é
-   justamente o que a visitante está comparando.
-*/
-.plano--destaque {
-  border-color: var(--brand-primary);
-  background: linear-gradient(180deg, var(--surface-purple), var(--surface-main) 42%);
+/* ---------------------------------------------------------------------------
+   HIERARQUIA DOS TRÊS
+
+   A escada precisa ser lida em um segundo: entrada → intermediário →
+   completo. Ela é feita de COR e LUZ, nunca de tamanho — ampliar um cartão
+   desalinharia os três preços, que é justamente o que a visitante está
+   comparando. Nenhum dos três é escondido ou apagado.
+
+     base   linha fina, fundo branco             — o mais enxuto
+     medio  borda lilás, topo levemente roxo     — mais presente que o primeiro
+     forte  borda de marca, fundo roxo, glow     — o mais chamativo
+   --------------------------------------------------------------------------- */
+
+.plano[data-enfase='medio'] {
+  border-color: var(--lilac-300);
+  background: linear-gradient(180deg, var(--surface-soft), var(--surface-main) 38%);
   box-shadow: var(--shadow-erguida);
+}
+
+.plano[data-enfase='forte'] {
+  border-color: var(--brand-primary);
+  border-width: 1.5px;
+  background: linear-gradient(180deg, var(--surface-purple), var(--surface-main) 46%);
+  /* Glow discreto: a sombra roxa do sistema mais um halo de neon fraco. */
+  box-shadow: var(--shadow-erguida), 0 0 0 4px rgba(198, 60, 255, 0.1);
+}
+
+/* Fio de neon no topo do cartão completo. Único ornamento da escada. */
+.plano[data-enfase='forte']::before {
+  content: '';
+  position: absolute;
+  inset-inline: -1.5px;
+  inset-block-start: -1.5px;
+  block-size: 3px;
+  border-radius: var(--radius-cartao) var(--radius-cartao) 0 0;
+  background: linear-gradient(90deg, var(--purple-600), var(--neon-lilac), var(--purple-600));
+}
+
+.plano[data-enfase='medio'] .plano__etiqueta {
+  background: var(--lilac-500);
 }
 
 .plano__etiqueta {
@@ -153,6 +184,16 @@
   font-weight: 600;
 }
 
+.plano__contagem-extra {
+  color: var(--text-secondary);
+}
+
+/* No completo, "acesso completo" ganha o mesmo peso da contagem. */
+.plano[data-enfase='forte'] .plano__contagem-extra {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
 .plano__capitulos {
   list-style: none;
   margin: 0;
@@ -206,31 +247,48 @@
   border-block: 1px solid var(--border-subtle);
 }
 
+/*
+   A TABELA CABE, EM VEZ DE ROLAR.
+
+   A primeira versão tinha `min-inline-size: 32rem` e rolava na horizontal no
+   celular. Funcionava, mas rolagem lateral dentro de uma página que rola na
+   vertical é o tipo de coisa que a visitante não descobre: ela vê três
+   colunas cortadas e conclui que a tabela está quebrada.
+
+   Agora a tabela cabe em 360px. O que a faz caber:
+     · o cabeçalho abrevia ("Inici.", "Profi.", "Compl.");
+     · o padding e a fonte encolhem;
+     · o nome do capítulo quebra em duas linhas.
+
+   O nome completo do plano continua no DOM para leitor de tela.
+*/
 .comparacao {
   margin-block-start: var(--space-6);
-  overflow-x: auto;
-  /* Foco visível: o contêiner é focável para permitir rolagem por teclado. */
   border-radius: var(--radius-cartao);
-}
-
-.comparacao:focus-visible {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 2px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
 }
 
 .comparacao__tabela {
   inline-size: 100%;
-  min-inline-size: 32rem;
   border-collapse: collapse;
   background: var(--surface-main);
   font-size: var(--size-small);
+  table-layout: fixed;
 }
 
 .comparacao__tabela th,
 .comparacao__tabela td {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-2);
   border-block-end: 1px solid var(--border-subtle);
   text-align: center;
+}
+
+/* A coluna do capítulo fica com a metade; as três de plano dividem o resto. */
+.comparacao__tabela th:first-child,
+.comparacao__tabela td:first-child {
+  inline-size: 46%;
+  padding-inline-start: var(--space-3);
 }
 
 .comparacao__tabela thead th:first-child,
@@ -238,12 +296,7 @@
 .comparacao__tabela tfoot th {
   text-align: start;
   font-weight: 500;
-  /* Coluna do capítulo presa: rolando na horizontal, ainda se sabe qual
-     linha é qual. */
-  position: sticky;
-  inset-inline-start: 0;
-  background: var(--surface-main);
-  z-index: 1;
+  overflow-wrap: anywhere;
 }
 
 .comparacao__tabela thead th {
@@ -255,8 +308,37 @@
 .comparacao__plano {
   display: block;
   font-family: var(--font-display);
-  font-size: var(--size-h4);
+  font-size: var(--size-body);
   font-weight: 600;
+}
+
+/* Nome longo x abreviado: só um dos dois aparece por vez. */
+.comparacao__plano-longo {
+  display: none;
+}
+
+@media (min-width: 34rem) {
+  .comparacao__tabela th,
+  .comparacao__tabela td {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .comparacao__tabela th:first-child,
+  .comparacao__tabela td:first-child {
+    inline-size: 40%;
+  }
+
+  .comparacao__plano {
+    font-size: var(--size-h4);
+  }
+
+  .comparacao__plano-longo {
+    display: inline;
+  }
+
+  .comparacao__plano-curto {
+    display: none;
+  }
 }
 
 .comparacao__preco {
@@ -319,6 +401,67 @@
   margin-block-start: 0.5em;
   border-radius: 50%;
   background: var(--brand-primary);
+}
+
+/* --- Seção de planos e apoio do diagnóstico -------------------------------- */
+
+.secao-planos__apoio {
+  margin-block: var(--space-4) var(--space-7);
+  max-inline-size: var(--measure-sales);
+  font-size: var(--size-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  text-wrap: pretty;
+}
+
+/*
+   O diagnóstico deixou de ser a porta de entrada e virou apoio. O bloco é
+   deliberadamente discreto: uma caixa clara, botão secundário. Se ele
+   competisse com os planos, voltaríamos ao problema de antes — o preço
+   escondido atrás de um formulário.
+*/
+.ajuda-diagnostico__caixa {
+  display: grid;
+  gap: var(--space-5);
+  align-items: center;
+  padding: var(--space-6);
+  background: var(--surface-purple);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+}
+
+.ajuda-diagnostico__caixa > * {
+  min-width: 0;
+}
+
+.ajuda-diagnostico__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ajuda-diagnostico__texto {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  max-inline-size: var(--measure-sales);
+}
+
+.ajuda-diagnostico .botao {
+  justify-self: start;
+}
+
+@media (min-width: 48rem) {
+  .ajuda-diagnostico__caixa {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-7);
+  }
+
+  .ajuda-diagnostico .botao {
+    justify-self: end;
+  }
 }
 
 /* --- Como funciona -------------------------------------------------------- */

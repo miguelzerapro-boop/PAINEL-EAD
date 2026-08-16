@@ -1,0 +1,100 @@
+[
+  {
+    "rota": "/",
+    "status": 200,
+    "links": 24,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/planos",
+    "status": 200,
+    "links": 22,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/diagnostico",
+    "status": 200,
+    "links": 11,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/checkout/iniciante",
+    "status": 200,
+    "links": 13,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/checkout/profissional",
+    "status": 200,
+    "links": 13,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/checkout/completo",
+    "status": 200,
+    "links": 13,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/entrar",
+    "status": 200,
+    "links": 10,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/cursos",
+    "status": 200,
+    "links": 17,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/suporte",
+    "status": 200,
+    "links": 11,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/termos",
+    "status": 200,
+    "links": 17,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/privacidade",
+    "status": 200,
+    "links": 17,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/obrigado",
+    "status": 200,
+    "links": 10,
+    "botoes": 1,
+    "mortos": []
+  },
+  {
+    "rota": "/admin",
+    "status": 200,
+    "links": 10,
+    "botoes": 2,
+    "mortos": []
+  },
+  {
+    "rota": "/aluna",
+    "status": 200,
+    "links": 10,
+    "botoes": 2,
+    "mortos": []
+  }
+]

@@ -56,6 +56,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     {
       rotulo: 'Comercial',
       itens: [
+        { href: '/admin/formacao/previa', rotulo: 'Ver como aluna', icone: 'perfil' },
+        { href: '/admin/funil', rotulo: 'Funil', icone: 'atividades' },
         { href: '/admin/quiz', rotulo: 'Diagnóstico', icone: 'atividades' },
         { href: '/admin/leads', rotulo: 'Leads', icone: 'perfil' },
         { href: '/admin/ofertas', rotulo: 'Ofertas', icone: 'ofertas' },

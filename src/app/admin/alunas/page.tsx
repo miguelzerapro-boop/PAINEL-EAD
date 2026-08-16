@@ -50,7 +50,18 @@ export default async function AlunasPage() {
             )
           })
         ) : (
-          <p className="lista-admin__vazia">Nenhuma aluna cadastrada ainda.</p>
+          /*
+           * Estado vazio EXPLICADO. "Nenhuma aluna cadastrada ainda." sozinho
+           * deixa quem abre a tela sem saber se falta configurar alguma coisa
+           * ou se é só o começo. A segunda linha responde isso.
+           */
+          <div className="vazio-explicado">
+            <p className="vazio-explicado__titulo">Nenhuma aluna matriculada ainda.</p>
+            <p className="vazio-explicado__texto">
+              As alunas aparecem aqui depois que uma compra for aprovada pelo Mercado Pago
+              ou que uma matrícula for criada manualmente no painel.
+            </p>
+          </div>
         )}
       </div>
     </>

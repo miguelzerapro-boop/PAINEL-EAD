@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 import { RenderBloco } from '@/components/cms/blocos'
+import { AjudaDoDiagnostico, SecaoDePlanos } from '@/components/comercial/secao-de-planos'
 import { ComposicaoVisual, VAGAS } from '@/components/composicao-visual'
 
 import { Assinatura, Rodape, Topo } from '@/components/site-chrome'
@@ -10,7 +11,6 @@ import { getPublicSettings, getPublishedPage } from '@/lib/cms/page'
 import { MARCA } from '@/lib/marca'
 import { formatWorkload } from '@/lib/format'
 import { createClient } from '@/lib/supabase/server'
-import { getWhatsAppTarget } from '@/lib/whatsapp'
 
 export const revalidate = 300
 
@@ -70,10 +70,12 @@ export default async function LandingPage({
 async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
   const db = await createClient()
 
-  const [{ data: momentos }, cursos, whatsapp, { data: vagasDeImagem }] = await Promise.all([
+  // O WhatsApp saiu daqui junto com a antiga etapa 03 de "Como funciona", que
+  // descrevia o caminho do quiz. Ele continua no resultado do diagnóstico, que
+  // é onde a conversa faz sentido.
+  const [{ data: momentos }, cursos, { data: vagasDeImagem }] = await Promise.all([
     db.from('quiz_outcomes').select('key, name, description').order('position'),
     listPublishedCourses({ limit: 6 }),
-    getWhatsAppTarget(),
     /*
      * As fotos da landing vêm do CMS, como toda a mídia do projeto. Enquanto a
      * vaga estiver vazia, a arte editorial temporária ocupa o lugar — nenhuma
@@ -142,9 +144,17 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
               qual é o próximo passo.
             </p>
 
+            {/*
+              O CTA PRINCIPAL É O PREÇO, não o quiz.
+
+              Antes a única porta era "Fazer meu diagnóstico": quem chegava
+              querendo saber quanto custa precisava responder um formulário
+              para descobrir. O diagnóstico continua ali, ao lado, como
+              caminho complementar de quem não sabe escolher.
+            */}
             <div className="capa__acoes">
-              <Link className="botao botao--cta" href="/diagnostico">
-                <span>Fazer meu diagnóstico</span>
+              <a className="botao botao--cta" href="#planos">
+                <span>Ver planos</span>
                 <svg
                   className="botao__seta"
                   width="20"
@@ -157,14 +167,22 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
                   strokeLinejoin="round"
                   aria-hidden="true"
                 >
-                  <path d="M4 10h11" />
-                  <path d="m10 5 5 5-5 5" />
+                  <path d="M10 4v11" />
+                  <path d="m5 10 5 5 5-5" />
                 </svg>
+              </a>
+
+              <Link className="botao botao--secundario" href="/diagnostico">
+                Fazer diagnóstico
               </Link>
+
+              {/* Sem número escrito aqui: preço tem um dono só, que é o banco.
+                  Repetir "a partir de R$ 29,90" no herói criaria um segundo
+                  lugar para o valor divergir. */}
               <span className="capa__nota">
-                Leva poucos minutos.
+                Três planos.
                 <br />
-                Sem custo e sem compromisso.
+                Pagamento único.
               </span>
             </div>
           </div>
@@ -187,72 +205,92 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
       </section>
 
       {/* ================================================================== */}
-      {/* A MARCA — assinatura institucional                                 */}
+      {/* VISUAL — fotografia antes de qualquer preço                        */}
       {/* ================================================================== */}
-      {/*
-        Aqui ficava o bloco "O jeito comum | Aqui": duas colunas de texto com
-        um risco no meio, ocupando uma dobra inteira para dizer o que a seção
-        "Como funciona", logo abaixo, já mostra em três etapas.
-
-        No lugar entra a marca. Até então ela só existia no cabeçalho — quem
-        rolava a página não via mais nenhum sinal de quem assina o trabalho.
-      */}
-      <section className="assinatura-marca">
-        <div className="page assinatura-marca__grade">
-          <Assinatura href={null} tamanho="grande" />
+      <section className="faixa-foto">
+        <div className="page faixa-foto__grade">
+          <ComposicaoVisual
+            vaga={VAGAS.detalheAcabamento}
+            mediaPath={imagens['landing.acabamento']}
+            className="faixa-foto__imagem"
+            sizes="(max-width: 62rem) 100vw, 46vw"
+          />
 
           <div>
-            <span className="assinatura-marca__fio" aria-hidden="true" />
-            <p className="assinatura-marca__texto">
-              A formação é assinada por {MARCA.nome} — o mesmo cuidado do estúdio,
-              organizado em capítulos para você aprender no seu ritmo.
+            <p className="capa__chapeu">Feito com as mãos</p>
+            <h2 className="faixa-foto__titulo">
+              O acabamento é o que separa o trabalho bom do trabalho comum.
+            </h2>
+            <p className="faixa-foto__texto">
+              Cutícula limpa, esmalte uniforme, borda definida. É detalhe que a cliente não
+              sabe nomear — mas é exatamente o que a faz voltar.
             </p>
           </div>
         </div>
       </section>
 
       {/* ================================================================== */}
-      {/* COMO FUNCIONA — três palhetas no mesmo trilho                      */}
+      {/* COMO FUNCIONA — o caminho da compra, não o do quiz                 */}
       {/* ================================================================== */}
+      {/*
+        As três etapas descreviam o quiz: "conte seu momento", "entenda onde
+        você está", "descubra o próximo passo". Com o CTA principal virando
+        "Ver planos", isso passou a contradizer o fluxo da página — explicava
+        um caminho que deixou de ser o principal.
+
+        Agora são as etapas da compra, iguais às da /planos.
+      */}
       <section className="section" id="como-funciona">
         <div className="page">
           <h2 className="titulo-secao">Como funciona</h2>
-
-          <div className="trilho mostruario percurso">
-            <ol className="trilho__itens">
-              <li className="palheta mostruario__item mostruario__item--atual">
-                <span className="palheta__codigo">Etapa 01</span>
-                <span className="palheta__titulo">Conte seu momento</span>
-                <span className="palheta__meta">
-                  Responda perguntas rápidas sobre sua experiência e seus objetivos.
-                </span>
-              </li>
-
-              <li className="palheta mostruario__item">
-                <span className="palheta__codigo">Etapa 02</span>
-                <span className="palheta__titulo">Entenda onde você está</span>
-                <span className="palheta__meta">
-                  O diagnóstico organiza suas respostas e identifica seu momento atual.
-                </span>
-              </li>
-
-              <li className="palheta mostruario__item">
-                <span className="palheta__codigo">Etapa 03</span>
-                <span className="palheta__titulo">Descubra o próximo passo</span>
-                <span className="palheta__meta">
-                  {whatsapp.available
-                    ? 'Você recebe uma orientação e pode continuar a conversa pelo WhatsApp.'
-                    : 'Você recebe uma orientação com o que faz sentido considerar a partir dali.'}
-                </span>
-              </li>
-            </ol>
-          </div>
+          <ol className="passos">
+            <li className="passo">
+              <span className="passo__numero mono">01</span>
+              <div>
+                <p className="passo__titulo">Escolha seu plano</p>
+                <p className="passo__texto">
+                  Compare os capítulos e decida até onde quer ir agora.
+                </p>
+              </div>
+            </li>
+            <li className="passo">
+              <span className="passo__numero mono">02</span>
+              <div>
+                <p className="passo__titulo">Faça a compra</p>
+                <p className="passo__texto">
+                  Pagamento processado pelo Mercado Pago. Não guardamos dados do seu cartão.
+                </p>
+              </div>
+            </li>
+            <li className="passo">
+              <span className="passo__numero mono">03</span>
+              <div>
+                <p className="passo__titulo">Acesse sua área de estudos</p>
+                <p className="passo__texto">
+                  Você entra com o mesmo e-mail da compra e começa pelos capítulos do seu
+                  plano.
+                </p>
+              </div>
+            </li>
+          </ol>
         </div>
       </section>
 
       {/* ================================================================== */}
-      {/* OS MOMENTOS — composição assimétrica                               */}
+      {/* PLANOS + COMPARAÇÃO — o coração comercial da página                */}
       {/* ================================================================== */}
+      {/*
+        O mesmo componente que a /planos monta. Preço, capítulos e textos saem
+        de `offers` e `offer_module_access` — as duas páginas não têm como
+        discordar porque leem a mesma função.
+      */}
+      <SecaoDePlanos />
+
+      {/* ================================================================== */}
+      {/* DIAGNÓSTICO — agora apoio, não porta de entrada                    */}
+      {/* ================================================================== */}
+      <AjudaDoDiagnostico />
+
       <section className="section faixa-escura">
         <div className="page momentos-composicao">
           <div className="momentos__topo">
@@ -262,7 +300,7 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
             </h2>
             <p className="momentos__apoio">
               São cinco momentos possíveis. O diagnóstico diz em qual deles você está hoje —
-              e é a partir dele que a conversa começa.
+              e sugere por onde começar.
             </p>
 
             <div className="momentos__acao">
@@ -289,36 +327,6 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================== */}
-      {/* A BANCADA — onde a foto real vai entrar                            */}
-      {/* ================================================================== */}
-      {/*
-        Faixa fotográfica escura. Entra depois de duas seções claras para
-        quebrar o bloco branco — e é aqui que o assunto da profissão aparece
-        em imagem, não em texto.
-      */}
-      <section className="faixa-foto">
-        <div className="page faixa-foto__grade">
-          <ComposicaoVisual
-            vaga={VAGAS.detalheAcabamento}
-            mediaPath={imagens['landing.acabamento']}
-            className="faixa-foto__imagem"
-            sizes="(max-width: 62rem) 100vw, 46vw"
-          />
-
-          <div>
-            <p className="capa__chapeu">Feito com as mãos</p>
-            <h2 className="faixa-foto__titulo">
-              O acabamento é o que separa o trabalho bom do trabalho comum.
-            </h2>
-            <p className="faixa-foto__texto">
-              Cutícula limpa, esmalte uniforme, borda definida. É detalhe que a cliente não
-              sabe nomear — mas é exatamente o que a faz voltar.
-            </p>
           </div>
         </div>
       </section>
@@ -407,22 +415,49 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
       ) : null}
 
       {/* ================================================================== */}
+      {/* A MARCA — assinatura institucional                                 */}
+      {/* ================================================================== */}
+      {/*
+        Aqui ficava o bloco "O jeito comum | Aqui": duas colunas de texto com
+        um risco no meio, ocupando uma dobra inteira para dizer o que a seção
+        "Como funciona" já mostra em três etapas.
+
+        No lugar entra a marca. Até então ela só existia no cabeçalho — quem
+        rolava a página não via mais nenhum sinal de quem assina o trabalho.
+      */}
+      <section className="assinatura-marca">
+        <div className="page assinatura-marca__grade">
+          <Assinatura href={null} tamanho="grande" />
+
+          <div>
+            <span className="assinatura-marca__fio" aria-hidden="true" />
+            <p className="assinatura-marca__texto">
+              A formação é assinada por {MARCA.nome} — o mesmo cuidado do estúdio,
+              organizado em capítulos para você aprender no seu ritmo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================== */}
       {/* FECHAMENTO                                                         */}
       {/* ================================================================== */}
-      {/* Fecha em quase-preto com neon: a página termina no tom que abriu. */}
+      {/* Fecha em quase-preto com neon: a página termina no tom que abriu.
+          O CTA final repete o principal — volta para os planos, não para o
+          quiz. */}
       <section className="fechamento-escuro">
         <div className="page">
           <h2 className="fechamento-escuro__titulo">
-            Vamos começar pelo seu momento?
+            Até onde você quer ir?
           </h2>
           <p className="fechamento-escuro__texto">
-            É rápido, não custa nada, e é o que permite falar com você sobre o que realmente
-            interessa.
+            Dá para começar pelos fundamentos e avançar depois — os capítulos que você já
+            tiver continuam seus.
           </p>
 
           <div className="fechamento-escuro__acoes">
-            <Link className="botao botao--cta" href="/diagnostico">
-              <span>Fazer meu diagnóstico</span>
+            <a className="botao botao--cta" href="#planos">
+              <span>Ver planos</span>
               <svg
                 className="botao__seta"
                 width="20"
@@ -435,10 +470,10 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
                 strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <path d="M4 10h11" />
-                <path d="m10 5 5 5-5 5" />
+                <path d="M10 4v11" />
+                <path d="m5 10 5 5 5-5" />
               </svg>
-            </Link>
+            </a>
           </div>
 
           <span className="fechamento-escuro__fio" aria-hidden="true" />

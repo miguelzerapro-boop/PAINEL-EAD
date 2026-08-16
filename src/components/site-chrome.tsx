@@ -77,12 +77,20 @@ export async function Topo() {
   // vazio é pior do que link nenhum.
   const temCursos = cursos.length > 0
 
+  /*
+   * O CTA do topo é "Ver planos", e ele aponta para a seção de planos da
+   * HOME (`/#planos`), não para a /planos. A home agora tem os três pacotes:
+   * mandar para outra página seria um salto desnecessário.
+   *
+   * O diagnóstico saiu do topo. Ele continua acessível pelo herói, pela seção
+   * de apoio e pela seção de momentos — mas deixou de ser a porta principal.
+   */
   const itens: ItemNav[] = [
     { href: '/#como-funciona', rotulo: 'Como funciona' },
     ...(temCursos ? [{ href: '/cursos', rotulo: 'Cursos' }] : []),
     { href: '/planos', rotulo: 'Planos' },
     { href: '/entrar', rotulo: 'Entrar' },
-    { href: '/diagnostico', rotulo: 'Fazer o diagnóstico', cta: true },
+    { href: '/#planos', rotulo: 'Ver planos', cta: true },
   ]
 
   return (
@@ -95,8 +103,8 @@ export async function Topo() {
           {temCursos ? <Link href="/cursos">Cursos</Link> : null}
           <Link href="/planos">Planos</Link>
           <Link href="/entrar">Entrar</Link>
-          <Link className="botao botao--cta topo__cta" href="/diagnostico">
-            Fazer o diagnóstico
+          <Link className="botao botao--cta topo__cta" href="/#planos">
+            Ver planos
           </Link>
         </nav>
 

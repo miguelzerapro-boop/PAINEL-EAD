@@ -141,3 +141,17 @@ export function etiquetaDoPlano(plano: Plano, todos: Plano[]): string | null {
   if (indice === todos.length - 1) return 'Acesso completo'
   return null
 }
+
+/**
+ * Peso visual do cartão: entrada → intermediário → completo.
+ *
+ * Sai da posição na lista de preços, que já vem ordenada. O CSS traduz isso em
+ * borda, fundo e brilho — nunca em tamanho: ampliar um cartão desalinharia os
+ * três preços, que é justamente o que a visitante está comparando.
+ */
+export function enfaseDoPlano(plano: Plano, todos: Plano[]): 'base' | 'medio' | 'forte' {
+  const indice = todos.findIndex((p) => p.id === plano.id)
+  if (indice === todos.length - 1) return 'forte'
+  if (indice === 0) return 'base'
+  return 'medio'
+}

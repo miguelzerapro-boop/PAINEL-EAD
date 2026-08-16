@@ -1,16 +1,13 @@
-import Link from 'next/link'
 import type { Metadata } from 'next'
 
+import { AjudaDoDiagnostico, SecaoDePlanos } from '@/components/comercial/secao-de-planos'
 import { ComposicaoVisual, VAGAS } from '@/components/composicao-visual'
-import { EstadoVazio } from '@/components/estados'
 import { Rodape, Topo } from '@/components/site-chrome'
 import { VisualizacaoDeEtapa } from '@/components/analytics/rastro'
 import { EVENTO } from '@/lib/analytics/eventos'
-import { comparar, etiquetaDoPlano, getVitrine } from '@/lib/comercial/planos'
 import { createClient } from '@/lib/supabase/server'
 import { verifyToken } from '@/lib/token'
 import { um } from '@/lib/rel'
-import { CartaoDePlano, ComparacaoDePlanos } from './planos-cliente'
 
 export const metadata: Metadata = {
   title: 'Planos e preços',
@@ -41,7 +38,6 @@ export default async function PlanosPage({
   // `d` é o mesmo nome de parâmetro usado em /diagnostico/resultado — quem
   // chega de lá traz o token intacto, e o resultado continua identificado.
   const { d: token } = await searchParams
-  const vitrine = await getVitrine()
 
   /* --- Personalização pelo diagnóstico ---------------------------------- */
   let momento: { nome: string; chave: string } | null = null
@@ -61,28 +57,9 @@ export default async function PlanosPage({
     }
   }
 
-  if (!vitrine || vitrine.planos.length === 0) {
-    return (
-      <>
-        <Topo />
-        <main id="conteudo" className="page section">
-          <EstadoVazio
-            titulo="Os planos ainda não estão disponíveis"
-            texto="Assim que as inscrições abrirem, eles aparecem aqui com os valores e o que cada um inclui."
-            acao={{ label: 'Fazer o diagnóstico', href: '/diagnostico' }}
-          />
-        </main>
-        <Rodape />
-      </>
-    )
-  }
-
-  const { planos, capitulos, totalDeCapitulos } = vitrine
-  const destaque = planos[planos.length - 1]
-
-  // O token viaja junto até o checkout: é o que liga a compra ao diagnóstico
-  // que a originou, sem pedir os dados de novo.
-  const sufixo = token ? `?d=${encodeURIComponent(token)}` : ''
+  // O estado vazio ("ainda não estão disponíveis") vive dentro de
+  // <SecaoDePlanos>, que é quem consulta o banco. Duplicá-lo aqui daria duas
+  // versões da mesma mensagem para manter em sincronia.
 
   return (
     <>
@@ -156,37 +133,13 @@ export default async function PlanosPage({
           </div>
         </section>
 
-        {/* ================================================ PLANOS ======== */}
-        <section className="section" id="planos">
-          <div className="page">
-            <h2 className="titulo-secao">Três formas de começar</h2>
-            <p className="lead" style={{ marginBlock: 'var(--space-4) var(--space-7)', maxWidth: 'var(--measure-lead)' }}>
-              Todos dão acesso à mesma formação. O que muda é quantos capítulos você libera.
-            </p>
-
-            <div className="planos-grade">
-              {planos.map((plano) => (
-                <CartaoDePlano
-                  key={plano.id}
-                  plano={plano}
-                  etiqueta={etiquetaDoPlano(plano, planos)}
-                  destaque={plano.id === destaque?.id}
-                  capitulos={comparar(plano, capitulos)}
-                  totalDeCapitulos={totalDeCapitulos}
-                  href={`/checkout/${plano.slug}${sufixo}`}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================== COMPARAÇÃO ========= */}
-        <section className="section faixa-comparacao">
-          <div className="page">
-            <h2 className="titulo-secao">O que entra em cada plano</h2>
-            <ComparacaoDePlanos planos={planos} capitulos={capitulos} />
-          </div>
-        </section>
+        {/* ====================================== PLANOS + COMPARAÇÃO ===== */}
+        {/*
+          O MESMO componente que a home monta. As duas páginas leem
+          `getVitrine()`, então não têm como discordar sobre preço ou sobre o
+          que cada pacote inclui.
+        */}
+        <SecaoDePlanos token={token} titulo="Três formas de começar" />
 
         {/* ========================================= COMO FUNCIONA ======== */}
         <section className="section">
@@ -225,7 +178,15 @@ export default async function PlanosPage({
           </div>
         </section>
 
+        {/* ================================= DIAGNÓSTICO COMO APOIO ======= */}
+        <AjudaDoDiagnostico />
+
         {/* =============================================== CTA FINAL ====== */}
+        {/*
+          O fechamento volta para a seção de planos acima em vez de repetir os
+          três botões com preço. Repeti-los criaria um segundo lugar onde o
+          valor aparece escrito nesta página — e um a mais para divergir.
+        */}
         <section className="fechamento-escuro">
           <div className="page">
             <h2 className="fechamento-escuro__titulo">Qual combina com o seu momento?</h2>
@@ -235,15 +196,9 @@ export default async function PlanosPage({
             </p>
 
             <div className="fechamento-escuro__acoes">
-              {planos.map((plano) => (
-                <Link
-                  key={plano.id}
-                  className={`botao ${plano.id === destaque?.id ? 'botao--cta' : 'botao--secundario'}`}
-                  href={`/checkout/${plano.slug}${sufixo}`}
-                >
-                  {plano.nome} · {plano.precoFormatado}
-                </Link>
-              ))}
+              <a className="botao botao--cta" href="#planos">
+                Ver planos
+              </a>
             </div>
 
             <span className="fechamento-escuro__fio" aria-hidden="true" />

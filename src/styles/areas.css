@@ -854,3 +854,225 @@ button.lista__item:hover {
   min-height: var(--target-min);
   align-items: center;
 }
+
+/* ===========================================================================
+   ESTADO VAZIO EXPLICADO
+
+   "Nenhuma aluna cadastrada ainda." sozinho deixa quem abre a tela sem saber
+   se falta configurar alguma coisa ou se é só o começo. A segunda linha diz o
+   que precisa acontecer para a lista encher — é a diferença entre uma tela
+   que parece quebrada e uma que se explica.
+   =========================================================================== */
+
+.vazio-explicado {
+  padding: var(--space-5);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-soft);
+  max-inline-size: var(--measure-study);
+}
+
+.vazio-explicado__titulo {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.vazio-explicado__texto {
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+
+/* ===========================================================================
+   FUNIL
+
+   A tela aparece mesmo com tudo zerado — zero é medição, não defeito. Por
+   isso a etapa vazia continua legível: ela perde a barra e o número fica em
+   cinza, mas o nome e a explicação seguem em contraste normal.
+   =========================================================================== */
+
+.funil {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  max-inline-size: var(--measure-study);
+}
+
+.funil__etapa {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+  overflow: hidden;
+}
+
+/* Barra proporcional ao topo do funil, atrás do conteúdo. */
+.funil__barra {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: -1;
+  inline-size: calc(var(--proporcao, 0) * 100%);
+  background: linear-gradient(90deg, var(--surface-purple), transparent);
+  transition: inline-size var(--duration-lenta) var(--ease-out);
+}
+
+.funil__ordem {
+  font-size: var(--size-mono);
+  color: var(--brand-primary);
+}
+
+.funil__nome {
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.funil__explicacao {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+}
+
+.funil__numeros {
+  text-align: end;
+}
+
+.funil__valor {
+  display: block;
+  font-size: var(--size-h3);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--brand-primary);
+}
+
+.funil__etapa[data-vazio='sim'] .funil__valor {
+  color: var(--text-secondary);
+}
+
+.funil__taxa {
+  display: block;
+  margin-block-start: var(--space-1);
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+}
+
+.funil--apoio .funil__etapa {
+  background: var(--surface-soft);
+}
+
+/* ===========================================================================
+   PRÉVIA POR PLANO ("visualizar como aluna")
+
+   Leitura, não simulação: nenhuma matrícula é criada. O selo "Abre/Fecha" é o
+   que o cliente lê de longe, então ele é a única coisa colorida da linha.
+   =========================================================================== */
+
+.previa__abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.previa__aba {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-5);
+  min-height: var(--target-min);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-main);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.previa__aba:hover {
+  border-color: var(--brand-primary);
+}
+
+.previa__aba[aria-current='true'] {
+  border-color: var(--brand-primary);
+  background: var(--surface-purple);
+  box-shadow: var(--glow-neon);
+}
+
+.previa__aba-nome {
+  font-weight: 600;
+}
+
+.previa__aba-preco {
+  font-size: var(--size-mono);
+  color: var(--brand-primary);
+}
+
+.previa__capitulos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  max-inline-size: var(--measure-study);
+}
+
+.previa__capitulo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+/* Fechado é neutro, nunca vermelho: não é erro, é o pacote menor. */
+.previa__capitulo[data-aberto='nao'] {
+  background: var(--palheta-bloqueado);
+  border-color: var(--palheta-bloqueado-linha);
+}
+
+.previa__ordem {
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+}
+
+.previa__nome {
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.previa__capitulo[data-aberto='nao'] .previa__nome {
+  color: var(--palheta-bloqueado-texto);
+}
+
+.previa__estado {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.previa__selo {
+  padding: 0.25rem var(--space-3);
+  border-radius: var(--radius-rail);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  background: var(--brand-primary);
+  color: var(--text-on-purple);
+}
+
+.previa__capitulo[data-aberto='nao'] .previa__selo {
+  background: transparent;
+  border: 1px solid var(--palheta-bloqueado-linha);
+  color: var(--palheta-bloqueado-texto);
+}
