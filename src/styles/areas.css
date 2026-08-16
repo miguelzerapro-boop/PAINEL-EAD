@@ -2228,3 +2228,59 @@ button.lista__item:hover {
   border-color: color-mix(in srgb, var(--error) 40%, transparent);
   color: var(--error);
 }
+
+/* ===========================================================================
+   ÁREA DA ALUNA — acabamento
+
+   A aluna abre isto depois de pagar. Tem que parecer o produto, não o painel
+   reciclado: mais espaço, título grande, e a formação como conteúdo de curso.
+   =========================================================================== */
+
+.app-shell__conteudo .formacao-aluna {
+  max-inline-size: var(--measure-study);
+}
+
+.formacao-aluna__topo {
+  padding-block-end: var(--space-6);
+  margin-block-end: var(--space-6);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+/* O capítulo aberto reage ao ponteiro; o fechado não finge ser clicável. */
+.capitulo[data-aberto='sim'] {
+  cursor: pointer;
+}
+
+/* A barra de preview do admin não pode cobrir conteúdo nem o botão de
+   suporte. Fica acima do conteúdo, abaixo do WhatsApp flutuante (z 40). */
+.barra-modo {
+  z-index: 25;
+}
+
+/* ===========================================================================
+   BARRA LATERAL — acabamento
+
+   O menu já está aprovado. O que muda é o acabamento: item selecionado com
+   peso de verdade, rótulos de grupo menos gritantes, e a marca no topo em vez
+   da palavra "Painel" solta.
+   =========================================================================== */
+
+.menu__rotulo {
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  opacity: 0.55;
+}
+
+/* O item ativo ganha fundo e um fio de marca à esquerda — antes só mudava a
+   cor do texto, o que some numa lista de nove itens. */
+.menu__item[aria-current='page'],
+.menu__item[data-ativo='true'] {
+  background: color-mix(in srgb, var(--neon-lilac) 14%, transparent);
+  font-weight: 600;
+}
+
+/* Separação entre grupos por espaço, não por linha: uma régua a cada grupo
+   picota um menu que já é curto. */
+.menu__grupo + .menu__grupo {
+  margin-block-start: var(--space-6);
+}
