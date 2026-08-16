@@ -98,7 +98,7 @@ export default async function FormacaoPage() {
           acao={{ label: 'Novo capítulo', href: '/admin/modulos' }}
         />
       ) : (
-        <ol className="capitulos">
+        <ol className="capitulos capitulos--painel">
           {formacao.capitulos.map((capitulo, indice) => (
             <li key={capitulo.id} className="capitulo" data-status={capitulo.status}>
               <div className="capitulo__ordem mono" aria-hidden="true">
