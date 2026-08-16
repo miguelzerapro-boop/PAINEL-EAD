@@ -741,3 +741,204 @@
 .quiz-retomada__acoes {
   justify-content: center;
 }
+
+/* ===========================================================================
+   P0 — LEGIBILIDADE
+
+   Bug encontrado em produção: a PERGUNTA estava branca sobre um cartão
+   CLARO. Ilegível.
+
+   Causa: `.quiz-pergunta` (quiz.css) desenha um cartão com fundo
+   `--surface-soft`, herdado do tema claro original. Este arquivo pintou o
+   texto de branco e nunca trocou o fundo do cartão. Branco sobre branco.
+
+   Lição: pintar texto sem conferir a superfície embaixo é meio caminho para
+   o invisível. Abaixo, toda superfície escura vem acompanhada da cor de
+   texto que foi MEDIDA contra ela.
+
+   Contrastes conferidos (WCAG AA exige 4,5:1 em texto normal):
+
+     branco   / #09050D fundo ................ 20,21:1
+     branco   / #160B20 cartão ................ 19,04:1
+     branco   / #241032 hover ................. 17,57:1
+     #DDD1E5  / #160B20 secundário ............ 12,99:1
+     #B8A8C3  / #160B20 apagado ...............  8,55:1
+     branco   / #7E22CE selecionada ...........  6,98:1
+     #EE5BFF  / #09050D neon como texto .......  7,29:1
+     #D946EF  / #160B20 lilás como texto ......  5,51:1
+   =========================================================================== */
+
+:root {
+  --quiz-surface: #160b20;
+  --quiz-surface-hover: #241032;
+  --quiz-surface-elevated: #241032;
+  --quiz-text-muted: #b8a8c3;
+  --quiz-text-secondary: #ddd1e5;
+  --quiz-border: #4b2761;
+  --quiz-border-ativa: #d946ef;
+}
+
+/* --- O cartão da pergunta: era claro, agora é escuro --------------------- */
+
+.quiz-pergunta {
+  background: linear-gradient(180deg, var(--quiz-surface-hover) 0%, var(--quiz-surface) 60%);
+  border: 1px solid var(--quiz-border);
+  box-shadow: 0 18px 48px -24px rgba(0, 0, 0, 0.8);
+  max-width: 100%;
+}
+
+/* Qualquer texto dentro do cartão nasce branco. */
+.quiz-pergunta,
+.quiz-pergunta * {
+  color: var(--quiz-text);
+}
+
+.quiz-pergunta .quiz__apoio,
+.quiz-pergunta .quiz-limite__regra {
+  color: var(--quiz-text-secondary);
+}
+
+/* --- Alternativas -------------------------------------------------------- */
+
+.opcao {
+  background: var(--quiz-surface);
+  border: 1.5px solid var(--quiz-border);
+  color: var(--quiz-text);
+}
+
+.opcao .opcao__texto {
+  color: var(--quiz-text);
+}
+
+.opcao .opcao__ajuda {
+  color: var(--quiz-text-secondary);
+}
+
+.opcao:hover:not(:disabled) {
+  background: var(--quiz-surface-hover);
+  border-color: var(--quiz-lilac);
+}
+
+.opcao:hover:not(:disabled) .opcao__texto {
+  color: var(--quiz-text);
+}
+
+/*
+   SELECIONADA — roxo cheio com texto branco (6,98:1).
+
+   O erro a evitar aqui é roxo-sobre-roxo: fundo lilás com texto lilás claro
+   fica bonito na paleta e ilegível na tela.
+*/
+.opcao[aria-checked='true'] {
+  background: var(--quiz-purple);
+  border-color: var(--quiz-neon);
+  box-shadow: 0 0 0 2px rgba(238, 91, 255, 0.35), 0 12px 32px -16px rgba(238, 91, 255, 0.6);
+}
+
+.opcao[aria-checked='true'],
+.opcao[aria-checked='true'] .opcao__texto {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.opcao[aria-checked='true'] .opcao__ajuda {
+  color: #f0e4f7;
+}
+
+.opcao[aria-checked='true'] .opcao__marca {
+  border-color: #ffffff;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 4px var(--quiz-purple);
+}
+
+/* Desabilitada continua legível: 4,6:1. Opacidade baixa some com o texto. */
+.opcao:disabled {
+  opacity: 1;
+  background: var(--quiz-bg);
+  border-color: #2e1a3d;
+  cursor: not-allowed;
+}
+
+.opcao:disabled,
+.opcao:disabled .opcao__texto {
+  color: #8f7f9c;
+}
+
+/* --- Progresso e rótulos ------------------------------------------------- */
+
+.quiz__etapa {
+  color: var(--quiz-neon);
+  font-weight: 600;
+}
+
+.quiz-salvamento,
+.quiz-limite__regra,
+.quiz-limite__aviso {
+  color: var(--quiz-text-secondary);
+}
+
+/* --- Campos ------------------------------------------------------------- */
+
+.quiz .entrada {
+  background: var(--quiz-surface);
+  border: 1.5px solid var(--quiz-border);
+  color: var(--quiz-text);
+}
+
+.quiz .entrada::placeholder {
+  color: var(--quiz-text-muted);
+}
+
+.quiz .campo__rotulo {
+  color: #ffffff;
+}
+
+.quiz .campo__dica {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz .consentimento,
+.quiz .consentimento span {
+  color: var(--quiz-text-secondary);
+}
+
+/* --- Botões do rodapé ---------------------------------------------------- */
+
+.quiz .botao--discreto {
+  color: var(--quiz-text-secondary);
+  border-color: var(--quiz-border);
+}
+
+.quiz .botao--discreto:hover:not(:disabled) {
+  color: #ffffff;
+}
+
+/* Desabilitado precisa ser lido, não adivinhado. */
+.quiz .botao--primario[aria-disabled='true'],
+.quiz .botao--primario:disabled {
+  filter: none;
+  background: #3a2150;
+  color: var(--quiz-text-muted);
+  box-shadow: none;
+}
+
+/* --- Erros --------------------------------------------------------------- */
+
+.quiz-bloqueio,
+.quiz-limite__aviso,
+.quiz .campo__erro {
+  color: #ffb4b4;
+}
+
+.quiz-erro__titulo {
+  color: #ff9d9d;
+}
+
+.quiz-erro,
+.quiz-erro * {
+  color: var(--quiz-text);
+}
+
+.quiz-erro__titulo {
+  color: #ff9d9d;
+}
