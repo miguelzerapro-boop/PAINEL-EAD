@@ -1,0 +1,16 @@
+@import '../styles/tokens.css';
+@import '../styles/base.css';
+@import '../styles/hierarquia.css';
+@import '../styles/components.css';
+@import '../styles/layouts.css';
+@import '../styles/landing.css';
+@import '../styles/capa.css';
+@import '../styles/menu.css';
+@import '../styles/areas.css';
+@import '../styles/mostruario.css';
+@import '../styles/formacao.css';
+@import '../styles/quiz.css';
+@import '../styles/quiz-escuro.css';
+@import '../styles/animacoes.css';
+/* Por último: estas regras precisam vencer as dimensões declaradas acima. */
+@import '../styles/alvos-de-toque.css';

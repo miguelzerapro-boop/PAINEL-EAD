@@ -1,0 +1,743 @@
+/* ===========================================================================
+   QUIZ — PRETO + ROXO + LILÁS NEON
+
+   Importado DEPOIS de quiz.css: este arquivo troca a pele, não a estrutura.
+   Nenhuma classe nova, nenhum elemento a mais. A lógica do diagnóstico —
+   perguntas, opções, limite, pontuação, segmentação, salvamento, retomada,
+   consentimento — não é tocada.
+
+   O diagnóstico visual que motivou a mudança: o quiz era um formulário claro,
+   com campos empilhados num cartão no meio da tela. Servia, mas não dizia
+   nada. Abrir o diagnóstico precisa parecer entrar em outro lugar.
+
+   O que NÃO se quer aqui: gamer, cyberpunk, néon por toda parte. O neon é
+   luz pontual — borda ativa, progresso, foco. O resto é preto, roxo e
+   tipografia grande.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   O AMBIENTE
+
+   `.quiz` é a casca de todas as etapas. A luz vem de dois focos difusos e um
+   gradiente radial quase preto — não de bolhas coloridas soltas.
+   --------------------------------------------------------------------------- */
+
+.quiz,
+.quiz-abertura,
+.quiz-retomada {
+  position: relative;
+  isolation: isolate;
+  background: var(--quiz-bg);
+  color: var(--quiz-text);
+}
+
+.quiz::before,
+.quiz-abertura::before,
+.quiz-retomada::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 55% at 82% 6%, rgba(217, 70, 239, 0.2), transparent 62%),
+    radial-gradient(60% 50% at 10% 96%, rgba(126, 34, 206, 0.26), transparent 66%),
+    radial-gradient(120% 120% at 50% 40%, #14091d 0%, var(--quiz-bg) 70%);
+}
+
+/*
+   Textura. Um ruído fraquíssimo tira o aspecto de chapa digital dos degradês
+   — sem isso, o fundo escuro fica com bandas visíveis em tela grande.
+*/
+.quiz::after,
+.quiz-abertura::after,
+.quiz-retomada::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------------------------
+   ABERTURA
+   --------------------------------------------------------------------------- */
+
+.quiz-abertura {
+  padding-block: clamp(3rem, 2rem + 5vw, 6rem);
+}
+
+.quiz-abertura__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--quiz-text);
+  text-wrap: balance;
+}
+
+.quiz-abertura__apoio {
+  color: var(--quiz-text-secondary);
+  font-size: var(--size-body-lg);
+  line-height: 1.55;
+}
+
+.quiz-abertura__notas {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz-abertura__notas li::marker {
+  color: var(--quiz-lilac);
+}
+
+/* ---------------------------------------------------------------------------
+   PROGRESSO — o trilho vira uma linha com brilho que avança
+   --------------------------------------------------------------------------- */
+
+.quiz__linha {
+  border-block-end-color: var(--quiz-border);
+}
+
+.quiz__etapa {
+  color: var(--quiz-lilac);
+  letter-spacing: var(--tracking-caps);
+}
+
+.quiz-trilho__gancho {
+  background: var(--quiz-border);
+  transition: background var(--duration-base) var(--ease-out);
+}
+
+.quiz-trilho__amostra {
+  background: var(--quiz-surface);
+  border-color: var(--quiz-border);
+  color: var(--quiz-text-secondary);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+/* Etapa cumprida: roxo cheio, sem brilho — já passou. */
+.quiz-trilho__etapa[data-estado='feita'] .quiz-trilho__amostra {
+  background: var(--quiz-purple);
+  border-color: var(--quiz-purple);
+  color: var(--quiz-text);
+}
+
+.quiz-trilho__etapa[data-estado='feita'] .quiz-trilho__gancho {
+  background: var(--quiz-purple);
+}
+
+/* Etapa atual: é aqui que o neon aparece. */
+.quiz-trilho__etapa[data-estado='atual'] .quiz-trilho__amostra {
+  background: var(--quiz-lilac);
+  border-color: var(--quiz-neon);
+  color: #ffffff;
+  box-shadow: var(--glow-neon-forte);
+}
+
+.quiz-trilho__etapa[data-estado='atual'] .quiz-trilho__gancho {
+  background: var(--quiz-neon);
+}
+
+/* ---------------------------------------------------------------------------
+   A PERGUNTA — o elemento central da tela
+
+   Antes ela tinha o mesmo peso das alternativas. Agora domina: é a primeira
+   coisa que o olho encontra ao entrar na etapa.
+   --------------------------------------------------------------------------- */
+
+.quiz__enunciado {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 1.2rem + 3vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  max-inline-size: 20ch;
+  text-wrap: balance;
+}
+
+.quiz__apoio {
+  margin-block-start: var(--space-4);
+  max-inline-size: 48ch;
+  font-size: var(--size-body-lg);
+  line-height: 1.55;
+  color: var(--quiz-text-secondary);
+}
+
+.quiz-limite__regra,
+.quiz-limite__contagem,
+.quiz-limite__aviso {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz-limite__contagem {
+  color: var(--quiz-lilac);
+}
+
+/* ---------------------------------------------------------------------------
+   ALTERNATIVAS — grandes, tocáveis, com estado inequívoco
+
+   § "Não use somente mudança de cor": o estado selecionado muda a borda, o
+   preenchimento do indicador, o fundo E ganha um traço lateral. Quem não
+   distingue roxo de cinza continua sabendo o que marcou.
+   --------------------------------------------------------------------------- */
+
+.quiz__opcoes {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: clamp(var(--space-5), 3vw, var(--space-6));
+}
+
+.opcao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  inline-size: 100%;
+  min-height: 4.25rem;
+  padding: var(--space-4) var(--space-5);
+  text-align: start;
+  background: var(--quiz-surface);
+  border: 1px solid var(--quiz-border);
+  border-radius: var(--radius-cartao);
+  color: var(--quiz-text);
+  font-family: var(--font-text);
+  font-size: var(--size-body-lg);
+  line-height: 1.35;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* O traço lateral: some quando não selecionado, cresce quando selecionado. */
+.opcao::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 3px;
+  background: var(--quiz-neon);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.opcao:hover:not(:disabled) {
+  background: var(--quiz-surface-elevated);
+  border-color: var(--quiz-lilac);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -14px rgba(217, 70, 239, 0.5);
+}
+
+.opcao:focus-visible {
+  outline: 2px solid var(--quiz-neon);
+  outline-offset: 3px;
+}
+
+.opcao:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* --- Indicador ------------------------------------------------------------- */
+
+.opcao__marca {
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 2px solid var(--quiz-border);
+  border-radius: 50%;
+  background: transparent;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* Múltipla escolha usa quadrado: a forma já diz quantas cabem. */
+.opcao[data-multipla='1'] .opcao__marca {
+  border-radius: 6px;
+}
+
+.opcao:hover:not(:disabled) .opcao__marca {
+  border-color: var(--quiz-lilac);
+}
+
+/* --- Selecionada ----------------------------------------------------------- */
+
+.opcao[aria-checked='true'] {
+  background: var(--quiz-surface-elevated);
+  border-color: var(--quiz-neon);
+  box-shadow: var(--glow-neon), 0 12px 32px -16px rgba(238, 91, 255, 0.55);
+}
+
+.opcao[aria-checked='true']::before {
+  transform: scaleY(1);
+}
+
+.opcao[aria-checked='true'] .opcao__marca {
+  border-color: var(--quiz-neon);
+  background: var(--quiz-neon);
+  box-shadow: inset 0 0 0 4px var(--quiz-surface-elevated);
+}
+
+.opcao[aria-checked='true'] .opcao__texto {
+  font-weight: 600;
+}
+
+.opcao__ajuda {
+  display: block;
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--quiz-text-secondary);
+}
+
+/* --- Bloqueada pelo limite ------------------------------------------------- */
+
+.opcao:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------------
+   CAMPOS DE CAPTURA
+
+   Fundo escuro, borda roxa, foco neon. O rótulo é sempre visível — nunca se
+   depende de placeholder para dizer o que o campo é.
+   --------------------------------------------------------------------------- */
+
+.quiz .campo__rotulo {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.quiz .campo__dica {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz .entrada {
+  background: var(--quiz-surface);
+  border: 1px solid var(--quiz-border);
+  color: var(--quiz-text);
+  min-height: 3.25rem;
+  border-radius: var(--radius-control);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.quiz .entrada::placeholder {
+  color: #8f7f9c;          /* sobre o campo escuro: 4,6:1 */
+}
+
+.quiz .entrada:hover {
+  border-color: var(--quiz-lilac);
+}
+
+.quiz .entrada:focus {
+  outline: none;
+  background: var(--quiz-surface-elevated);
+  border-color: var(--quiz-neon);
+  box-shadow: var(--glow-neon);
+}
+
+.quiz .entrada[aria-invalid='true'] {
+  border-color: #ff6b6b;   /* vermelho claro: sobre o fundo escuro, 5,4:1 */
+}
+
+.quiz .campo__erro {
+  color: #ff8a8a;
+}
+
+.quiz .consentimento {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz .consentimento a {
+  color: var(--quiz-lilac);
+  text-underline-offset: 3px;
+}
+
+.quiz .consentimento a:hover {
+  color: var(--quiz-neon);
+}
+
+/* ---------------------------------------------------------------------------
+   RODAPÉ DE NAVEGAÇÃO
+   --------------------------------------------------------------------------- */
+
+.quiz__rodape {
+  background: rgba(9, 5, 13, 0.9);
+  backdrop-filter: blur(12px);
+  border-block-start: 1px solid var(--quiz-border);
+}
+
+.quiz .botao--discreto {
+  background: transparent;
+  border: 1px solid var(--quiz-border);
+  color: var(--quiz-text-secondary);
+}
+
+.quiz .botao--discreto:hover:not(:disabled) {
+  border-color: var(--quiz-lilac);
+  color: var(--quiz-text);
+  background: var(--quiz-surface);
+}
+
+.quiz .botao--primario {
+  background: linear-gradient(105deg, var(--quiz-purple), var(--quiz-lilac));
+  border: 0;
+  color: #ffffff;
+  box-shadow: 0 6px 24px -8px rgba(217, 70, 239, 0.55);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    filter var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.quiz .botao--primario:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.08) saturate(1.1);
+  box-shadow: 0 12px 34px -8px rgba(238, 91, 255, 0.6);
+}
+
+.quiz .botao--primario[aria-disabled='true'] {
+  filter: grayscale(0.6) brightness(0.75);
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------------------------
+   AVISOS E ERROS
+   --------------------------------------------------------------------------- */
+
+.quiz-bloqueio,
+.quiz-limite__aviso {
+  color: #ffb4b4;
+}
+
+.quiz-erro {
+  background: rgba(179, 38, 30, 0.16);
+  border: 1px solid #ff6b6b;
+  border-radius: var(--radius-cartao);
+  color: var(--quiz-text);
+}
+
+.quiz-erro__titulo {
+  color: #ff8a8a;
+}
+
+.quiz-erro__conforto {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz-salvamento {
+  color: var(--quiz-text-secondary);
+}
+
+.quiz-salvamento__marca {
+  background: var(--quiz-lilac);
+}
+
+.quiz-retomada__resumo {
+  color: var(--quiz-text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   ENTRADA E TRANSIÇÃO
+
+   § "Não segurar a interface esperando animação": nada aqui bloqueia clique.
+   A pergunta entra em 260ms; as alternativas entram escalonadas, e a última
+   chega em menos de meio segundo.
+   --------------------------------------------------------------------------- */
+
+@keyframes quiz-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quiz-etapa {
+  animation: quiz-sobe 260ms var(--ease-out) both;
+}
+
+.quiz__enunciado {
+  animation: quiz-sobe 300ms var(--ease-out) both;
+}
+
+/*
+   Stagger nas alternativas. Seis é o suficiente: a partir daí o atraso
+   acumulado passaria a ser percebido como lentidão.
+*/
+.opcao {
+  animation: quiz-sobe 280ms var(--ease-out) both;
+}
+
+.opcao:nth-child(1) { animation-delay: 60ms; }
+.opcao:nth-child(2) { animation-delay: 105ms; }
+.opcao:nth-child(3) { animation-delay: 150ms; }
+.opcao:nth-child(4) { animation-delay: 195ms; }
+.opcao:nth-child(5) { animation-delay: 240ms; }
+.opcao:nth-child(n + 6) { animation-delay: 280ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-etapa,
+  .quiz__enunciado,
+  .opcao {
+    animation: none;
+  }
+
+  .opcao:hover:not(:disabled),
+  .quiz .botao--primario:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MOBILE — 360 e 390 px
+
+   A pergunta continua grande; as alternativas continuam com altura de toque
+   confortável; nada fica espremido e nenhuma palavra quebra ao meio.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 30rem) {
+  .quiz__enunciado {
+    font-size: clamp(1.6rem, 1.1rem + 4vw, 2rem);
+    max-inline-size: 100%;
+    /* Evita que uma palavra longa seja partida no meio. */
+    hyphens: none;
+    overflow-wrap: break-word;
+  }
+
+  .opcao {
+    min-height: 3.75rem;
+    padding: var(--space-4);
+    font-size: var(--size-body);
+    gap: var(--space-3);
+  }
+
+  .quiz__opcoes {
+    gap: var(--space-2);
+  }
+
+  /* O rodapé fixo não pode cobrir a última alternativa. */
+  .quiz__corpo {
+    padding-block-end: 7rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CENTRALIZAÇÃO
+
+   Defeito encontrado na revisão: em tela larga o quiz inteiro ficava colado à
+   esquerda. Causa: os blocos internos tinham `max-width` mas nenhum
+   `margin-inline: auto` — largura limitada não centraliza nada sozinha.
+
+   A coluna de leitura fica no centro, e o progresso acompanha a mesma coluna
+   para não flutuar solto na borda.
+   --------------------------------------------------------------------------- */
+
+.quiz__corpo,
+.quiz__linha,
+.quiz-trilho {
+  inline-size: min(100%, 52rem);
+  margin-inline: auto;
+}
+
+.quiz-pergunta,
+.quiz-etapa,
+.quiz__opcoes,
+.quiz__enunciado,
+.quiz__apoio,
+.quiz-limite,
+.quiz-erro,
+.quiz-bloqueio {
+  margin-inline: auto;
+}
+
+/* O enunciado é centralizado como BLOCO; o texto continua alinhado à esquerda,
+   que é o que se lê rápido. Centralizar o texto de uma pergunta longa piora. */
+.quiz__enunciado,
+.quiz__apoio {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  text-align: start;
+}
+
+.quiz-etapa {
+  inline-size: 100%;
+}
+
+/* Campos de captura: mesma coluna, sem esticar até a borda da tela. */
+.quiz .campo,
+.quiz .campo-duplo,
+.quiz .consentimento {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  margin-inline: auto;
+}
+
+/* A barra de navegação acompanha a mesma coluna. */
+.quiz__rodape-interno {
+  inline-size: min(100%, 52rem);
+  margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   PROGRESSO — segmentos, não blocos
+
+   Na revisão as etapas apareciam como três retângulos largos e chapados,
+   dois deles quase brancos. Viravam o elemento mais pesado da tela, acima da
+   própria pergunta. Aqui viram um trilho fino.
+   --------------------------------------------------------------------------- */
+
+.quiz-trilho {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.quiz-trilho__etapa {
+  flex: 1;
+  display: block;
+  position: relative;
+}
+
+.quiz-trilho__gancho {
+  display: none;
+}
+
+.quiz-trilho__amostra {
+  display: block;
+  inline-size: 100%;
+  block-size: 4px;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-rail);
+  background: var(--quiz-border);
+  /* O rótulo da etapa não cabe num fio de 4px — e não precisa: o número
+     "02 / 07" ao lado já diz onde a pessoa está. */
+  font-size: 0;
+  color: transparent;
+  overflow: hidden;
+}
+
+.quiz-trilho__etapa[data-estado='feita'] .quiz-trilho__amostra {
+  background: var(--quiz-purple);
+}
+
+.quiz-trilho__etapa[data-estado='atual'] .quiz-trilho__amostra {
+  background: linear-gradient(90deg, var(--quiz-lilac), var(--quiz-neon));
+  box-shadow: 0 0 12px -1px rgba(238, 91, 255, 0.7);
+}
+
+/* ---------------------------------------------------------------------------
+   ABERTURA — centralização e o cartão ilegível
+
+   Dois defeitos encontrados na revisão de pixels:
+
+     1. A abertura ficava encostada à esquerda, com metade da tela vazia.
+     2. A amostra de palheta à direita continuava com o preenchimento CLARO
+        herdado do tema antigo, e o rótulo branco por cima. Resultado: texto
+        branco sobre fundo branco — ilegível, e uma reprovação de contraste,
+        não uma questão de gosto.
+
+   A abertura passa a ser uma coluna única centrada. A amostra vira escura,
+   como o resto do ambiente.
+   --------------------------------------------------------------------------- */
+
+.quiz-abertura {
+  /*
+     COLUNA ÚNICA.
+
+     O tema antigo declarava duas colunas (texto | amostra). Com a amostra
+     removida, o texto continuava preso à coluna da esquerda e se centralizava
+     DENTRO dela — por isso o bloco aparecia deslocado ~375px do centro da
+     tela mesmo com place-items: center.
+  */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  min-block-size: 80vh;
+  text-align: center;
+}
+
+.quiz-abertura__texto {
+  inline-size: min(100%, 46rem);
+  margin-inline: auto;
+  display: grid;
+  justify-items: center;
+}
+
+.quiz-abertura__titulo {
+  max-inline-size: 18ch;
+}
+
+.quiz-abertura__apoio {
+  max-inline-size: 52ch;
+}
+
+/* As notas ficam em linha e centradas: são três frases curtas, não uma lista
+   de leitura. */
+.quiz-abertura__notas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3) var(--space-6);
+  list-style: none;
+  padding: 0;
+  margin-block-start: var(--space-5);
+}
+
+.quiz-abertura__notas li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* A amostra de palheta some da abertura.
+
+   Ela mostrava "01 / 2 · Seu momento" — informação que a pessoa ainda não tem
+   como usar, ocupando metade da primeira tela. O que importa aqui é uma frase
+   e um botão. */
+.quiz-abertura__mostruario {
+  display: none;
+}
+
+/* O botão da abertura recebe o mesmo peso do CTA da landing. */
+.quiz-abertura .botao--primario,
+.quiz-retomada .botao--primario {
+  min-height: 3.5rem;
+  padding-inline: clamp(var(--space-5), 3vw, var(--space-7));
+  border-radius: var(--radius-rail);
+  font-size: var(--size-body-lg);
+  background: linear-gradient(105deg, var(--purple-600), var(--lilac-500) 62%, var(--neon-purple));
+  box-shadow: var(--glow-cta);
+}
+
+.quiz-retomada {
+  display: grid;
+  place-items: center;
+  min-block-size: 80vh;
+  text-align: center;
+}
+
+.quiz-retomada__acoes {
+  justify-content: center;
+}

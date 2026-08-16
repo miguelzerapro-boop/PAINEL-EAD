@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" width="900" height="1100" role="img" aria-label="Composição editorial de unhas em esmaltação roxa">
+  <title>Composição editorial — unhas esmaltadas</title>
+  <desc>
+    ARTE TEMPORÁRIA DE DEMONSTRAÇÃO.
+    Macro de uma mão em três-quartos com as unhas esmaltadas, pincel e gota.
+    FUNDO TRANSPARENTE de propósito: a arte se integra ao degradê da seção em
+    vez de formar um retângulo colado sobre ele.
+    Não representa pessoa real. Substituível pelo CMS sem alterar código.
+  </desc>
+
+  <defs>
+    <linearGradient id="esmalte" x1="12%" y1="0%" x2="88%" y2="100%">
+      <stop offset="0%"   stop-color="#F79BFF"/>
+      <stop offset="24%"  stop-color="#EE5BFF"/>
+      <stop offset="58%"  stop-color="#C026D3"/>
+      <stop offset="100%" stop-color="#6B1F9E"/>
+    </linearGradient>
+
+    <linearGradient id="esmalteFundo" x1="12%" y1="0%" x2="88%" y2="100%">
+      <stop offset="0%"   stop-color="#D946EF"/>
+      <stop offset="55%"  stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#4A1272"/>
+    </linearGradient>
+
+    <!-- Pele: neutro quente e translúcido, para receber a luz roxa da cena. -->
+    <linearGradient id="dedo" x1="24%" y1="0%" x2="78%" y2="100%">
+      <stop offset="0%"   stop-color="#E8CFE0"/>
+      <stop offset="42%"  stop-color="#C9A3C0"/>
+      <stop offset="78%"  stop-color="#8E6690"/>
+      <stop offset="100%" stop-color="#4A2E55"/>
+    </linearGradient>
+
+    <linearGradient id="dedoFundo" x1="24%" y1="0%" x2="78%" y2="100%">
+      <stop offset="0%"   stop-color="#DCC3D6"/>
+      <stop offset="55%"  stop-color="#A986AA"/>
+      <stop offset="100%" stop-color="#5E4266"/>
+    </linearGradient>
+
+    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#FCF9FF"/>
+      <stop offset="45%"  stop-color="#C3A3D6"/>
+      <stop offset="100%" stop-color="#5A3B6E"/>
+    </linearGradient>
+
+    <linearGradient id="lustro" x1="0%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="38%"  stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="sombraDedo" x="-40%" y="-30%" width="180%" height="170%">
+      <feDropShadow dx="-10" dy="16" stdDeviation="20" flood-color="#0B0610" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="brilhoSuave" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+
+    <!--
+      Unha em amêndoa, com PROPORÇÃO CORRETA: a lâmina ocupa cerca de um terço
+      da ponta visível do dedo. A versão anterior tinha o dobro disso e as
+      unhas pareciam balões soltos sobre hastes brancas.
+    -->
+    <path id="lamina" d="M0,-62 C26,-62 44,-44 46,-18 C48,10 40,44 28,66
+                         C19,82 9,90 0,90 C-9,90 -19,82 -28,66
+                         C-40,44 -48,10 -46,-18 C-44,-44 -26,-62 0,-62 Z"/>
+
+    <!-- Máscara de vinheta: a arte some nas bordas em vez de terminar em corte. -->
+    <radialGradient id="fade" cx="52%" cy="52%" r="62%">
+      <stop offset="0%"   stop-color="#fff" stop-opacity="1"/>
+      <stop offset="66%"  stop-color="#fff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="vinheta">
+      <rect width="900" height="1100" fill="url(#fade)"/>
+      <rect x="120" y="600" width="680" height="500" fill="#fff"/>
+    </mask>
+  </defs>
+
+  <!-- SEM retângulo de fundo: a seção atrás aparece através da arte. -->
+
+  <g mask="url(#vinheta)">
+
+    <!-- Halo por trás da mão, para ela descolar do fundo sem caixa. -->
+    <ellipse cx="470" cy="520" rx="330" ry="330" fill="#C026D3" opacity="0.3" filter="url(#brilhoSuave)"/>
+    <ellipse cx="640" cy="300" rx="180" ry="180" fill="#EE5BFF" opacity="0.22" filter="url(#brilhoSuave)"/>
+
+    <!-- ================== MÃO EM TRÊS-QUARTOS ==================
+         Os dedos vêm de baixo, sobrepostos e em leque. O mais distante fica
+         atrás, menor e mais escuro: é a sobreposição que faz ler como mão. -->
+
+    <!-- mindinho (mais atrás) -->
+    <g transform="translate(228 742) rotate(-15)">
+      <path d="M-46,320 C-52,190 -50,96 -44,44 C-38,-2 -14,-24 0,-24
+               C14,-24 38,-2 44,44 C50,96 52,190 46,520 Z"
+            fill="url(#dedoFundo)" filter="url(#sombraDedo)"/>
+      <g transform="translate(0 6) scale(0.8)">
+        <use href="#lamina" fill="url(#esmalteFundo)"/>
+        <use href="#lamina" fill="url(#lustro)" transform="scale(0.8) translate(-6 -10)"/>
+      </g>
+    </g>
+
+    <!-- anelar -->
+    <g transform="translate(360 660) rotate(-7)">
+      <path d="M-52,400 C-58,240 -56,112 -50,52 C-43,-2 -16,-28 0,-28
+               C16,-28 43,-2 50,52 C56,112 58,240 52,600 Z"
+            fill="url(#dedo)" filter="url(#sombraDedo)"/>
+      <g transform="translate(0 8) scale(0.92)">
+        <use href="#lamina" fill="url(#esmalte)"/>
+        <use href="#lamina" fill="url(#lustro)" transform="scale(0.8) translate(-6 -10)"/>
+        <!-- cutícula -->
+        <path d="M-34,60 C-18,76 18,76 34,60" stroke="#8E6A8C" stroke-opacity="0.5"
+              stroke-width="4" fill="none" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- médio (o da frente, maior) -->
+    <g transform="translate(500 612)">
+      <path d="M-55,440 C-61,268 -59,124 -53,58 C-45,-2 -17,-32 0,-32
+               C17,-32 45,-2 53,58 C59,124 61,268 55,640 Z"
+            fill="url(#dedo)" filter="url(#sombraDedo)"/>
+      <g transform="translate(0 10)">
+        <use href="#lamina" fill="url(#esmalte)"/>
+        <use href="#lamina" fill="url(#lustro)" transform="scale(0.8) translate(-6 -10)"/>
+        <!-- reflexo comprido: o verniz -->
+        <path d="M-22,-38 C-31,-6 -32,32 -25,58" stroke="#FFFFFF" stroke-opacity="0.55"
+              stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M-34,60 C-18,76 18,76 34,60" stroke="#8E6A8C" stroke-opacity="0.5"
+              stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- borda livre -->
+        <path d="M-28,66 C-19,82 -9,90 0,90 C9,90 19,82 28,66"
+              stroke="#FCF9FF" stroke-opacity="0.6" stroke-width="3" fill="none"/>
+      </g>
+    </g>
+
+    <!-- indicador -->
+    <g transform="translate(640 668) rotate(8)">
+      <path d="M-52,400 C-58,244 -56,116 -50,54 C-43,-2 -16,-28 0,-28
+               C16,-28 43,-2 50,54 C56,116 58,244 52,600 Z"
+            fill="url(#dedo)" filter="url(#sombraDedo)"/>
+      <g transform="translate(0 8) scale(0.94)">
+        <use href="#lamina" fill="url(#esmalte)"/>
+        <use href="#lamina" fill="url(#lustro)" transform="scale(0.8) translate(-6 -10)"/>
+        <path d="M-34,60 C-18,76 18,76 34,60" stroke="#8E6A8C" stroke-opacity="0.5"
+              stroke-width="4" fill="none" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- ================== PINCEL ================== -->
+    <g transform="translate(752 262) rotate(28)">
+      <rect x="-12" y="-186" width="24" height="192" rx="12" fill="url(#metal)"/>
+      <rect x="-12" y="-186" width="8"  height="192" rx="6" fill="#FFFFFF" opacity="0.3"/>
+      <path d="M-14,4 C-14,58 -8,94 0,110 C8,94 14,58 14,4 Z" fill="#3B075A"/>
+      <path d="M-10,24 C-10,66 -5,92 0,104 C5,92 10,66 10,24 Z" fill="url(#esmalte)"/>
+    </g>
+
+    <!-- Traço e gota -->
+    <path d="M726 402 C778 424 818 456 840 500" stroke="url(#esmalte)" stroke-width="13"
+          fill="none" stroke-linecap="round" opacity="0.9"/>
+    <g transform="translate(844 546)">
+      <path d="M0,-26 C14,-7 23,5 23,17 A23,23 0 0 1 -23,17 C-23,5 -14,-7 0,-26 Z"
+            fill="url(#esmalte)"/>
+      <ellipse cx="-7" cy="9" rx="6" ry="9" fill="#FFFFFF" opacity="0.5"/>
+    </g>
+
+    <!-- Partículas: poucas e pequenas. -->
+    <g fill="#F79BFF">
+      <circle cx="222" cy="268" r="3" opacity="0.75"/>
+      <circle cx="812" cy="700" r="2.5" opacity="0.6"/>
+      <circle cx="168" cy="560" r="2" opacity="0.5"/>
+    </g>
+  </g>
+</svg>

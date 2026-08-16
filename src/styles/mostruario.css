@@ -1,0 +1,551 @@
+/* ===========================================================================
+   MOSTRUÁRIO NA LANDING
+   O trilho e a palheta existiam no sistema mas nunca tinham sido usados na
+   página pública — a identidade central só existia na documentação.
+
+   Geometria (herdada de components.css, não reinventada aqui):
+     · o trilho desenha a haste em `top: var(--rail-offset)`;
+     · a palheta pendura o anel em `-(--palheta-drop) + 0.25rem`;
+     · logo, anel e haste coincidem quando --palheta-drop bate com o recuo.
+
+   Para pendurar em alturas diferentes: empurra-se a palheta com
+   `margin-block-start` e soma-se o mesmo valor ao seu --palheta-drop. Assim o
+   anel continua exatamente sobre a haste — o desnível é físico, não pintado.
+   =========================================================================== */
+
+/*
+ * --rail-offset NÃO pode ser alterado aqui.
+ *
+ * O anel da palheta é posicionado em `-(--palheta-drop) + 0.25rem` a partir do
+ * topo da palheta, e a palheta começa em `padding-block-start` = o
+ * --palheta-drop do CONTÊINER. Quando os dois valores se cancelam, o anel cai
+ * sempre em 0.25rem + metade da sua altura = 0.6875rem. Esse é o invariante do
+ * sistema, e é exatamente o --rail-offset de components.css.
+ *
+ * Tentei 1.4375rem e os ganchos ficaram flutuando 19px acima da haste.
+ */
+.mostruario {
+  --palheta-drop: 2.25rem;
+}
+
+/* O desnível de cada palheta. Números pequenos e irregulares: um mostruário
+   real não tem as amostras alinhadas com esquadro. */
+.mostruario__item {
+  --queda: 0rem;
+  margin-block-start: var(--queda);
+  --palheta-drop: calc(2.25rem + var(--queda));
+  /* Gira em torno do gancho: o ponto de fixação fica parado e só o corpo
+     inclina, como um pingente. */
+  transform-origin: top center;
+}
+
+.mostruario__item:nth-child(1) {
+  --queda: 0.75rem;
+  rotate: -1.1deg;
+}
+.mostruario__item:nth-child(2) {
+  --queda: 0rem;
+  rotate: 0.7deg;
+}
+.mostruario__item:nth-child(3) {
+  --queda: 1.25rem;
+  rotate: -0.5deg;
+}
+.mostruario__item:nth-child(4) {
+  --queda: 0.35rem;
+  rotate: 1deg;
+}
+.mostruario__item:nth-child(5) {
+  --queda: 1.6rem;
+  rotate: -0.8deg;
+}
+
+/* A palheta do momento atual: fica no prumo, sobe um pouco e ganha o coral.
+   É a única que não balança — o olho entende que ela foi escolhida. */
+.mostruario__item--atual {
+  --queda: 0rem !important;
+  rotate: 0deg !important;
+  --palheta-fill: var(--surface-soft);
+  --palheta-line: var(--brand-action);
+  box-shadow: var(--shadow-erguida);
+  z-index: 2;
+}
+
+.mostruario__item--atual::before {
+  background: var(--brand-action);
+  border-color: var(--brand-action);
+}
+
+.mostruario__item--atual .palheta__codigo {
+  color: var(--brand-action-texto);
+}
+
+.palheta__etiqueta {
+  align-self: flex-start;
+  margin-block-start: var(--space-1);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-rail);
+  background: var(--brand-action-solida);
+  color: var(--text-on-accent);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+/* --- Mostruário do herói --------------------------------------------------- */
+
+.capa__mostruario {
+  min-width: 0;
+}
+
+/*
+ * base.css aplica `overflow-wrap: break-word` no corpo inteiro. Numa palheta
+ * estreita isso partia palavra ao meio — "começa/r", "recome/çar". Aqui a
+ * palavra fica inteira; se não couber, a palheta cresce.
+ */
+.palheta__titulo,
+.palheta__codigo,
+.palheta__meta {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+
+.capa__mostruario .palheta__titulo {
+  font-size: var(--size-body);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* Duas hastes em vez de uma: é assim que um mostruário de bancada é montado,
+   e resolve o aperto de encaixar cinco amostras numa fileira só. */
+.mostruario--duplo {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.mostruario--duplo .trilho:nth-child(2) {
+  margin-inline-start: clamp(0rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 1024px) {
+  .mostruario--duplo .trilho__itens > * {
+    min-width: 8.5rem;
+  }
+}
+
+.mostruario__legenda {
+  margin-block-start: var(--space-5);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  max-width: 34ch;
+}
+
+/* Em telas largas as palhetas do herói são estreitas de propósito: proporção
+   de amostra, não de cartão. */
+@media (min-width: 1024px) {
+  .capa__mostruario .trilho__itens > * {
+    min-width: 0;
+    padding-inline: var(--space-3);
+  }
+}
+
+/* --- Palhetas sobre fundo escuro ------------------------------------------- */
+
+.faixa-escura .palheta,
+.mostruario--escuro .palheta {
+  --palheta-fill: var(--brand-primary-dark);
+  --palheta-line: color-mix(in srgb, var(--text-on-dark) 20%, transparent);
+  color: var(--text-on-dark);
+}
+
+.faixa-escura .palheta__codigo,
+.mostruario--escuro .palheta__codigo {
+  color: var(--brand-accent);
+}
+
+.faixa-escura .palheta__meta,
+.mostruario--escuro .palheta__meta {
+  color: color-mix(in srgb, var(--text-on-dark) 72%, transparent);
+}
+
+.faixa-escura .trilho::before,
+.mostruario--escuro .trilho::before {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-accent) 85%, transparent) 0 1px,
+    color-mix(in srgb, var(--text-on-dark) 34%, transparent) 1px 100%
+  );
+}
+
+.faixa-escura .palheta::before,
+.mostruario--escuro .palheta::before {
+  background: var(--surface-strong);
+  border-color: color-mix(in srgb, var(--text-on-dark) 45%, transparent);
+}
+
+.faixa-escura .palheta::after,
+.mostruario--escuro .palheta::after {
+  background: color-mix(in srgb, var(--text-on-dark) 34%, transparent);
+}
+
+.faixa-escura .mostruario__item--atual,
+.mostruario--escuro .mostruario__item--atual {
+  --palheta-line: var(--brand-accent);
+}
+
+.faixa-escura .mostruario__item--atual::before,
+.mostruario--escuro .mostruario__item--atual::before {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+
+.faixa-escura .mostruario__item--atual .palheta__codigo {
+  color: var(--brand-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   COMO FUNCIONA — três palhetas no mesmo trilho
+   Substitui a grade de três colunas iguais, que lia como institucional.
+   --------------------------------------------------------------------------- */
+
+/*
+ * Queda maior que a do herói. Com 2,25rem a haste tinha ~20px e ficava quase
+ * toda escondida dentro da cúpula da palheta — parecia que a etapa flutuava
+ * solta em vez de estar pendurada.
+ */
+.percurso {
+  margin-block-start: var(--space-7);
+  --palheta-drop: 3.5rem;
+}
+
+.percurso .mostruario__item {
+  --palheta-drop: calc(3.5rem + var(--queda));
+}
+
+.percurso .mostruario__item:nth-child(1) {
+  --queda: 0.5rem;
+}
+.percurso .mostruario__item:nth-child(2) {
+  --queda: 1.6rem;
+}
+.percurso .mostruario__item:nth-child(3) {
+  --queda: 0.9rem;
+}
+
+/* A etapa atual continua a mais alta do trilho, mas com haste visível. */
+.percurso .mostruario__item--atual {
+  --queda: 0.5rem !important;
+}
+
+.percurso .palheta {
+  gap: var(--space-3);
+}
+
+.percurso .palheta__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--brand-deep);
+}
+
+.percurso .palheta__meta {
+  font-size: var(--size-body);
+  line-height: 1.5;
+}
+
+/* A etapa em que a visitante entra fica no prumo e com o coral. */
+.percurso .mostruario__item--atual .palheta__titulo {
+  color: var(--brand-primary);
+}
+
+@media (min-width: 768px) {
+  .percurso .trilho__itens {
+    gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MOMENTOS — composição assimétrica
+   Uma coluna de texto estreita e o mostruário ocupando a maior área. Antes as
+   linhas usavam 350px de 1190 e o resto era vazio.
+   --------------------------------------------------------------------------- */
+
+.momentos-composicao {
+  display: grid;
+  gap: var(--space-7);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .momentos-composicao {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: var(--space-8);
+  }
+}
+
+.momentos-composicao > * {
+  min-width: 0;
+}
+
+.momentos-composicao .momentos__acao {
+  margin-block-start: var(--space-6);
+}
+
+/* Duas fileiras curtas em vez de uma fileira longa: o olho lê em bloco. */
+@media (min-width: 640px) {
+  .momentos-composicao .trilho__itens {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    row-gap: var(--space-7);
+  }
+
+  .momentos-composicao .trilho__itens > * {
+    flex: 1 1 12rem;
+  }
+}
+
+/* ===========================================================================
+   NAVEGAÇÃO MOBILE
+   Painel curto ancorado no cabeçalho. Não é tela cheia de propósito: a
+   visitante continua vendo onde está.
+   =========================================================================== */
+
+.nav-mobile {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .nav-mobile {
+    display: none;
+  }
+}
+
+.nav-mobile__botao {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--size-small);
+  cursor: pointer;
+}
+
+/* Dois riscos que viram um X. Nada de ícone de biblioteca. */
+.nav-mobile__risos {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 1rem;
+  height: 0.75rem;
+}
+
+.nav-mobile__risos > span {
+  display: block;
+  height: 2px;
+  border-radius: var(--radius-rail);
+  background: currentColor;
+  transition:
+    translate var(--duration-fast) var(--ease-out),
+    rotate var(--duration-fast) var(--ease-out);
+}
+
+.nav-mobile__risos[data-aberto='true'] > span:first-child {
+  translate: 0 3px;
+  rotate: 45deg;
+}
+
+.nav-mobile__risos[data-aberto='true'] > span:last-child {
+  translate: 0 -3px;
+  rotate: -45deg;
+}
+
+.nav-mobile__painel {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 30;
+  min-width: min(15rem, calc(100vw - 2rem));
+  padding: var(--space-3);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-erguida);
+}
+
+.nav-mobile__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.nav-mobile__link {
+  display: block;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.nav-mobile__link:hover {
+  background: var(--surface-sunken);
+}
+
+.nav-mobile__cta {
+  width: 100%;
+  margin-block-start: var(--space-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-mobile__painel[data-aberto='true'] {
+    animation: abrir-painel 160ms var(--ease-out) both;
+  }
+}
+
+@keyframes abrir-painel {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ===========================================================================
+   VAGA DE FOTO
+   Enquanto não existir ensaio próprio, o lugar da imagem não fica vazio nem
+   parece defeito: é uma superfície de bancada com a marca do mostruário. O
+   briefing de produção só aparece com ?revisao=1.
+   =========================================================================== */
+
+.vaga-foto {
+  margin: 0;
+  min-width: 0;
+}
+
+.vaga-foto__area {
+  position: relative;
+  aspect-ratio: var(--foto-ratio, 3 / 2);
+  border-radius: var(--radius-media);
+  border: 1px solid var(--border-subtle);
+  background:
+    linear-gradient(160deg, var(--surface-soft) 0%, var(--surface-sunken) 100%);
+  box-shadow: var(--shadow-palheta);
+  overflow: hidden;
+}
+
+/* Um traço de champagne atravessando: o mesmo gesto do trilho, em repouso. */
+.vaga-foto__area::after {
+  content: '';
+  position: absolute;
+  inset-inline: 12%;
+  top: 58%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--brand-accent) 55%, transparent) 22%,
+    color-mix(in srgb, var(--brand-accent) 55%, transparent) 78%,
+    transparent 100%
+  );
+}
+
+/* A silhueta da palheta, discreta, como marca d'água. */
+.vaga-foto__marca {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  translate: -50% -100%;
+  width: 2.75rem;
+  height: 3.75rem;
+  border-radius: var(--radius-tip);
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  background: color-mix(in srgb, var(--surface-soft) 70%, transparent);
+}
+
+.vaga-foto__legenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.vaga-foto__ratio {
+  color: var(--border-strong);
+}
+
+.vaga-foto__briefing {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  font-size: var(--size-small);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.vaga-foto__briefing > div {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.vaga-foto__briefing dt {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+}
+
+.vaga-foto__briefing dd {
+  margin: 0;
+}
+
+/* ===========================================================================
+   BANCADA — a seção que abriga a foto real quando ela existir
+   =========================================================================== */
+
+.bancada {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .bancada {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: var(--space-8);
+  }
+}
+
+.bancada > * {
+  min-width: 0;
+}
+
+.bancada__titulo {
+  color: var(--brand-deep);
+}
+
+.bancada__apoio {
+  margin-block-start: var(--space-4);
+  color: var(--text-secondary);
+  max-width: 42ch;
+}

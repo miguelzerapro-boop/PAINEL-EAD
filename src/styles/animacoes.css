@@ -1,0 +1,315 @@
+/* ===========================================================================
+   ANIMAÇÕES
+   Três movimentos, todos amarrados ao ofício. Nada de "fade genérico em toda
+   seção", que o escopo original proíbe:
+     1. BRILHO DE LACA — a passada de brilho da cobertura, só na ação principal;
+     2. TRILHO QUE SE DESENHA — a direção da jornada, uma vez por seção;
+     3. PALHETA QUE ASSENTA — a amostra pousando no trilho, escalonada.
+   Tudo desligado sob `prefers-reduced-motion`, e o conteúdo NUNCA depende da
+   animação para aparecer.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. BRILHO DE LACA
+   Uma faixa clara atravessa o botão, como a luz correndo na cobertura recém
+   aplicada.
+
+   Versão anterior: laço INFINITO de 5,5s. Medido em 02/08 e descartado por
+   três motivos, todos verificáveis em docs/validacao/design-forte/:
+     · rodava em 5 botões ao mesmo tempo, e o do cabeçalho é fixo — ou seja,
+       havia sempre um brilho pulsando na tela, o que lê como anúncio;
+     · com ease-OUT a passada se comprimia em ~100ms dos 5,5s, então não era
+       um brilho lento, era um estalo;
+     · a faixa era fraca demais (alfa 0,42) para se ler como acabamento.
+
+   Agora: UMA passada na primeira carga, e uma a cada hover. Fora isso, parado.
+   --------------------------------------------------------------------------- */
+
+.botao--primario {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.botao--primario::after {
+  content: '';
+  position: absolute;
+  inset-block: -50%;
+  inset-inline-start: -70%;
+  width: 58%;
+  /* Negativo de propósito: fica acima do fundo do botão e abaixo do texto. */
+  z-index: -1;
+  /*
+   * O núcleo claro é largo e o degradê tem piso. A versão anterior ia de
+   * transparente a 0,62 em 8% da faixa — uma lâmina fina e tão esfumada que
+   * não se lia na tela (ver animacoes/laca-diagnostico/).
+   */
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 250, 244, 0.16) 22%,
+    rgba(255, 250, 244, 0.5) 50%,
+    rgba(255, 250, 244, 0.16) 78%,
+    transparent 100%
+  );
+  rotate: 8deg;
+  translate: 0 0;
+  transition: none;
+  /* Uma vez só. `both` mantém o estado final: a faixa fica fora, em repouso. */
+  animation: laca 760ms cubic-bezier(0.4, 0, 0.25, 1) 900ms 1 both;
+}
+
+@keyframes laca {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 420% 0;
+  }
+}
+
+/* No hover a laca passa de novo — aí o movimento responde a um gesto real. */
+.botao--primario:hover::after {
+  animation: laca 620ms cubic-bezier(0.4, 0, 0.25, 1) 1 both;
+}
+
+/* ---------------------------------------------------------------------------
+   2. TRILHO QUE SE DESENHA
+   A linha nasce da esquerda quando a seção entra. Representa direção — o
+   próprio posicionamento da marca.
+   --------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .trilho::before,
+    .etapa-numerada,
+    .titulo-secao::after {
+      animation: desenhar-trilho auto linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 55%;
+    }
+
+    .trilho--vertical::before {
+      animation-name: desenhar-trilho-vertical;
+    }
+  }
+}
+
+@keyframes desenhar-trilho {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes desenhar-trilho-vertical {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* A borda superior das etapas é o mesmo trilho: desenha junto. */
+.etapa-numerada {
+  --trilho-progresso: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   3. PALHETA QUE ASSENTA
+   Sobe 10px e ganha nitidez, em cascata. Uma vez, na entrada.
+   --------------------------------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .trilho__itens > *,
+    .grade > *,
+    .momento,
+    .etapas > * {
+      animation: assentar auto var(--ease-suave) both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 45%;
+    }
+  }
+}
+
+@keyframes assentar {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   HOVER DA PALHETA
+   Ela se solta do trilho: sobe e inclina um grau. Devolve a sensação de pegar
+   uma amostra na mão.
+   --------------------------------------------------------------------------- */
+
+a.palheta,
+button.palheta {
+  transition:
+    transform var(--duration-base) var(--ease-suave),
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+  will-change: transform;
+}
+
+a.palheta:hover,
+button.palheta:hover {
+  transform: translateY(-4px) rotate(-0.6deg);
+  box-shadow: var(--shadow-erguida);
+}
+
+/* ---------------------------------------------------------------------------
+   ENTRADA DO HERÓI
+   Só aqui, só uma vez. O título sobe, o apoio segue, a ação por último.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * Duração curta de propósito. Com 620ms + 140ms de atraso, o título só ficava
+   * opaco aos 759ms — medido. A promessa da marca não pode chegar depois de
+   * três quartos de segundo.
+   */
+  .capa__chapeu,
+  .capa__titulo,
+  .capa__apoio,
+  .capa__acoes {
+    animation: subir 340ms var(--ease-suave) both;
+  }
+
+  .capa__chapeu {
+    animation-delay: 40ms;
+  }
+  .capa__titulo {
+    animation-delay: 80ms;
+  }
+  .capa__apoio {
+    animation-delay: 170ms;
+  }
+  .capa__acoes {
+    animation-delay: 240ms;
+  }
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   LINHA QUE CRESCE SOB O LINK
+   Substitui o sublinhado permanente por um gesto.
+   --------------------------------------------------------------------------- */
+
+.link-gesto {
+  position: relative;
+  text-decoration: none;
+  padding-block-end: 2px;
+}
+
+.link-gesto::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 1.5px;
+  background: currentColor;
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale var(--duration-base) var(--ease-suave);
+}
+
+.link-gesto:hover::after {
+  scale: 1 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Corte geral
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .botao--primario::after {
+    animation: none;
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. ENTRADA DO MOSTRUÁRIO DO HERÓI
+   O herói já está na tela quando a página carrega, então `view()` não serve:
+   ele dispararia com a animação já concluída. Aqui a sequência é por tempo.
+
+   Ordem: a haste se desenha, as palhetas assentam em cascata curta, e a do
+   momento atual chega por último com um respiro.
+
+   O TEXTO E O CTA NÃO PARTICIPAM: eles já estão opacos e clicáveis no primeiro
+   quadro. Nada aqui bloqueia interação — são só opacidade e deslocamento.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .capa__mostruario .trilho::before {
+    animation: desenhar-trilho 520ms var(--ease-out) 120ms both;
+  }
+
+  .capa__mostruario .trilho__itens > * {
+    animation: pendurar 420ms var(--ease-suave) both;
+  }
+
+  .capa__mostruario .trilho__itens > *:nth-child(1) { animation-delay: 320ms; }
+  .capa__mostruario .trilho__itens > *:nth-child(2) { animation-delay: 500ms; }
+  .capa__mostruario .trilho__itens > *:nth-child(3) { animation-delay: 400ms; }
+  .capa__mostruario .trilho__itens > *:nth-child(4) { animation-delay: 440ms; }
+  .capa__mostruario .trilho__itens > *:nth-child(5) { animation-delay: 360ms; }
+
+  .capa__mostruario .mostruario__legenda {
+    animation: subir 420ms var(--ease-suave) 720ms both;
+  }
+}
+
+/* Desce a partir do gancho, como se tivesse sido pendurada. Nada de escala. */
+@keyframes pendurar {
+  from {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* As palhetas do "Como funciona" e dos momentos entram por rolagem, como as
+   demais seções — ali `view()` é o comportamento certo. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .percurso .trilho__itens > *,
+    .momentos-composicao .trilho__itens > * {
+      animation: pendurar auto var(--ease-suave) both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 42%;
+    }
+  }
+}

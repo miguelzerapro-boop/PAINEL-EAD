@@ -1,0 +1,692 @@
+/* ===========================================================================
+   FORMAÇÃO — capítulos, aulas e envio de vídeo
+   Painel administrativo. Nenhuma cor literal: tudo sai de tokens.css.
+
+   Restrição de projeto: a responsável precisa conseguir cadastrar uma aula
+   INTEIRA pelo celular. Por isso a coluna única é o padrão e o layout de duas
+   colunas só entra a partir de 40rem — não o contrário.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Complementos de componente que faltavam
+   --------------------------------------------------------------------------- */
+
+.botao--pequeno {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--size-small);
+  min-height: 2.25rem;
+}
+
+.botao--texto {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--brand-action-texto);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--target-min);
+  font-family: var(--font-text);
+  font-size: var(--size-small);
+  cursor: pointer;
+  border-radius: var(--radius-control);
+}
+
+.botao--texto:hover:not(:disabled) {
+  background: var(--surface-purple);
+}
+
+.botao--texto:disabled {
+  color: var(--text-secondary);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.botao--texto.botao--perigo {
+  color: var(--error);
+}
+
+.botao--texto.botao--perigo:hover:not(:disabled) {
+  background: var(--error-soft);
+}
+
+.etiqueta[data-tone='ok'] {
+  border-color: var(--brand-primary);
+  color: var(--brand-action-texto);
+  background: var(--surface-purple);
+}
+
+.etiqueta[data-tone='rascunho'] {
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+  background: var(--surface-soft);
+}
+
+.admin__cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.admin__migalha {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+  margin-block-end: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------------
+   LISTA DOS CAPÍTULOS
+   O número é grande porque é assim que ela se orienta: "estou no 3".
+   --------------------------------------------------------------------------- */
+
+.capitulos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.capitulo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-palheta);
+  transition: border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.capitulo:hover {
+  border-color: var(--brand-neon-soft);
+  box-shadow: var(--shadow-erguida);
+}
+
+.capitulo__ordem {
+  font-size: var(--size-h2);
+  line-height: 1;
+  color: var(--brand-neon);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Capítulo publicado ganha o roxo cheio; rascunho fica no neon apagado. */
+.capitulo[data-status='published'] .capitulo__ordem {
+  color: var(--brand-primary);
+}
+
+.capitulo__corpo {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.capitulo__topo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.capitulo__nome {
+  font-size: var(--size-h3);
+  line-height: var(--leading-title);
+  margin: 0;
+}
+
+.capitulo__numeros {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+}
+
+.capitulo__vazio {
+  font-style: italic;
+}
+
+.capitulo__alerta {
+  color: var(--warning);
+}
+
+.capitulo__acoes {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------------------
+   ENVIO DE VÍDEO
+   --------------------------------------------------------------------------- */
+
+.envio {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.envio__area {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-7) var(--space-4);
+  text-align: center;
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-soft);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.envio__area:hover,
+.envio__area:focus-within {
+  border-color: var(--brand-neon);
+  background: var(--surface-purple);
+}
+
+.envio__area:focus-within {
+  box-shadow: var(--glow-neon);
+}
+
+/* Arrastando: o alvo precisa ser inequívoco antes de soltar o arquivo. */
+.envio__area[data-arrastando='true'] {
+  border-color: var(--brand-neon);
+  border-style: solid;
+  background: var(--surface-purple);
+  box-shadow: var(--glow-neon-forte);
+}
+
+.envio__icone {
+  color: var(--brand-primary);
+}
+
+.envio__chamada {
+  font-size: var(--size-body-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.envio__ou,
+.envio__formatos {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.envio__resumo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-soft);
+  flex-wrap: wrap;
+}
+
+.envio__marca {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-control);
+  background: var(--surface-purple);
+  color: var(--brand-primary);
+  flex: none;
+}
+
+.envio__dados {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+.envio__nome {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  line-height: var(--leading-ui);
+}
+
+.envio__meta {
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+}
+
+.envio__progresso {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.envio__barra {
+  height: 0.5rem;
+  border-radius: var(--radius-rail);
+  background: var(--surface-purple);
+  overflow: hidden;
+}
+
+.envio__barra-feito {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-rail);
+  background: linear-gradient(90deg, var(--brand-primary), var(--brand-neon));
+  box-shadow: var(--glow-neon-forte);
+  transition: width var(--duration-fast) linear;
+}
+
+.envio__estado {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  color: var(--brand-action-texto);
+}
+
+.envio__nota,
+.envio__aviso-saida {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+}
+
+.envio__aviso-saida {
+  color: var(--warning);
+}
+
+.envio__ok {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-4);
+  border: 1px solid var(--brand-neon-soft);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-purple);
+}
+
+.envio__erro {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-cartao);
+  background: var(--error-soft);
+}
+
+.envio__erro-titulo {
+  font-weight: 600;
+  color: var(--error);
+}
+
+.envio__erro-texto {
+  line-height: var(--leading-ui);
+}
+
+.envio__acoes {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-block-start: var(--space-2);
+}
+
+.envio--pronto {
+  gap: var(--space-2);
+}
+
+/* ---------------------------------------------------------------------------
+   FORMULÁRIO DA AULA
+   --------------------------------------------------------------------------- */
+
+.form-aula {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--width-text);
+}
+
+.form-aula__estado {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.form-aula__linha {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.form-aula__acoes {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.form-aula__aviso {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.form-aula__aviso[data-tom='ok'] {
+  background: var(--surface-purple);
+  border: 1px solid var(--brand-neon-soft);
+  color: var(--brand-action-texto);
+}
+
+.form-aula__aviso[data-tom='erro'] {
+  background: var(--error-soft);
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+.form-aula__aviso[data-tom='info'] {
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.form-aula__nota {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   LISTA DE AULAS DO CAPÍTULO
+   --------------------------------------------------------------------------- */
+
+.aulas-admin {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.aulas-admin__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.aula-linha {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+.aula-linha:hover {
+  border-color: var(--brand-neon-soft);
+}
+
+/* Rascunho fica visualmente recuado: publicado é que tem presença. */
+.aula-linha[data-status='draft'] {
+  background: var(--surface-soft);
+}
+
+.aula-linha[data-status='archived'] {
+  opacity: 0.6;
+}
+
+.aula-linha__pegar {
+  color: var(--text-secondary);
+  cursor: grab;
+  font-size: var(--size-body-lg);
+  line-height: 1;
+}
+
+.aula-linha__ordem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  font-size: var(--size-mono);
+}
+
+.aula-linha__seta {
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-control);
+  color: var(--brand-action-texto);
+  cursor: pointer;
+  font-size: var(--size-body);
+}
+
+.aula-linha__seta:hover:not(:disabled) {
+  background: var(--surface-purple);
+}
+
+.aula-linha__seta:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.aula-linha__corpo {
+  min-width: 0;
+  grid-column: 3;
+}
+
+.aula-linha__titulo {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.aula-linha__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-block-start: var(--space-2);
+  font-size: var(--size-mono);
+  color: var(--text-secondary);
+}
+
+.aula-linha__sem-video {
+  color: var(--warning);
+}
+
+.aula-linha__acoes {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.aula-linha__mover {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-main);
+  color: var(--text-secondary);
+  font-family: var(--font-text);
+  font-size: var(--size-small);
+  min-height: 2.25rem;
+  max-width: 12rem;
+}
+
+.aula-linha__confirmar {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  margin-block-start: var(--space-2);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-cartao);
+  background: var(--error-soft);
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.aula-linha__confirmar-acoes {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.aulas-admin__rodape {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+/* ---------------------------------------------------------------------------
+   A partir de 40rem: as ações voltam para a mesma linha do título.
+   Abaixo disso — 360 px e 390 px inclusive — tudo empilha e nada estoura.
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 40rem) {
+  .form-aula__linha {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aula-linha {
+    grid-template-columns: auto auto 1fr auto;
+  }
+
+  .aula-linha__acoes {
+    grid-column: 4;
+    padding-block-start: 0;
+    border-block-start: 0;
+    justify-content: flex-end;
+  }
+
+  .capitulo__topo {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (max-width: 26rem) {
+  .capitulo {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .capitulo__ordem {
+    font-size: var(--size-h3);
+  }
+
+  /* O botão precisa caber inteiro no polegar, não em metade dele. */
+  .capitulo__acoes .botao,
+  .form-aula__acoes .botao {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .envio__area {
+    padding: var(--space-6) var(--space-3);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CAPÍTULO NA ÁREA DA ALUNA
+   Estados do Mostruário aplicados à nova paleta.
+
+   § "Não depender apenas da cor": cada estado carrega TAMBÉM um rótulo em
+   palavra ("em andamento", "bloqueado") e uma diferença de peso de borda.
+   Quem não distingue roxo de cinza continua sabendo onde está.
+   --------------------------------------------------------------------------- */
+
+.capitulo-aluna__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.capitulo-aluna__vazio {
+  padding: var(--space-4);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+/* Não iniciado — branco e roxo claro. Presente, sem chamar atenção. */
+.etiqueta[data-estado='nao-iniciado'] {
+  border-color: var(--palheta-nao-iniciado-linha);
+  background: var(--palheta-nao-iniciado);
+  color: var(--text-secondary);
+}
+
+/* Em andamento — roxo principal com o ponto de luz. É onde ela está agora. */
+.etiqueta[data-estado='andamento'] {
+  border-color: var(--palheta-andamento);
+  background: var(--palheta-andamento);
+  color: var(--text-on-purple);
+  box-shadow: var(--glow-neon);
+}
+
+/* Concluído — roxo escuro. Peso de coisa fechada, sem brilho. */
+.etiqueta[data-estado='concluido'] {
+  border-color: var(--palheta-concluido);
+  background: var(--palheta-concluido);
+  color: var(--text-on-purple);
+}
+
+/* Bloqueado — neutro de verdade. Bloqueio não pode parecer marca. */
+.etiqueta[data-estado='bloqueado'] {
+  border-color: var(--palheta-bloqueado-linha);
+  background: var(--palheta-bloqueado);
+  color: var(--palheta-bloqueado-texto);
+}
+
+/* Em preparação — capítulo publicado, ainda sem aula. */
+.etiqueta[data-estado='vazio'] {
+  border-color: var(--border-subtle);
+  background: var(--surface-main);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.aula-indice[data-estado='andamento'] > summary {
+  border-inline-start: 3px solid var(--brand-neon);
+}
+
+.aula-indice[data-estado='concluido'] > summary {
+  border-inline-start: 3px solid var(--brand-primary-dark);
+}
+
+.aula-indice[data-estado='bloqueado'] > summary {
+  border-inline-start: 3px solid var(--palheta-bloqueado-linha);
+}
+
+/* ---------------------------------------------------------------------------
+   ENVIO PAUSADO — a tela mais importante do upload resumível.
+
+   É o que a responsável vê quando a internet cai aos 80%. Precisa dizer três
+   coisas de imediato: o que houve, que nada se perdeu, e o que fazer agora.
+   Por isso não usa a cor de erro: não é erro, é pausa.
+   --------------------------------------------------------------------------- */
+
+.envio__pausado {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--warning);
+  border-radius: var(--radius-cartao);
+  background: var(--warning-soft);
+}
+
+.envio__pausado .envio__estado {
+  color: var(--warning);
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  font-weight: 600;
+}
+
+/* A barra continua visível: é a prova de que o progresso ficou guardado. */
+.envio__pausado .envio__barra-feito {
+  background: var(--brand-primary);
+  box-shadow: none;
+}

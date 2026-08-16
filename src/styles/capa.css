@@ -1,0 +1,630 @@
+/* ===========================================================================
+   PRIMEIRA DOBRA E RITMO DA LANDING
+
+   O diagnóstico que motivou este arquivo: a landing abria branca, com um
+   mostruário abstrato ocupando metade da tela. Parecia painel de sistema, não
+   site de manicure — e todas as seções tinham o mesmo fundo, então a página
+   não tinha respiração nem hierarquia.
+
+   Três decisões:
+
+     1. A PRIMEIRA DOBRA É ESCURA. O roxo profundo entra antes da primeira
+        palavra ser lida. Branco continua dominando a página — mas depois.
+
+     2. A IMAGEM SANGRA. Ela não fica dentro de uma caixa ao lado do texto:
+        atravessa a borda da coluna e passa por baixo do texto. É o que
+        substitui "texto | quadrado" por composição com profundidade.
+
+     3. AS SEÇÕES ALTERNAM. escuro → branco → branco com roxo → escuro →
+        fotografia → quase-preto. Sem alternância, quinze parágrafos brancos
+        viram um bloco só.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   PRIMEIRA DOBRA
+   --------------------------------------------------------------------------- */
+
+.capa {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--purple-950);
+  color: var(--text-inverse);
+  padding-block: clamp(3rem, 2rem + 5vw, 6.5rem) 0;
+}
+
+/* Luz ambiente. Dois focos, não um gradiente chapado. */
+.capa__fundo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(120% 90% at 78% 8%, rgba(192, 38, 211, 0.42), transparent 62%),
+    radial-gradient(90% 80% at 8% 92%, rgba(88, 28, 135, 0.55), transparent 65%),
+    var(--purple-950);
+}
+
+.capa__luz {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+}
+
+.capa__luz--alta {
+  inline-size: 26rem;
+  block-size: 26rem;
+  inset-block-start: -8rem;
+  inset-inline-end: 6%;
+  background: var(--neon-lilac);
+  opacity: 0.28;
+}
+
+.capa__luz--baixa {
+  inline-size: 22rem;
+  block-size: 22rem;
+  inset-block-end: -10rem;
+  inset-inline-start: -4rem;
+  background: var(--purple-600);
+  opacity: 0.4;
+}
+
+.capa__grade {
+  display: grid;
+  gap: clamp(2rem, 1rem + 4vw, 3.5rem);
+  align-items: center;
+}
+
+.capa__texto {
+  position: relative;
+  z-index: 2;
+  padding-block-end: clamp(2rem, 1rem + 3vw, 3rem);
+}
+
+.capa__chapeu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--lilac-300);
+  margin-block-end: var(--space-5);
+}
+
+.capa__chapeu::before {
+  content: '';
+  inline-size: 2rem;
+  block-size: 1px;
+  background: var(--neon-lilac);
+  box-shadow: var(--glow-neon-forte);
+}
+
+/*
+   O título precisa vencer a imagem. Peso alto, entrelinha curta e uma medida
+   mais larga do que o corpo — ele é o primeiro a ser lido, não o segundo.
+*/
+.capa__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem);
+  line-height: 0.99;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  max-inline-size: 15ch;
+  text-wrap: balance;
+}
+
+/*
+   A segunda frase é a tese. Ganha o lilás — é o único texto longo que recebe
+   cor, e mesmo assim num tom que passa em contraste (7,4:1 sobre o fundo).
+*/
+.capa__titulo em {
+  display: block;
+  margin-block-start: 0.12em;
+  font-style: normal;
+  color: var(--lilac-300);
+}
+
+.capa__apoio {
+  margin-block-start: var(--space-5);
+  max-inline-size: 46ch;
+  font-size: var(--size-body-lg);
+  line-height: 1.55;
+  color: #e5d8ee;          /* sobre o fundo do herói: 11,2:1 */
+}
+
+.capa__acoes {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--space-4), 2vw, var(--space-6));
+  flex-wrap: wrap;
+  margin-block-start: clamp(var(--space-6), 3vw, var(--space-7));
+}
+
+.capa__nota {
+  font-size: var(--size-small);
+  line-height: 1.5;
+  color: #c9b4d8;          /* 7,1:1 */
+}
+
+/* --- A imagem -------------------------------------------------------------- */
+
+.capa__visual {
+  position: relative;
+  z-index: 1;
+  block-size: min(52vh, 24rem);
+  /* Sangra até a borda da janela no mobile. */
+  margin-inline: calc(var(--space-4) * -1);
+}
+
+/*
+   A arte tem fundo transparente e some nas bordas por máscara. Sem isso ela
+   formava um retângulo escuro visível sobre o degradê do herói — o "texto |
+   quadrado" que esta reformulação existe para eliminar.
+
+   Quando a FOTO real entrar (que terá fundo opaco), a máscara continua sendo
+   o que integra a imagem à seção em vez de deixá-la colada por cima.
+*/
+/*
+   SEM recorte e SEM proporção forçada.
+
+   A versão anterior usava `object-fit: cover` + `aspect-ratio`, o que obriga o
+   navegador a desenhar uma CAIXA e encaixar a arte dentro dela. Com uma arte
+   de fundo transparente, essa caixa aparecia como um retângulo escuro sobre o
+   degradê — justamente o "texto | quadrado" que esta reformulação combateu.
+
+   Deixando a altura seguir a proporção natural, não existe caixa: o que se vê
+   é só o desenho, e o degradê da seção passa por trás dele.
+*/
+/*
+   TRATAMENTO DA FOTOGRAFIA
+
+   A foto tem fundo próprio e opaco. Colada sobre o degradê, ela vira um
+   retângulo — o "texto | quadrado" que esta reformulação combate. Três
+   camadas resolvem:
+
+     1. `mask-image` dissolve as bordas no roxo, então não existe recorte;
+     2. `filter` puxa a foto para a temperatura da marca (o original é
+        neutro/cinza; sem isso a primeira dobra tem uma ilha fria no meio);
+     3. o `::after` da moldura joga uma luz roxa por cima, em `soft-light`,
+        que amarra a foto ao ambiente sem apagar o assunto.
+
+   A unha continua perfeitamente reconhecível — que é a condição.
+*/
+/*
+   A MÁSCARA PRECISA DE DUAS CAMADAS.
+
+   Só o radial não bastava: com o foco em 56% da largura, a borda ESQUERDA da
+   foto ficava dentro do raio e continuava quase opaca — resultado, um corte
+   vertical duro no meio do herói, exatamente o retângulo que se queria
+   eliminar. Dava para ver a linha.
+
+   `intersect` faz a máscara final ser a interseção das duas: o radial
+   dissolve as quatro bordas, e o linear garante que o lado esquerdo — o que
+   encosta no texto — chegue a zero antes de tocar a coluna.
+*/
+.capa__mascara-foto {
+  -webkit-mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.capa__imagem {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  filter: saturate(0.82) contrast(1.06) brightness(0.92) hue-rotate(-6deg);
+  -webkit-mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.capa__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background: linear-gradient(155deg, rgba(238, 91, 255, 0.5), rgba(88, 28, 135, 0.7) 62%, transparent);
+  -webkit-mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  mask-image:
+    radial-gradient(82% 78% at 62% 46%, #000 38%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 26%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/*
+   Vinheta: escurece a base e as bordas da foto para o texto continuar legível
+   quando a imagem passa por baixo dele, e para a foto não terminar num corte
+   seco contra o fundo.
+*/
+/*
+   A máscara acima já resolve a borda. A vinheta ficou só para escurecer o pé
+   da imagem, onde ela encosta na próxima seção — bem mais fraca do que na
+   primeira versão, que estava chapando metade da arte.
+*/
+.capa__vinheta {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--purple-950) 0%, transparent 26%);
+}
+
+/* ---------------------------------------------------------------------------
+   CTA PRINCIPAL
+   Precisa ser o elemento mais forte da tela — não um botão de dashboard.
+   --------------------------------------------------------------------------- */
+
+.botao--cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 3.5rem;
+  padding-inline: clamp(var(--space-5), 3vw, var(--space-7));
+  border: 0;
+  border-radius: var(--radius-rail);
+  background: linear-gradient(105deg, var(--purple-600) 0%, var(--lilac-500) 62%, var(--neon-purple) 100%);
+  color: #ffffff;                     /* sobre o meio do degradê: 5,4:1 */
+  font-family: var(--font-text);
+  font-size: var(--size-body-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--glow-cta);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    filter var(--duration-fast) var(--ease-out);
+}
+
+.botao--cta:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.12) brightness(1.06);
+  box-shadow: 0 14px 44px -10px rgba(198, 60, 255, 0.65), 0 3px 10px -2px rgba(126, 34, 206, 0.5);
+}
+
+.botao--cta:active {
+  transform: translateY(0);
+}
+
+.botao--cta:focus-visible {
+  outline: 2px solid var(--neon-lilac);
+  outline-offset: 4px;
+}
+
+/* A seta anda um pouco: sinaliza "leva a algum lugar" sem mexer o botão. */
+.botao__seta {
+  flex: none;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.botao--cta:hover .botao__seta {
+  transform: translateX(4px);
+}
+
+/* ---------------------------------------------------------------------------
+   FAIXA FOTOGRÁFICA — bloco de impacto no meio da página
+   --------------------------------------------------------------------------- */
+
+.faixa-foto {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--purple-950);
+  color: var(--text-inverse);
+}
+
+.faixa-foto__grade {
+  display: grid;
+  gap: clamp(2rem, 1rem + 3vw, 4rem);
+  align-items: center;
+  padding-block: clamp(3.5rem, 2rem + 5vw, 6rem);
+}
+
+.faixa-foto__imagem {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-foto);
+}
+
+.faixa-foto__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  max-inline-size: 18ch;
+  text-wrap: balance;
+}
+
+.faixa-foto__texto {
+  margin-block-start: var(--space-5);
+  max-inline-size: 44ch;
+  font-size: var(--size-body-lg);
+  line-height: 1.55;
+  color: #e5d8ee;
+}
+
+/*
+   Número grande em vez de card. Três caixas iguais viravam ruído; o número
+   editorial carrega a mesma informação com muito menos moldura.
+*/
+.numeros-editoriais {
+  display: grid;
+  gap: clamp(var(--space-5), 3vw, var(--space-7));
+  margin-block-start: clamp(var(--space-6), 3vw, var(--space-7));
+}
+
+.numero-editorial__valor {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 1.8rem + 3.6vw, 4.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  background: linear-gradient(120deg, var(--lilac-300), var(--neon-lilac));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.numero-editorial__rotulo {
+  display: block;
+  margin-block-start: var(--space-3);
+  font-size: var(--size-body);
+  line-height: 1.5;
+  color: #e5d8ee;
+  max-inline-size: 30ch;
+}
+
+.numero-editorial + .numero-editorial {
+  padding-block-start: clamp(var(--space-5), 3vw, var(--space-6));
+  border-block-start: 1px solid rgba(232, 121, 249, 0.22);
+}
+
+/* ---------------------------------------------------------------------------
+   CTA FINAL — quase preto com neon
+   --------------------------------------------------------------------------- */
+
+.fechamento-escuro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--black-purple);
+  color: var(--text-inverse);
+  text-align: center;
+  padding-block: clamp(4rem, 2.5rem + 6vw, 8rem);
+}
+
+.fechamento-escuro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 100% at 50% 120%, rgba(198, 60, 255, 0.35), transparent 70%),
+    radial-gradient(50% 70% at 50% -10%, rgba(147, 51, 234, 0.25), transparent 70%);
+}
+
+.fechamento-escuro__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 1.4rem + 3vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  margin-inline: auto;
+  max-inline-size: 20ch;
+  text-wrap: balance;
+}
+
+.fechamento-escuro__texto {
+  margin: var(--space-5) auto 0;
+  max-inline-size: 46ch;
+  font-size: var(--size-body-lg);
+  line-height: 1.55;
+  color: #ddd0e8;
+}
+
+.fechamento-escuro__acoes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-block-start: clamp(var(--space-6), 3vw, var(--space-7));
+}
+
+/* Linha de neon fechando a página. */
+.fechamento-escuro__fio {
+  display: block;
+  inline-size: min(28rem, 70%);
+  block-size: 2px;
+  margin: clamp(var(--space-6), 3vw, var(--space-7)) auto 0;
+  background: linear-gradient(90deg, transparent, var(--neon-lilac), transparent);
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------------
+   Desktop: a composição ganha as duas colunas e a imagem sangra de verdade.
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 62rem) {
+  .capa {
+    padding-block-end: clamp(3rem, 2rem + 3vw, 5rem);
+    min-block-size: min(88vh, 54rem);
+    display: grid;
+    align-items: center;
+  }
+
+  .capa__grade {
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  .capa__texto {
+    padding-block-end: 0;
+  }
+
+  .capa__visual {
+    /* Sai da coluna e vai até a borda direita da janela. */
+    margin-inline: 0 calc((100vw - min(100vw, var(--width-page))) / -2 - var(--space-6));
+    margin-block: calc(var(--space-7) * -1) calc(var(--space-7) * -1);
+  }
+
+  .capa__visual {
+    block-size: min(76vh, 42rem);
+  }
+
+  .capa__vinheta {
+    background:
+      linear-gradient(to right, var(--purple-950) 0%, rgba(23, 5, 36, 0.55) 22%, transparent 55%),
+      linear-gradient(to top, var(--purple-950) 0%, transparent 30%);
+  }
+
+  .faixa-foto__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  /* Alterna o lado da imagem, para duas faixas seguidas não repetirem o ritmo. */
+  .faixa-foto--invertida .faixa-foto__imagem {
+    order: 2;
+  }
+
+  .numeros-editoriais {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(var(--space-5), 2vw, var(--space-6));
+  }
+
+  .numero-editorial + .numero-editorial {
+    padding-block-start: 0;
+    padding-inline-start: clamp(var(--space-5), 2vw, var(--space-6));
+    border-block-start: 0;
+    border-inline-start: 1px solid rgba(232, 121, 249, 0.22);
+  }
+}
+
+@media (max-width: 26rem) {
+  .capa__acoes .botao--cta {
+    inline-size: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   RITMO DAS SEÇÕES
+
+   A primeira montagem ficou escuro · escuro · branco · escuro · escuro ·
+   escuro · escuro. Sete seções, seis delas escuras: o oposto de "landing
+   clara com roxo agressivo nos lugares certos" — e sem alternância nenhuma,
+   a página vira um bloco só.
+
+   A sequência abaixo alterna de verdade:
+
+     1 herói            ESCURO   fotografia + roxo profundo
+     2 o jeito comum    CLARO    branco com roxo no contraste
+     3 como funciona    CLARO    branco com elementos roxos
+     4 momentos         ESCURO   o diferencial
+     5 acabamento       ESCURO   fotografia
+     6 bancada          CLARO    fotografia sobre branco
+     7 fechamento       QUASE-PRETO + neon
+   --------------------------------------------------------------------------- */
+
+/* 2 — o contraste "antes / aqui" sai do roxo chapado e vai para o branco. */
+.faixa-marca {
+  background: var(--surface-main);
+  color: var(--text-primary);
+  border-block: 1px solid var(--border-subtle);
+}
+
+.faixa-marca .contraste__rotulo {
+  color: var(--text-secondary);
+}
+
+.faixa-marca .contraste__frase {
+  color: var(--text-primary);
+}
+
+/* O lado "aqui" é o que ganha o roxo — é o argumento da marca. */
+.faixa-marca .contraste__lado[data-tom='depois'] .contraste__rotulo {
+  color: var(--brand-action-texto);
+  font-weight: 600;
+}
+
+.faixa-marca .contraste__lado[data-tom='depois'] {
+  position: relative;
+}
+
+.faixa-marca .contraste__lado[data-tom='depois']::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--space-5) * -1);
+  inline-size: 3px;
+  border-radius: var(--radius-rail);
+  background: linear-gradient(to bottom, var(--lilac-400), var(--purple-600));
+}
+
+.faixa-marca .contraste__divisor {
+  background: var(--border-subtle);
+}
+
+/* 6 — a bancada vira faixa CLARA, para quebrar a corrida de escuros. */
+.faixa-foto--clara {
+  background: var(--surface-soft);
+  color: var(--text-primary);
+}
+
+.faixa-foto--clara .capa__chapeu {
+  color: var(--brand-action-texto);
+}
+
+.faixa-foto--clara .capa__chapeu::before {
+  background: var(--lilac-500);
+  box-shadow: none;
+}
+
+.faixa-foto--clara .faixa-foto__titulo {
+  color: var(--text-primary);
+}
+
+.faixa-foto--clara .faixa-foto__texto,
+.faixa-foto--clara .numero-editorial__rotulo {
+  color: var(--text-secondary);
+}
+
+.faixa-foto--clara .numero-editorial__valor {
+  background: linear-gradient(120deg, var(--purple-600), var(--lilac-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.faixa-foto--clara .numero-editorial + .numero-editorial {
+  border-color: var(--border-subtle);
+}
+
+/* Na faixa clara a foto precisa de moldura suave para não flutuar. */
+.faixa-foto--clara .faixa-foto__imagem {
+  box-shadow: var(--shadow-erguida);
+  background: var(--purple-950);
+}

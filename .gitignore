@@ -1,0 +1,37 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/
+.supabase/
+
+# Tipos gerados
+src/types/database.ts
+
+# Screenshots da critica visual - regerar com `npm run screenshots`
+/screenshots/
+
+# Banco de homologacao local (PostgreSQL embarcado)
+/.homolog/
+
+# Artefato de build do TypeScript
+tsconfig.tsbuildinfo
+
+# Editor Obsidian — nao faz parte do projeto
+.obsidian/

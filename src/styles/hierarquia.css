@@ -1,0 +1,109 @@
+/* ===========================================================================
+   HIERARQUIA
+   O defeito central da revisão anterior: cinco títulos de seção em Fraunces
+   display, todos do mesmo tamanho, na mesma tela. Cinco coisas gritando igual
+   é o mesmo que nenhuma ter prioridade.
+   Regra nova: a serifada de display aparece UMA vez por tela — no título da
+   página. Tudo abaixo disso é sans, e a diferença se faz por peso, cor e
+   espaço, não por trocar de fonte.
+   =========================================================================== */
+
+/* --- Título da página: o único display da tela ---------------------------- */
+
+.titulo-pagina {
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 30, 'WONK' 0;
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-display);
+}
+
+/* --- Título de seção: sans, discreto, com filete curto -------------------- */
+
+.titulo-secao {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-text);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
+
+.titulo-secao::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* Variante ainda mais discreta, para blocos de apoio. */
+.titulo-apoio {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Dentro das áreas internas, h2 solto herda o tratamento discreto.
+   Assim uma página que ainda use <h2> não volta a gritar. */
+.app-shell__conteudo h2:not([class]) {
+  font-family: var(--font-text);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* --- Ritmo interno --------------------------------------------------------- */
+
+.pilha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.pilha--solta {
+  gap: var(--space-8);
+}
+
+.pilha--junta {
+  gap: var(--space-4);
+}
+
+/* Conteúdo das áreas internas: largura confortável, não a página inteira. */
+.area {
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-4) var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .area {
+    padding-inline: var(--space-7);
+  }
+}
+
+.area--larga {
+  max-width: 78rem;
+}
+
+/* --- Cabeçalho da área ------------------------------------------------------ */
+
+.area__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-7);
+}
+
+.area__topo p.lead {
+  margin-block-start: var(--space-2);
+}

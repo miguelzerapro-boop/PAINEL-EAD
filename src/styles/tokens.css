@@ -1,0 +1,232 @@
+/* ===========================================================================
+   TOKENS
+   Identidade PROVISÓRIA. Trocar os valores deste arquivo troca o site inteiro.
+   Nenhum componente pode declarar cor, fonte, espaçamento ou raio literal.
+   =========================================================================== */
+
+:root {
+  /* --- Marca ---------------------------------------------------------------
+     Roxo + branco. Branco domina a área; o roxo carrega a voz; o neon é
+     brilho pontual, nunca preenchimento de página.
+
+     Todo par de cor abaixo foi conferido contra WCAG AA. Os números estão
+     anotados porque é o que impede a próxima pessoa de "só clarear um pouco"
+     e reprovar a tela sem perceber.                                          */
+
+  /* --- Escala roxa ---------------------------------------------------------
+     Correção de rumo: a escala anterior (#6d28d9 / #a855f7) puxava para o
+     violeta AZUL. Esta puxa para o magenta. O teste é o tom médio: se ao lado
+     de um azul-marinho ele parecer parente, está errado.                     */
+
+  --purple-950: #170524;
+  --purple-900: #260638;
+  --purple-800: #3b075a;
+  --purple-700: #581c87;
+  --purple-600: #7e22ce;
+  --purple-500: #9333ea;
+
+  /* Lilás: o lado quente da escala. Puxa para a fúcsia. */
+  --lilac-500: #c026d3;
+  --lilac-400: #d946ef;
+  --lilac-300: #e879f9;
+
+  --neon-purple: #c63cff;
+  --neon-lilac: #ee5bff;
+
+  --black-purple: #0b0610;
+  --dark-purple: #14091d;
+  --off-white: #fcf9ff;
+
+  /* --- Papéis --------------------------------------------------------------
+     Os nomes abaixo são os que os componentes usam. Trocar a identidade é
+     reapontá-los — nenhum componente conhece "purple-600".                   */
+
+  --brand-primary: var(--purple-600);        /* branco sobre ele: 6,98:1      */
+  --brand-primary-strong: var(--purple-700); /* hover de sólido               */
+  --brand-primary-dark: var(--purple-900);   /* faixas, menu                  */
+  --brand-deep: var(--purple-950);
+
+  /* Neon: brilho, borda ativa, progresso, detalhe. NÃO é cor de texto claro. */
+  --brand-neon: var(--neon-purple);
+  --brand-neon-soft: var(--lilac-300);
+  /*
+   * #c63cff como TEXTO sobre branco dá 3,4:1 e REPROVA em texto normal.
+   * Quando o neon precisar virar palavra sobre claro, use esta: 6,98:1.
+   * Sobre fundo escuro, o neon puro pode ser texto — lá ele dá 7,3:1.
+   */
+  --brand-neon-texto: var(--purple-600);
+
+  --brand-accent: var(--lilac-500);
+
+  /*
+   * Ação. Branco sobre #6d28d9 dá 7,10:1 — sobra folga para botão sólido,
+   * inclusive em texto pequeno.
+   */
+  --brand-action: var(--brand-primary);
+  --brand-action-hover: var(--brand-primary-strong);
+  --brand-action-solida: var(--brand-primary);
+  --brand-action-solida-hover: var(--brand-primary-strong);
+  /* Roxo como TEXTO sobre branco: 7,10:1. */
+  --brand-action-texto: var(--brand-primary);
+
+  /* --- Superfícies --------------------------------------------------------
+     Branco limpo é o padrão. As duas variações roxas são quase-brancas: elas
+     separam áreas sem tingir a página.                                       */
+  --surface-main: #ffffff;
+  --surface-soft: var(--off-white);   /* branco com um sopro de roxo         */
+  --surface-purple: #f6ebff;          /* quente, não azulado                 */
+  --surface-sunken: var(--surface-purple);
+  --surface-strong: var(--black-purple);
+  --surface-brand: var(--purple-800);
+
+  /* --- Menu ---------------------------------------------------------------- */
+  --menu-fundo: var(--purple-950);   /* branco sobre ele: 18:1                */
+  --menu-texto: #ffffff;
+
+  /* --- Texto --------------------------------------------------------------- */
+  --text-primary: #1a0f22;      /* quase-preto ROXO · sobre branco: 17,1:1    */
+  --text-secondary: #675470;    /* sobre branco: 6,82:1 · sobre roxo claro: 5,8:1 */
+  --text-inverse: #ffffff;
+  --text-on-dark: #ffffff;
+  --text-on-accent: #ffffff;
+  --text-on-purple: #ffffff;
+
+  /* --- Linhas -------------------------------------------------------------- */
+  --border-subtle: #ecdcf7;
+  --border-strong: #b48fcc;
+
+  /* Roxo diluído: estado concluído sem chapa pesada. */
+  --brand-primary-suave: var(--surface-purple);
+
+  /* --- Fundo escuro (quiz, seções de impacto, CTA final) ------------------- */
+  --quiz-bg: #09050d;
+  --quiz-surface: var(--dark-purple);
+  --quiz-surface-elevated: #21102f;
+  --quiz-purple: var(--purple-500);
+  --quiz-lilac: var(--lilac-400);
+  --quiz-neon: var(--neon-lilac);
+  --quiz-text: #ffffff;
+  --quiz-text-secondary: #d8cbe2;   /* sobre o fundo do quiz: 13,0:1         */
+  --quiz-border: #3a2150;
+  --quiz-border-ativa: var(--lilac-400);
+
+  /* --- Sinal ---------------------------------------------------------------
+     Os três sinais continuam fora da família roxa de propósito: erro que
+     parece marca não é lido como erro. Os fundos foram esfriados para não
+     amarelar sobre branco.                                                   */
+  --success: #1f5c43;           /* sobre branco: 7,3:1                        */
+  --warning: #7f520a;           /* sobre branco: 5,7:1                        */
+  --error: #b3261e;             /* sobre branco: 6,0:1                        */
+  --error-forte: #8f1e17;       /* hover de botão de perigo                   */
+  --success-soft: #e7f2ec;
+  --warning-soft: #fbf1dd;
+  --error-soft: #fbe9e7;
+
+  /* --- Mostruário: estados da palheta --------------------------------------
+     § "Não depender apenas da cor": cada estado também muda forma, peso de
+     borda ou rótulo. Estas variáveis dão só a camada cromática.              */
+  --palheta-nao-iniciado: var(--surface-purple);
+  --palheta-nao-iniciado-linha: var(--border-subtle);
+  --palheta-andamento: var(--brand-primary);
+  --palheta-andamento-brilho: var(--brand-neon);
+  --palheta-concluido: var(--brand-primary-dark);
+  --palheta-bloqueado: #eceaf0;          /* neutro real: bloqueio não é marca */
+  --palheta-bloqueado-linha: #c9c4d1;
+  --palheta-bloqueado-texto: #5c5563;    /* sobre o neutro acima: 5,6:1       */
+
+  /* --- Tipografia ---------------------------------------------------------- */
+  --font-display: var(--font-fraunces), 'Fraunces', Georgia, serif;
+  --font-text: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Escala mais agressiva no topo: o título precisa dominar de verdade. */
+  --size-display: clamp(2.875rem, 1.5rem + 5vw, 4.75rem);
+  --size-h1: clamp(2.25rem, 1.55rem + 3.1vw, 3.5rem);
+  --size-h2: clamp(1.6875rem, 1.4rem + 1.4vw, 2.375rem);
+  --size-h3: clamp(1.3125rem, 1.22rem + 0.42vw, 1.5625rem);
+  --size-h4: clamp(1.0625rem, 1.03rem + 0.18vw, 1.1875rem);
+  --size-body-lg: clamp(1.125rem, 1.1rem + 0.12vw, 1.25rem);
+  --size-body: 1rem;
+  --size-small: 0.875rem;
+  --size-mono: clamp(0.8125rem, 0.8rem + 0.06vw, 0.875rem);
+
+  --leading-display: 0.98;
+  --leading-title: 1.1;
+  --leading-body: 1.6;
+  --leading-ui: 1.45;
+
+  --tracking-caps: 0.09em;
+  --tracking-display: -0.03em;
+
+  --measure-study: 62ch;
+  --measure-sales: 46ch;
+  --measure-lead: 40ch;
+
+  /* --- Espaçamento --------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --section-y: clamp(3.5rem, 2rem + 6vw, 8rem);
+
+  /* --- Raios ---------------------------------------------------------------- */
+  --radius-tip: 46% 46% 5px 5px / 26% 26% 5px 5px;
+  --radius-control: 4px;
+  --radius-rail: 999px;
+  --radius-media: 3px;
+  --radius-cartao: 12px;
+
+  /* --- Elevação -------------------------------------------------------------
+     Sombra roxa e de baixa opacidade. Nunca cinza, nunca forte: sobre branco,
+     cinza suja; o roxo diluído mantém a página limpa.                       */
+  --shadow-hairline: 0 1px 0 var(--border-subtle);
+  --shadow-palheta: 0 1px 2px rgba(38, 6, 56, 0.06), 0 6px 16px -10px rgba(38, 6, 56, 0.26);
+  --shadow-erguida: 0 2px 4px rgba(38, 6, 56, 0.08), 0 18px 36px -18px rgba(38, 6, 56, 0.3);
+  --shadow-lifted: var(--shadow-erguida);
+
+  /* Sombra de peso, para a fotografia descolar do fundo. */
+  --shadow-foto: 0 32px 64px -32px rgba(23, 5, 36, 0.55), 0 4px 12px -6px rgba(23, 5, 36, 0.3);
+
+  /*
+   * Glow. O único lugar onde o neon vira luz de verdade — CTA em foco,
+   * item ativo, progresso. Discreto de propósito: a página precisa continuar
+   * premium.
+   */
+  --glow-neon: 0 0 0 3px rgba(198, 60, 255, 0.24);
+  --glow-neon-forte: 0 0 24px -2px rgba(198, 60, 255, 0.55);
+  --glow-cta: 0 8px 32px -8px rgba(198, 60, 255, 0.5), 0 2px 8px -2px rgba(126, 34, 206, 0.4);
+
+  /* --- Trilho ---------------------------------------------------------------- */
+  --rail-width: 2px;
+  --rail-color: var(--border-subtle);
+  --rail-color-active: var(--brand-neon);
+
+  /* --- Movimento ------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-suave: cubic-bezier(0.33, 1, 0.68, 1);
+  --duration-fast: 140ms;
+  --duration-base: 260ms;
+  --duration-lenta: 620ms;
+
+  /* --- Larguras --------------------------------------------------------------- */
+  --width-page: 78rem;
+  --width-text: 44rem;
+  --width-form: 30rem;
+
+  --target-min: 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-lenta: 0ms;
+  }
+}

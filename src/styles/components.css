@@ -1,0 +1,929 @@
+/* ===========================================================================
+   COMPONENTES
+   O sistema inteiro gira em torno de dois objetos: o TRILHO e a PALHETA.
+   Tudo o mais e suporte.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   TRILHO
+   A linha continua que carrega as palhetas. E o percurso: da visitante na
+   landing, das perguntas no quiz, dos modulos no curso.
+   --------------------------------------------------------------------------- */
+
+.trilho {
+  position: relative;
+  /* O trilho passa ACIMA das palhetas. Antes ele corria por dentro delas e
+     ficava escondido atrás do fundo opaco — a ideia de "amostras penduradas
+     num trilho" simplesmente não se lia (ver docs/validacao/06-visual.md). */
+  --rail-offset: 0.6875rem;
+  --palheta-drop: 1.5rem;
+  padding-block-start: var(--palheta-drop);
+}
+
+/* O trilho ganhou um fio de champagne por cima: deixa de ser "uma linha
+   cinza" e passa a parecer a haste metálica de um mostruário. */
+.trilho::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: var(--rail-offset);
+  height: var(--rail-width);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-accent) 70%, transparent) 0 1px,
+    var(--rail-color) 1px 100%
+  );
+  border-radius: var(--radius-rail);
+  z-index: 0;
+}
+
+/*
+ * O trilho rola lateralmente em QUALQUER largura quando as palhetas não
+ * couberem. Antes isso só valia abaixo de 768px, e entre 768px e ~1000px a
+ * fileira simplesmente estourava a página (verificado em 834px, ver
+ * docs/validacao/06-visual.md).
+ */
+.trilho__itens {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.trilho__itens::-webkit-scrollbar {
+  display: none;
+}
+
+.trilho__itens > * {
+  scroll-snap-align: start;
+}
+
+/* No celular a palheta ocupa quase a tela: convida ao gesto lateral. */
+@media (max-width: 767px) {
+  .trilho__itens > * {
+    flex: 0 0 min(76%, 17rem);
+  }
+}
+
+/* Do tablet para cima elas dividem o espaço e só rolam se forem muitas. */
+@media (min-width: 768px) {
+  .trilho__itens > * {
+    flex: 1 1 0;
+    min-width: 11rem;
+  }
+  .trilho__itens > .palheta--destaque {
+    flex-grow: 1.6;
+  }
+}
+
+/* Variante vertical: pagina do curso, lista de aulas */
+.trilho--vertical {
+  --rail-offset: 0;
+}
+
+.trilho--vertical::before {
+  inset-inline: auto;
+  left: calc(var(--space-5) - var(--rail-width) / 2);
+  top: var(--space-5);
+  bottom: var(--space-5);
+  width: var(--rail-width);
+  height: auto;
+}
+
+.trilho--vertical .trilho__itens {
+  flex-direction: column;
+  gap: 0;
+  overflow-x: visible;
+  scroll-snap-type: none;
+}
+
+.trilho--vertical .trilho__itens > * {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   PALHETA
+   Topo curvo (silhueta de tip), base reta, entalhe por onde o trilho passa.
+   --------------------------------------------------------------------------- */
+
+/*
+ * A palheta ganhou corpo. Antes era um retângulo de borda fina com o mesmo
+ * peso de tudo em volta; agora tem sombra quente e um brilho no topo curvo —
+ * a luz batendo na superfície da tip. É o que separa "cartão" de "amostra".
+ */
+.palheta {
+  --palheta-fill: var(--surface-soft);
+  --palheta-line: var(--border-subtle);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5) var(--space-4);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--palheta-fill) 88%, var(--surface-main)) 0%,
+      var(--palheta-fill) 38%
+    );
+  border: 1px solid var(--palheta-line);
+  border-radius: var(--radius-tip);
+  box-shadow: var(--shadow-palheta);
+  text-align: left;
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+/* O entalhe: o ponto em que a palheta se prende ao trilho.
+   Fica ACIMA da borda superior, centrado na linha. */
+.palheta::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--palheta-drop, 1.5rem) * -1 + 0.25rem);
+  left: 50%;
+  translate: -50% 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: var(--radius-rail);
+  background: var(--surface-main);
+  border: var(--rail-width) solid var(--rail-color);
+  z-index: 1;
+}
+
+/* A haste curta que liga o entalhe ao topo da palheta. */
+.palheta::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--palheta-drop, 1.5rem) * -1 + 1rem);
+  left: 50%;
+  translate: -50% 0;
+  width: var(--rail-width);
+  height: calc(var(--palheta-drop, 1.5rem) - 1rem);
+  background: var(--rail-color);
+}
+
+a.palheta,
+button.palheta {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a.palheta:hover,
+button.palheta:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.palheta__codigo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.palheta__titulo {
+  font-size: var(--size-h4);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.palheta__meta {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+/* --- Estados -------------------------------------------------------------- */
+
+/* CONCLUÍDA — roxo escuro onde a peça é FINA, claro onde ela é larga.
+
+   O pedido é "concluído em roxo escuro"; a medição anterior mostrou que chapa
+   escura repetida em vinte itens pesa a tela. As duas coisas cabem: o escuro
+   entra na borda, no marcador e no tique — traços de 1 a 2px, inequívocos — e
+   o preenchimento fica claro. Uma aluna com vinte aulas feitas vê vinte
+   contornos escuros, não vinte blocos. */
+.palheta[data-state='done'] {
+  --palheta-fill: var(--surface-purple);
+  --palheta-line: var(--brand-primary-dark);
+  color: var(--text-primary);
+}
+
+.palheta[data-state='done'] .palheta__codigo,
+.palheta[data-state='done'] .palheta__meta {
+  color: var(--brand-primary-dark);
+}
+
+.palheta[data-state='done']::before {
+  background: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
+}
+
+/* Marca de concluída: um tique, não uma chapa. Também é a garantia de que o
+   estado não depende só da cor. */
+.palheta[data-state='done'] .palheta__titulo::after {
+  content: ' ✓';
+  color: var(--brand-primary-dark);
+  font-weight: 400;
+}
+
+.palheta[data-state='done']::after {
+  background: var(--brand-primary-dark);
+}
+
+/* EM ANDAMENTO — o estado forte. É onde ela está agora, e é o único lugar da
+   lista que ganha chapa cheia e brilho. */
+.palheta[data-state='current'] {
+  --palheta-fill: var(--brand-primary);
+  --palheta-line: var(--brand-neon);
+  border-width: 2px;
+  color: var(--text-on-purple);
+  box-shadow: var(--glow-neon);
+}
+
+.palheta[data-state='current'] .palheta__codigo,
+.palheta[data-state='current'] .palheta__meta {
+  color: color-mix(in srgb, var(--text-on-purple) 82%, transparent);
+}
+
+.palheta[data-state='current']::before {
+  border-color: var(--brand-neon);
+  background: var(--brand-neon);
+}
+
+.palheta[data-state='current']::after {
+  background: var(--brand-neon);
+}
+
+/* Bloqueada: papel vazado. Sem cor, sem cadeado decorativo - o motivo e texto. */
+.palheta[data-state='locked'] {
+  --palheta-fill: transparent;
+  --palheta-line: var(--border-subtle);
+  border-style: dashed;
+  color: var(--text-secondary);
+}
+
+.palheta[data-state='locked']::before {
+  background: var(--surface-main);
+  border-style: dashed;
+}
+
+.palheta__motivo {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* A ultima palheta do trilho e sempre a acao. */
+.palheta--acao {
+  --palheta-fill: var(--brand-accent);
+  --palheta-line: var(--brand-accent);
+  color: var(--text-on-accent);
+}
+
+.palheta--acao .palheta__codigo,
+.palheta--acao .palheta__meta {
+  color: color-mix(in srgb, var(--text-on-accent) 82%, transparent);
+}
+
+.palheta--acao::before {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+
+.palheta--acao::after {
+  background: var(--brand-accent);
+}
+
+.palheta--acao:hover {
+  --palheta-fill: var(--brand-accent-hover);
+  --palheta-line: var(--brand-accent-hover);
+}
+
+/* Palheta em destaque: quebra a monotonia da fileira (regra da direcao) */
+.palheta--destaque {
+  padding-block-end: var(--space-6);
+}
+
+.palheta--destaque .palheta__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+}
+
+/* Item de trilho vertical: linha, nao cartao */
+.trilho-item {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-5) * 2);
+  border-block-end: 1px solid var(--border-subtle);
+  text-decoration: none;
+  min-height: var(--target-min);
+}
+
+.trilho-item::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-5) - 0.375rem);
+  top: 1.4em;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--radius-rail);
+  background: var(--surface-main);
+  border: var(--rail-width) solid var(--rail-color);
+}
+
+.trilho-item[data-state='done']::before {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.trilho-item[data-state='current']::before {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+  scale: 1.25;
+}
+
+.trilho-item[data-state='locked'] {
+  color: var(--text-secondary);
+}
+
+.trilho-item[data-state='locked']::before {
+  border-style: dashed;
+}
+
+.trilho-item:hover {
+  background: var(--surface-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   BOTOES
+   --------------------------------------------------------------------------- */
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 3rem;
+  padding: var(--space-3) var(--space-6);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  font-size: var(--size-body);
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+/*
+ * A ação principal precisava de presença: era um retângulo chapado do mesmo
+ * peso que o resto. Agora tem coral sólido, sombra quente e o brilho de laca
+ * (animacoes.css). O tom sólido é mais fechado que `--brand-action` de
+ * propósito: branco sobre o coral claro dá 4,18:1 e reprova.
+ */
+.botao--primario {
+  background: var(--brand-action-solida);
+  color: var(--text-on-accent);
+  box-shadow: 0 1px 0 rgba(255, 250, 244, 0.18) inset,
+    0 10px 22px -12px rgba(109, 23, 55, 0.7);
+}
+
+.botao--primario:hover:not(:disabled) {
+  background: var(--brand-action-solida-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 250, 244, 0.18) inset,
+    0 14px 28px -12px rgba(109, 23, 55, 0.8);
+}
+
+.botao--primario:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.botao--secundario {
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.botao--secundario:hover:not(:disabled) {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+/* Sobre fundo escuro, a secundária inverte. */
+.faixa-escura .botao--secundario,
+.continuar .botao--secundario,
+.momentos .botao--secundario {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text-on-dark) 45%, transparent);
+  color: var(--text-on-dark);
+}
+
+.faixa-escura .botao--secundario:hover:not(:disabled),
+.continuar .botao--secundario:hover:not(:disabled) {
+  border-color: var(--text-on-dark);
+  color: var(--text-on-dark);
+}
+
+.botao--discreto {
+  background: transparent;
+  color: var(--text-secondary);
+  padding-inline: var(--space-2);
+}
+
+.botao--discreto:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botao--bloco {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   FORMULARIOS
+   --------------------------------------------------------------------------- */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.campo__rotulo {
+  font-size: var(--size-small);
+  font-weight: 600;
+}
+
+.campo__dica {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.campo__erro {
+  font-size: var(--size-small);
+  color: var(--error);
+  font-weight: 500;
+}
+
+.entrada {
+  min-height: var(--target-min);
+  padding: var(--space-3);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  font-size: var(--size-body);
+}
+
+.entrada:focus-visible {
+  border-color: var(--brand-accent);
+}
+
+.entrada[aria-invalid='true'] {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+
+textarea.entrada {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+/* Alternativa do quiz: palheta deitada, alvo generoso */
+.opcao {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 3.5rem;
+  padding: var(--space-4);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.opcao:hover {
+  border-color: var(--border-strong);
+}
+
+.opcao__marca {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--border-strong);
+  border-radius: 50% 50% 3px 3px / 40% 40% 3px 3px;
+  background: transparent;
+}
+
+.opcao[aria-checked='true'] {
+  border-color: var(--brand-primary);
+  background: var(--surface-main);
+}
+
+.opcao[aria-checked='true'] .opcao__marca {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.consentimento {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.consentimento input {
+  margin-top: 0.2em;
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--brand-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   PROGRESSO (o trilho preenchido)
+   --------------------------------------------------------------------------- */
+
+.progresso {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Mais grosso que o trilho estrutural: a 2px o progresso some no celular. */
+.progresso__trilha {
+  flex: 1;
+  height: 5px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-rail);
+  overflow: hidden;
+}
+
+.progresso__feito {
+  display: block;
+  height: 100%;
+  background: var(--brand-accent);
+  border-radius: var(--radius-rail);
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.progresso__valor {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   ESTADOS VAZIOS
+   Uteis, nao decorativos. Sem ilustracao generica.
+   --------------------------------------------------------------------------- */
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+  max-width: var(--measure-sales);
+  padding: var(--space-6);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+}
+
+.vazio__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+}
+
+.vazio__texto {
+  color: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   PLACEHOLDER DE FOTO
+   Honesto: diz que a foto ainda nao existe e qual e a vaga.
+   Nunca preenchido com imagem de banco.
+   --------------------------------------------------------------------------- */
+
+.foto-pendente {
+  position: relative;
+  display: grid;
+  place-content: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-sunken);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-media);
+  color: var(--text-secondary);
+  text-align: center;
+  aspect-ratio: var(--foto-ratio, 3 / 2);
+}
+
+.foto-pendente__rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+}
+
+.foto-pendente__spec {
+  font-size: var(--size-small);
+}
+
+/* ---------------------------------------------------------------------------
+   CARREGAMENTO
+   Esqueleto com a forma real do conteudo, nao spinner generico.
+   --------------------------------------------------------------------------- */
+
+.esqueleto {
+  background: linear-gradient(
+    90deg,
+    var(--surface-sunken) 25%,
+    var(--surface-soft) 37%,
+    var(--surface-sunken) 63%
+  );
+  background-size: 400% 100%;
+  animation: esqueleto-desliza 1.4s ease infinite;
+  border-radius: var(--radius-media);
+  color: transparent;
+}
+
+.esqueleto--palheta {
+  border-radius: var(--radius-tip);
+  min-height: 11rem;
+}
+
+@keyframes esqueleto-desliza {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   AVISOS
+   --------------------------------------------------------------------------- */
+
+.aviso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-inline-start: 3px solid var(--border-strong);
+  background: var(--surface-soft);
+  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+}
+
+.aviso[data-tone='warning'] {
+  border-color: var(--warning);
+  background: var(--warning-soft);
+}
+
+.aviso[data-tone='error'] {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+
+.aviso[data-tone='success'] {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+
+.aviso__titulo {
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   DEPOIMENTOS
+   Lista editorial numerada. Nao e grade de cartoes: a citacao domina, a
+   atribuicao fica discreta e o indice da ritmo sem virar etiqueta decorativa.
+   --------------------------------------------------------------------------- */
+
+.depoimentos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-7);
+  max-width: var(--measure-study);
+}
+
+.depoimento {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+@media (min-width: 768px) {
+  .depoimento {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: var(--space-5);
+  }
+  .depoimento__indice {
+    grid-row: span 2;
+  }
+}
+
+.depoimento__indice {
+  color: var(--text-secondary);
+}
+
+.depoimento__texto {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  line-height: 1.35;
+  font-style: italic;
+}
+
+.depoimento__autora {
+  font-style: normal;
+  font-weight: 600;
+  font-size: var(--size-small);
+}
+
+/* ---------------------------------------------------------------------------
+   ETIQUETA
+   --------------------------------------------------------------------------- */
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-rail);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+}
+
+.etiqueta[data-tone='demo'] {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   CERTIFICADO
+   Peça editorial, nao um cartao. A moldura evoca o diploma impresso sem
+   imitar borda dourada.
+   --------------------------------------------------------------------------- */
+
+.certificados {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .certificados {
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  }
+}
+
+.certificado {
+  position: relative;
+  padding: var(--space-6) var(--space-5);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  /* Filete interno: o gesto do diploma, em 1px. */
+  box-shadow: inset 0 0 0 1px var(--surface-soft), inset 0 0 0 2px var(--border-subtle);
+}
+
+.certificado__curso {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-block-start: var(--space-3);
+}
+
+.certificado__nome {
+  margin-block-start: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.certificado__dados {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+.certificado__dados > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: baseline;
+}
+
+.certificado__dados dt {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.certificado__dados dd {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   FICHA — pares rotulo/valor
+   --------------------------------------------------------------------------- */
+
+.ficha {
+  margin: 0;
+  max-width: var(--measure-study);
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+.ficha__linha {
+  display: grid;
+  gap: var(--space-1);
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+@media (min-width: 640px) {
+  .ficha__linha {
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+}
+
+.ficha__linha dt {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.ficha__linha dd {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   CABECALHO DE PAGINA INTERNA
+   Da presenca ao topo sem precisar de imagem.
+   --------------------------------------------------------------------------- */
+
+.cabecalho-secao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block-end: var(--space-4);
+  margin-block-end: var(--space-6);
+  border-block-end: var(--rail-width) solid var(--rail-color);
+}
+
+/* O texto do item do trilho empilha titulo e motivo. Em linha, o motivo em
+   italico se intercalava com o titulo quando ele quebrava. */
+.trilho-item__texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.trilho-item__titulo {
+  line-height: var(--leading-ui);
+}

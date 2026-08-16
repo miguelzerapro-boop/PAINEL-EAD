@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing com o Mostruário implementado — evidências</title>
+<style>
+  :root{--creme:#f6f0e7;--papel:#fffaf4;--vinho:#6d1737;--fundo:#421328;
+    --coral:#bd3542;--champ:#c69a59;--tinta:#241b1e;--sec:#6f6266;--linha:#ded3ca}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--creme);color:var(--tinta);
+    font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+  .page{max-width:1180px;margin:0 auto;padding:0 24px}
+  header.capa{background:var(--fundo);color:var(--papel);padding:56px 0 48px}
+  header.capa h1{font:600 clamp(28px,4vw,44px)/1.1 Georgia,serif;margin:0 0 12px;letter-spacing:-.02em}
+  header.capa p{margin:0;max-width:64ch;color:#e8d9dd}
+  h2{font:600 clamp(22px,2.6vw,30px)/1.2 Georgia,serif;color:var(--fundo);
+    margin:56px 0 4px;letter-spacing:-.02em}
+  h2+.sub{color:var(--sec);margin:0 0 20px;max-width:72ch}
+  h3{font:600 17px/1.3 "IBM Plex Sans",sans-serif;margin:28px 0 8px}
+  figure{margin:0 0 28px}
+  figure img{display:block;width:100%;height:auto;border:1px solid var(--linha);
+    border-radius:6px;background:var(--papel)}
+  figcaption{font-size:13.5px;color:var(--sec);margin-top:8px}
+  .duo{display:grid;gap:20px;grid-template-columns:1fr}
+  @media(min-width:820px){.duo{grid-template-columns:1fr 1fr}}
+  .tres{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .tira{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;margin:12px 0 28px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--linha);vertical-align:top}
+  th{background:var(--papel);font-weight:600}
+  .ok{color:#1f5c43;font-weight:600}
+  .nao{color:#b3261e;font-weight:600}
+  .meio{color:#7f520a;font-weight:600}
+  .aviso{border-left:3px solid var(--coral);background:var(--papel);
+    padding:14px 18px;margin:20px 0;border-radius:0 6px 6px 0}
+  video{width:100%;border:1px solid var(--linha);border-radius:6px;background:#000}
+  code{background:var(--papel);border:1px solid var(--linha);padding:1px 5px;
+    border-radius:3px;font-size:13.5px}
+  .rodape{margin:64px 0 40px;padding-top:20px;border-top:1px solid var(--linha);
+    color:var(--sec);font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="page">
+    <h1>Landing com o Mostruário implementado</h1>
+    <p>O relatório anterior apontou que a identidade central existia só na documentação:
+       zero <code>.palheta</code> e zero <code>.trilho</code> na página. Agora são
+       <strong>13 palhetas em 4 trilhos</strong>, contados no DOM. Todas as imagens são
+       renderizações reais do Chrome.</p>
+  </div>
+</header>
+
+<div class="page">
+
+<h2>1. O Mostruário existe</h2>
+<table>
+  <tr><th>Verificação</th><th>Antes</th><th>Agora</th></tr>
+  <tr><td><code>.palheta</code> no DOM</td><td class="nao">0</td><td class="ok">13</td></tr>
+  <tr><td><code>.trilho</code> no DOM</td><td class="nao">0</td><td class="ok">4</td></tr>
+  <tr><td>Menu mobile</td><td class="nao">não existia</td><td class="ok">existe e passa nos testes</td></tr>
+  <tr><td>Título opaco em</td><td class="meio">759 ms</td><td class="ok">467 ms</td></tr>
+  <tr><td>Animações infinitas</td><td class="nao">5</td><td class="ok">0</td></tr>
+  <tr><td>CLS em 3 s</td><td class="ok">0,0044</td><td class="ok">0,0074</td></tr>
+</table>
+
+<figure><img src="landing/09-mostruario-do-heroi.png" alt="Mostruário do herói">
+  <figcaption>Mostruário do herói — duas hastes, 3 + 2. Cada palheta pende de um gancho
+    com haste própria; a do momento atual fica no prumo, com borda coral e etiqueta</figcaption></figure>
+
+<figure><img src="landing/15-mostruario-360.png" alt="Mostruário em 360px">
+  <figcaption>O mesmo mostruário em 360 px — palhetas grandes, texto legível, sem quebra
+    de palavra ao meio</figcaption></figure>
+
+<h2>2. Landing completa nas quatro larguras</h2>
+<div class="duo">
+  <figure><img src="landing/01-completa-1440.png" alt="Landing 1440"><figcaption>1440</figcaption></figure>
+  <figure><img src="landing/02-completa-834.png" alt="Landing 834"><figcaption>834</figcaption></figure>
+</div>
+<div class="duo">
+  <figure><img src="landing/03-completa-390.png" alt="Landing 390"><figcaption>390</figcaption></figure>
+  <figure><img src="landing/04-completa-360.png" alt="Landing 360"><figcaption>360</figcaption></figure>
+</div>
+
+<h2>3. Acima da dobra</h2>
+<div class="duo">
+  <figure><img src="landing/05-dobra-1440.png" alt="Dobra 1440"><figcaption>1440 × 900</figcaption></figure>
+  <figure><img src="landing/06-dobra-834.png" alt="Dobra 834"><figcaption>834 × 1112</figcaption></figure>
+</div>
+<div class="duo">
+  <figure><img src="landing/07-dobra-390.png" alt="Dobra 390"><figcaption>390 × 844 — texto, CTA e o início do mostruário</figcaption></figure>
+  <figure><img src="landing/08-dobra-360.png" alt="Dobra 360"><figcaption>360 × 740</figcaption></figure>
+</div>
+
+<h2>4. Seções</h2>
+<figure><img src="landing/11-como-funciona.png" alt="Como funciona">
+  <figcaption><strong>Como funciona</strong> — não é mais uma grade de três colunas iguais:
+    são três palhetas no mesmo trilho, com a etapa 01 em destaque</figcaption></figure>
+<figure><img src="landing/12-momentos.png" alt="Momentos">
+  <figcaption><strong>Momentos</strong> — composição assimétrica: texto numa coluna estreita,
+    mostruário ocupando a área maior. Antes as linhas usavam 350 px de 1190</figcaption></figure>
+<figure><img src="landing/10-faixa-jeito-comum-x-aqui.png" alt="Faixa de marca">
+  <figcaption>Faixa &ldquo;O jeito comum × Aqui&rdquo;</figcaption></figure>
+<figure><img src="landing/13-bancada-vaga-de-foto.png" alt="Bancada com vaga de foto">
+  <figcaption>Bancada — a vaga de foto não parece mais erro</figcaption></figure>
+<figure><img src="landing/14-cta-final.png" alt="CTA final"><figcaption>Fechamento</figcaption></figure>
+
+<h2>5. Menu mobile</h2>
+<div class="duo">
+  <figure><img src="landing/16-menu-mobile-fechado.png" alt="Cabeçalho mobile fechado">
+    <figcaption>Fechado — marca, CTA e botão de menu</figcaption></figure>
+  <figure><img src="landing/17-menu-mobile-aberto.png" alt="Menu mobile aberto">
+    <figcaption>Aberto</figcaption></figure>
+</div>
+<table>
+  <tr><th>Requisito</th><th>Resultado</th></tr>
+  <tr><td><code>aria-expanded</code> alterna</td><td class="ok">false → true</td></tr>
+  <tr><td>Escape fecha</td><td class="ok">sim</td></tr>
+  <tr><td>Foco volta ao botão</td><td class="ok">sim</td></tr>
+  <tr><td>Foco entra no painel ao abrir</td><td class="ok">sim</td></tr>
+  <tr><td>Rolagem de fundo travada</td><td class="ok">sim, e destravada ao fechar</td></tr>
+  <tr><td>Fecha ao escolher item</td><td class="ok">sim</td></tr>
+  <tr><td>Rolagem horizontal</td><td class="ok">nenhuma em 360 px</td></tr>
+  <tr><td>&ldquo;Cursos&rdquo; só com curso publicado</td><td class="ok">sim — hoje está oculto</td></tr>
+</table>
+
+<h2>6. Estados</h2>
+<div class="duo">
+  <figure><img src="landing/18-foco-cta.png" alt="Foco no CTA">
+    <figcaption>Foco por teclado, alcançado no 6º Tab</figcaption></figure>
+  <figure><img src="landing/20-vaga-foto-revisao.png" alt="Vaga de foto em revisão">
+    <figcaption>Vaga de foto com <code>?revisao=1</code> — briefing de produção completo</figcaption></figure>
+</div>
+<figure><img src="landing/19-reducao-movimento-1440.png" alt="Com redução de movimento">
+  <figcaption><code>prefers-reduced-motion: reduce</code> — 300 ms após o load,
+    0 elementos abaixo de opacidade 1, incluindo trilhos e palhetas</figcaption></figure>
+
+<h2>7. Movimento</h2>
+<div class="duo">
+  <figure><video controls preload="metadata" src="animacoes/01-entrada-heroi.webm"></video>
+    <figcaption>Entrada do herói e do mostruário</figcaption></figure>
+  <figure><video controls preload="metadata" src="animacoes/03-rolagem-etapas-e-momentos.webm"></video>
+    <figcaption>Rolagem — trilhos se desenhando, palhetas pendurando</figcaption></figure>
+</div>
+<div class="duo">
+  <figure><video controls preload="metadata" src="animacoes/04-hover-cta-e-momento.webm"></video>
+    <figcaption>Hover no CTA e numa palheta</figcaption></figure>
+  <figure><video controls preload="metadata" src="animacoes/05-reducao-de-movimento.webm"></video>
+    <figcaption>Com redução de movimento</figcaption></figure>
+</div>
+
+<h3>Brilho de laca — posições sucessivas</h3>
+<div class="tira">
+  <figure><img src="animacoes/laca/pos-000.png" alt="0"><figcaption>0%</figcaption></figure>
+  <figure><img src="animacoes/laca/pos-120.png" alt="120"><figcaption>120%</figcaption></figure>
+  <figure><img src="animacoes/laca/pos-180.png" alt="180"><figcaption>180%</figcaption></figure>
+  <figure><img src="animacoes/laca/pos-240.png" alt="240"><figcaption>240%</figcaption></figure>
+  <figure><img src="animacoes/laca/pos-300.png" alt="300"><figcaption>300%</figcaption></figure>
+  <figure><img src="animacoes/laca/repouso.png" alt="repouso"><figcaption>repouso real</figcaption></figure>
+</div>
+<p>Uma passada na primeira carga, uma a cada hover, nada sob redução de movimento.
+   Zero animações infinitas na página.</p>
+
+<h3>Por que o brilho não aparecia</h3>
+<div class="tres">
+  <figure><img src="animacoes/laca-diagnostico/A-sem-a-faixa.png" alt="A"><figcaption>A — sem a faixa</figcaption></figure>
+  <figure><img src="animacoes/laca-diagnostico/B-faixa-branca-zindex--1.png" alt="B"><figcaption>B — branca, z-index −1</figcaption></figure>
+  <figure><img src="animacoes/laca-diagnostico/C-faixa-branca-zindex-1.png" alt="C"><figcaption>C — branca, z-index 1</figcaption></figure>
+</div>
+<p>B e C idênticos: a profundidade nunca foi o problema. O degradê ia de transparente ao
+   pico em 8% da largura — um fio, não um brilho.</p>
+
+<h2>8. Antes × depois</h2>
+<div class="aviso">
+  O projeto não é repositório git e a captura imediatamente anterior à primeira revisão foi
+  sobrescrita pelo próprio script. As comparações abaixo estão rotuladas pelo que realmente são.
+</div>
+<div class="duo">
+  <figure><img src="antes/landing-1440-2026-08-01.png" alt="Antes">
+    <figcaption>01/08/2026 — a home era um espaço reservado</figcaption></figure>
+  <figure><img src="landing/05-dobra-1440.png" alt="Depois">
+    <figcaption>Agora — posicionamento, mostruário e CTA</figcaption></figure>
+</div>
+<div class="duo">
+  <figure><img src="landing/21-ab-paleta-ANTIGA.png" alt="Paleta antiga">
+    <figcaption>A/B só de paleta — antiga. <em>AQUI</em> em cereja sobre vinho, quase ilegível</figcaption></figure>
+  <figure><img src="landing/22-ab-paleta-ATUAL.png" alt="Paleta atual">
+    <figcaption>A/B só de paleta — atual. <em>AQUI</em> em champagne, 5,40:1</figcaption></figure>
+</div>
+
+<div class="rodape">
+  Gerado por <code>scripts/evidencia-landing.mjs</code>,
+  <code>scripts/evidencia-animacoes.mjs</code> e <code>scripts/evidencia-laca.mjs</code>
+  contra o build de produção em <code>localhost:5900</code>.
+</div>
+
+</div>
+</body>
+</html>

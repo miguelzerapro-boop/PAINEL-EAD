@@ -1,0 +1,349 @@
+{
+  "resultados": [
+    {
+      "url": "/",
+      "nome": "Landing",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 14131,
+      "destino": "/",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/diagnostico",
+      "nome": "Quiz — abertura",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 14074,
+      "destino": "/diagnostico",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Diagnóstico · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/diagnostico/resultado",
+      "nome": "Quiz — resultado (sem token)",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 7085,
+      "destino": "/diagnostico/resultado",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Seu diagnóstico · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/cursos",
+      "nome": "Catálogo",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 21133,
+      "destino": "/cursos",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Cursos · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/entrar",
+      "nome": "Login",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 7050,
+      "destino": "/entrar",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Entrar · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/termos",
+      "nome": "Termos",
+      "grupo": "legal",
+      "status": 200,
+      "ms": 14129,
+      "destino": "/termos",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Termos de uso · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/privacidade",
+      "nome": "Privacidade",
+      "grupo": "legal",
+      "status": 200,
+      "ms": 14106,
+      "destino": "/privacidade",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Política de privacidade · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/reembolso",
+      "nome": "Reembolso",
+      "grupo": "legal",
+      "status": 200,
+      "ms": 16707,
+      "destino": "/reembolso",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Política de reembolso · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/cursos",
+        "/termos",
+        "/privacidade"
+      ]
+    },
+    {
+      "url": "/suporte",
+      "nome": "Suporte",
+      "grupo": "legal",
+      "status": 200,
+      "ms": 14096,
+      "destino": "/suporte",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Suporte · Escola de unhas",
+      "erroConsole": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico",
+        "/aluna"
+      ]
+    },
+    {
+      "url": "/obrigado",
+      "nome": "Obrigado (pós-compra)",
+      "grupo": "publica",
+      "status": 200,
+      "ms": 7065,
+      "destino": "/obrigado",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Inscrição recebida · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/checkout/oferta-inexistente",
+      "nome": "Checkout — oferta inexistente",
+      "grupo": "borda",
+      "status": 404,
+      "ms": 7103,
+      "destino": "/checkout/oferta-inexistente",
+      "redirecionou": false,
+      "estado": "VAZIA",
+      "titulo": "Escola de unhas",
+      "erroConsole": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "url": "/cursos/curso-inexistente",
+      "nome": "Curso inexistente",
+      "grupo": "borda",
+      "status": 404,
+      "ms": 7064,
+      "destino": "/cursos/curso-inexistente",
+      "redirecionou": false,
+      "estado": "VAZIA",
+      "titulo": "Escola de unhas",
+      "erroConsole": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "url": "/preview/chave-invalida",
+      "nome": "Preview — token inválido",
+      "grupo": "borda",
+      "status": 200,
+      "ms": 26,
+      "destino": "/preview/chave-invalida",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Pré-visualização · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": []
+    },
+    {
+      "url": "/rota-que-nao-existe",
+      "nome": "404",
+      "grupo": "borda",
+      "status": 404,
+      "ms": 20,
+      "destino": "/rota-que-nao-existe",
+      "redirecionou": false,
+      "estado": "ERRO",
+      "titulo": "Escola de unhas",
+      "erroConsole": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "url": "/admin",
+      "nome": "Admin (visitante)",
+      "grupo": "protegida",
+      "status": 200,
+      "ms": 7066,
+      "destino": "/entrar?proximo=%2Fadmin",
+      "redirecionou": true,
+      "estado": "REDIRECIONA",
+      "titulo": "Entrar · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/admin/formacao",
+      "nome": "Admin formação (visitante)",
+      "grupo": "protegida",
+      "status": 200,
+      "ms": 7069,
+      "destino": "/entrar?proximo=%2Fadmin%2Fformacao",
+      "redirecionou": true,
+      "estado": "REDIRECIONA",
+      "titulo": "Entrar · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/aluna",
+      "nome": "Área da aluna (visitante)",
+      "grupo": "protegida",
+      "status": 200,
+      "ms": 7061,
+      "destino": "/entrar?proximo=%2Faluna",
+      "redirecionou": true,
+      "estado": "REDIRECIONA",
+      "titulo": "Entrar · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/aluna/cursos",
+      "nome": "Meus cursos (visitante)",
+      "grupo": "protegida",
+      "status": 200,
+      "ms": 7087,
+      "destino": "/entrar?proximo=%2Faluna%2Fcursos",
+      "redirecionou": true,
+      "estado": "REDIRECIONA",
+      "titulo": "Entrar · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/",
+        "/#como-funciona",
+        "/entrar",
+        "/diagnostico"
+      ]
+    },
+    {
+      "url": "/estilo",
+      "nome": "Mostruário",
+      "grupo": "interna",
+      "status": 200,
+      "ms": 24,
+      "destino": "/estilo",
+      "redirecionou": false,
+      "estado": "OK",
+      "titulo": "Referência do design system · Escola de unhas",
+      "erroConsole": [],
+      "linksInternos": [
+        "/estilo"
+      ]
+    }
+  ],
+  "problemas": [],
+  "destinosQuebrados": []
+}

@@ -1,0 +1,376 @@
+/* ===========================================================================
+   LANDING
+   Porta de entrada. Assimétrica, com uma tese visual: o título grande em
+   Fraunces contra a foto, e uma só ação em coral. Sem onda, sem gradiente
+   decorativo, sem mockup flutuando.
+   =========================================================================== */
+
+.capa {
+  position: relative;
+  padding-block: clamp(3rem, 1.5rem + 7vw, 7rem) clamp(3rem, 2rem + 5vw, 6rem);
+  overflow: hidden;
+}
+
+/* Um vinco de champagne atravessando a abertura: a marca do trilho, no fundo,
+   sem virar ornamento. Some no celular, onde só atrapalharia. */
+.capa::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: -22%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    118deg,
+    transparent 0 48%,
+    color-mix(in srgb, var(--brand-accent) 16%, transparent) 48% calc(48% + 1px),
+    transparent calc(48% + 1px) 100%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .capa::after {
+    display: none;
+  }
+}
+
+.capa__grade {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .capa__grade {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--space-8);
+    align-items: center;
+  }
+}
+
+.capa__grade > * {
+  min-width: 0;
+}
+
+.capa__texto > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.capa__chapeu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--brand-primary);
+}
+
+/* Um traço curto antes do chapéu: o começo do trilho. */
+.capa__chapeu::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  border-radius: var(--radius-rail);
+  background: var(--brand-action);
+  flex: none;
+}
+
+/* Sobre fundo escuro o vinho some (1,3:1). Ali o chapéu vira champagne. */
+.faixa-escura .capa__chapeu,
+.faixa-marca .capa__chapeu {
+  color: var(--brand-accent);
+}
+
+.faixa-escura .capa__chapeu::before,
+.faixa-marca .capa__chapeu::before {
+  background: var(--brand-accent);
+}
+
+.capa__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-display);
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 40, 'WONK' 0;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--brand-deep);
+  max-width: 16ch;
+  text-wrap: balance;
+}
+
+/* A segunda linha é a promessa. Ela ganha o vinho e o itálico — uma vez só. */
+.capa__titulo em {
+  font-style: italic;
+  color: var(--brand-primary);
+}
+
+.capa__apoio {
+  font-size: var(--size-body-lg);
+  color: var(--text-secondary);
+  max-width: 48ch;
+  line-height: 1.55;
+}
+
+.capa__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-block-start: var(--space-6) !important;
+}
+
+.capa__nota {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.botao--grande {
+  min-height: 3.5rem;
+  padding-inline: var(--space-7);
+  font-size: var(--size-body-lg);
+}
+
+.capa__imagem {
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   FAIXA DE MARCA — o argumento central
+   Vinho cheio. É o bloco que rompe o creme e fixa a diferença na memória.
+   --------------------------------------------------------------------------- */
+
+.faixa-marca {
+  background: var(--surface-brand);
+  color: var(--text-on-dark);
+  padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+}
+
+.contraste {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .contraste {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+.contraste > * {
+  min-width: 0;
+}
+
+.contraste__divisor {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .contraste__divisor {
+    display: block;
+    width: 1px;
+    align-self: stretch;
+    background: color-mix(in srgb, var(--text-on-dark) 22%, transparent);
+  }
+}
+
+.contraste__rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: color-mix(in srgb, var(--text-on-dark) 62%, transparent);
+}
+
+.contraste__lado[data-tom='depois'] .contraste__rotulo {
+  color: var(--brand-accent);
+}
+
+.contraste__frase {
+  margin-block-start: var(--space-3);
+  font-size: var(--size-h3);
+  line-height: 1.35;
+  max-width: 34ch;
+  color: color-mix(in srgb, var(--text-on-dark) 80%, transparent);
+}
+
+.contraste__lado[data-tom='depois'] .contraste__frase {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-on-dark);
+}
+
+/* ---------------------------------------------------------------------------
+   COMO FUNCIONA
+   --------------------------------------------------------------------------- */
+
+.etapas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+  margin-block-start: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .etapas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-7);
+  }
+}
+
+.etapas > * {
+  min-width: 0;
+}
+
+.etapa-numerada {
+  padding-block-start: var(--space-4);
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+.etapa-numerada__numero {
+  color: var(--brand-action-texto);
+  font-size: var(--size-body);
+  font-weight: 500;
+}
+
+.etapa-numerada__titulo {
+  font-size: var(--size-h3);
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-block-start: var(--space-3);
+  color: var(--brand-deep);
+}
+
+.etapa-numerada__texto {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+  max-width: 36ch;
+}
+
+/* ---------------------------------------------------------------------------
+   MOMENTOS — o trilho da jornada
+   --------------------------------------------------------------------------- */
+
+.momentos__topo {
+  max-width: 40ch;
+}
+
+.momentos__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  line-height: 1.12;
+  margin-block-start: var(--space-3);
+  text-wrap: balance;
+}
+
+.momentos__titulo em {
+  font-style: italic;
+  color: var(--brand-accent);
+}
+
+.momentos__apoio {
+  margin-block-start: var(--space-3);
+  color: color-mix(in srgb, var(--text-on-dark) 70%, transparent);
+}
+
+.momentos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  margin-block-start: var(--space-7);
+}
+
+.momento {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-5);
+  border-block-start: 1px solid color-mix(in srgb, var(--text-on-dark) 16%, transparent);
+  transition: padding-inline-start var(--duration-base) var(--ease-suave);
+}
+
+.momento:last-child {
+  border-block-end: 1px solid color-mix(in srgb, var(--text-on-dark) 16%, transparent);
+}
+
+/* Ao passar o mouse, a linha avança — o gesto de "seguir o trilho". */
+.momento:hover {
+  padding-inline-start: var(--space-3);
+}
+
+.momento__indice {
+  color: var(--brand-accent);
+}
+
+.momento__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.momento__texto {
+  grid-column: 2;
+  color: color-mix(in srgb, var(--text-on-dark) 72%, transparent);
+  font-size: var(--size-small);
+}
+
+.momentos__acao {
+  margin-block-start: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------------
+   FECHAMENTO
+   --------------------------------------------------------------------------- */
+
+.fechamento {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-7) var(--space-6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-soft);
+  box-shadow: var(--shadow-palheta);
+}
+
+.fechamento > * {
+  min-width: 0;
+}
+
+.fechamento__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  line-height: 1.12;
+  max-width: 20ch;
+  color: var(--brand-deep);
+}
+
+.fechamento__titulo em {
+  font-style: italic;
+  color: var(--brand-primary);
+}
+
+.fechamento__texto {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+  max-width: 46ch;
+}

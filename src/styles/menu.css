@@ -1,0 +1,457 @@
+/* ===========================================================================
+   MENU LATERAL — apoio, não protagonista
+   Mais estreito, mais quieto, recolhível. O trilho continua, com 60% do
+   contraste anterior: organiza sem competir com o conteúdo.
+   =========================================================================== */
+
+/*
+ * Flex, não grid.
+ *
+ * Com `grid-template-columns: auto minmax(0,1fr)` a coluna do menu encolhia
+ * abaixo da largura declarada quando o espaço apertava — o menu de 216px
+ * chegou a renderizar com 166px e os rótulos quebraram letra por letra
+ * (flagrado na captura de tela em 1440px). Um item flex com `flex: 0 0 auto`
+ * respeita a largura e não encolhe.
+ */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--surface-main);
+}
+
+@media (min-width: 1024px) {
+  .app-shell {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.app-shell__conteudo {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* --- Barra superior (celular) --------------------------------------------- */
+
+.barra-mobile {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3.25rem;
+  padding-inline: var(--space-3) var(--space-4);
+  background: var(--menu-fundo);
+  color: var(--menu-texto);
+}
+
+@media (min-width: 1024px) {
+  .barra-mobile {
+    display: none;
+  }
+}
+
+.barra-mobile__botao {
+  display: grid;
+  place-items: center;
+  width: var(--target-min);
+  height: var(--target-min);
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+.barra-mobile__traco,
+.barra-mobile__traco::before,
+.barra-mobile__traco::after {
+  display: block;
+  width: 1.125rem;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: var(--radius-rail);
+}
+
+.barra-mobile__traco {
+  position: relative;
+}
+
+.barra-mobile__traco::before,
+.barra-mobile__traco::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.barra-mobile__traco::before {
+  top: -5px;
+}
+.barra-mobile__traco::after {
+  top: 5px;
+  width: 0.7rem;
+}
+
+.barra-mobile__titulo {
+  font-size: var(--size-small);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* --- Cortina ---------------------------------------------------------------- */
+
+.menu__cortina {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  border: 0;
+  background: rgba(24, 22, 21, 0.5);
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .menu__cortina {
+    display: none;
+  }
+}
+
+/* --- O menu ----------------------------------------------------------------- */
+
+.menu {
+  --menu-largura: 13.5rem;
+  --menu-largura-recolhida: 4.25rem;
+  --menu-rail-x: 1.0625rem;
+
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 50;
+  width: min(var(--menu-largura), 80vw);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-3);
+  background: var(--menu-fundo);
+  color: var(--menu-texto);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  translate: -100% 0;
+  transition: translate var(--duration-base) var(--ease-out);
+}
+
+.menu[data-aberto='true'] {
+  translate: 0 0;
+}
+
+@media (min-width: 1024px) {
+  .menu {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    /* `flex: 0 0 auto` + width fixa: não encolhe sob pressão de layout. */
+    flex: 0 0 auto;
+    width: var(--menu-largura);
+    translate: none;
+    transition: width var(--duration-base) var(--ease-out);
+  }
+
+  .menu[data-recolhido='true'] {
+    width: var(--menu-largura-recolhida);
+    padding-inline: var(--space-2);
+    --menu-rail-x: 1.4375rem;
+  }
+}
+
+/* --- Topo ------------------------------------------------------------------- */
+
+.menu__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 1.75rem;
+  padding-inline-start: var(--space-2);
+}
+
+/* Sans, não display: o menu não precisa de voz de título. */
+.menu__titulo {
+  font-size: var(--size-small);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu__recolher {
+  display: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-control);
+  color: color-mix(in srgb, var(--menu-texto) 55%, transparent);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.menu__recolher:hover {
+  color: var(--menu-texto);
+  background: color-mix(in srgb, var(--menu-texto) 10%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .menu__recolher {
+    display: grid;
+  }
+}
+
+.menu[data-recolhido='true'] .menu__titulo {
+  display: none;
+}
+
+.menu[data-recolhido='true'] .menu__topo {
+  justify-content: center;
+  padding-inline-start: 0;
+}
+
+.menu[data-recolhido='true'] .menu__recolher svg {
+  rotate: 180deg;
+}
+
+/* --- Corpo ------------------------------------------------------------------ */
+
+.menu__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  flex: 1;
+}
+
+.menu__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.menu__rotulo {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--menu-texto) 42%, transparent);
+  padding-inline-start: var(--space-2);
+}
+
+.menu[data-recolhido='true'] .menu__rotulo {
+  /* Vira um filete: o agrupamento continua legível sem texto. */
+  height: 1px;
+  padding: 0;
+  margin-inline: var(--space-3);
+  overflow: hidden;
+  color: transparent;
+  background: color-mix(in srgb, var(--menu-texto) 14%, transparent);
+}
+
+/* --- O trilho ---------------------------------------------------------------
+   Fio vertical discreto. Antes tinha 22% de contraste e puxava o olho; agora
+   tem 12% e some quando o menu está recolhido.
+   --------------------------------------------------------------------------- */
+
+.menu__trilho {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.menu__trilho::before {
+  content: '';
+  position: absolute;
+  inset-block: 1rem;
+  inset-inline-start: var(--menu-rail-x);
+  width: 1px;
+  background: color-mix(in srgb, var(--menu-texto) 12%, transparent);
+}
+
+.menu[data-recolhido='true'] .menu__trilho::before {
+  display: none;
+}
+
+.menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.375rem;
+  padding: var(--space-2);
+  border-radius: var(--radius-control);
+  color: color-mix(in srgb, var(--menu-texto) 74%, transparent);
+  text-decoration: none;
+  font-size: var(--size-small);
+  line-height: 1.3;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.menu__icone {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: 0 0 auto;
+  /* O ícone fica exatamente sobre o trilho: é ele que "prende" o item. */
+  position: relative;
+  z-index: 1;
+}
+
+/* Marca discreta atrás do ícone, para o trilho não passar por cima. */
+.menu__icone::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--radius-rail);
+  background: var(--menu-fundo);
+  z-index: -1;
+}
+
+.menu__texto {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu[data-recolhido='true'] .menu__texto {
+  display: none;
+}
+
+.menu[data-recolhido='true'] .menu__item {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.menu__item:hover {
+  background: color-mix(in srgb, var(--menu-texto) 7%, transparent);
+  color: var(--menu-texto);
+}
+
+.menu__item[data-ativo='true'] {
+  background: color-mix(in srgb, var(--menu-texto) 11%, transparent);
+  color: var(--menu-texto);
+  font-weight: 600;
+}
+
+/* O item ativo se anuncia por um filete na cor de ação, não por preencher. */
+.menu__item[data-ativo='true']::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 2px;
+  height: 1.125rem;
+  border-radius: var(--radius-rail);
+  background: var(--brand-accent);
+}
+
+.menu__item[data-ativo='true'] .menu__icone {
+  color: var(--brand-accent);
+}
+
+/* --- Badge ------------------------------------------------------------------
+   Neutro. O vermelho saturado transformava "3 cursos" em alarme.
+   --------------------------------------------------------------------------- */
+
+.menu__badge {
+  flex: 0 0 auto;
+  min-width: 1.25rem;
+  padding: 0.05rem 0.3rem;
+  text-align: center;
+  border-radius: var(--radius-rail);
+  background: color-mix(in srgb, var(--menu-texto) 14%, transparent);
+  color: color-mix(in srgb, var(--menu-texto) 82%, transparent);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+.menu[data-recolhido='true'] .menu__badge {
+  position: absolute;
+  top: 0.25rem;
+  inset-inline-end: 0.5rem;
+  min-width: 0.9rem;
+  padding: 0 0.2rem;
+  font-size: 0.625rem;
+}
+
+/* --- Rodapé ------------------------------------------------------------------ */
+
+.menu__rodape {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid color-mix(in srgb, var(--menu-texto) 12%, transparent);
+}
+
+/* Progresso como fio, não como bloco. */
+.menu__progresso {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-inline: var(--space-2);
+}
+
+.menu__progresso-rotulo {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--menu-texto) 42%, transparent);
+}
+
+.menu__progresso-valor {
+  font-size: 0.6875rem;
+  color: color-mix(in srgb, var(--menu-texto) 70%, transparent);
+}
+
+.menu__progresso-trilha {
+  grid-column: 1 / -1;
+  height: 3px;
+  border-radius: var(--radius-rail);
+  background: color-mix(in srgb, var(--menu-texto) 14%, transparent);
+  overflow: hidden;
+}
+
+.menu__progresso-feito {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-rail);
+  background: var(--brand-accent);
+}
+
+.menu[data-recolhido='true'] .menu__progresso-rotulo,
+.menu[data-recolhido='true'] .menu__progresso-valor,
+.menu[data-recolhido='true'] .menu__extra {
+  display: none;
+}
+
+.menu__extra {
+  padding-inline: var(--space-2);
+  font-size: var(--size-small);
+  color: color-mix(in srgb, var(--menu-texto) 62%, transparent);
+}
+
+.menu__extra a {
+  color: inherit;
+}
+
+.menu__extra a:hover {
+  color: var(--menu-texto);
+}

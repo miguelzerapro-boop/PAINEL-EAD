@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Bancada de trabalho com instrumentos de manicure">
+  <title>Bancada de trabalho</title>
+  <desc>
+    ARTE TEMPORÁRIA DE DEMONSTRAÇÃO.
+    Bancada com vidros de esmalte, alicate, lixa e palito. Sem pessoa
+    identificável. Substituível pelo CMS.
+  </desc>
+
+  <defs>
+    <linearGradient id="b-fundo" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#260638"/>
+      <stop offset="58%"  stop-color="#170524"/>
+      <stop offset="100%" stop-color="#0B0610"/>
+    </linearGradient>
+
+    <linearGradient id="b-tampo" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#3B075A"/>
+      <stop offset="100%" stop-color="#1B0729"/>
+    </linearGradient>
+
+    <linearGradient id="b-vidro1" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%"   stop-color="#EE5BFF"/>
+      <stop offset="60%"  stop-color="#C026D3"/>
+      <stop offset="100%" stop-color="#581C87"/>
+    </linearGradient>
+
+    <linearGradient id="b-vidro2" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%"   stop-color="#D946EF"/>
+      <stop offset="70%"  stop-color="#7E22CE"/>
+      <stop offset="100%" stop-color="#3B075A"/>
+    </linearGradient>
+
+    <linearGradient id="b-metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#FCF9FF"/>
+      <stop offset="40%"  stop-color="#B48FCC"/>
+      <stop offset="100%" stop-color="#5A3B6E"/>
+    </linearGradient>
+
+    <filter id="b-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="46"/>
+    </filter>
+
+    <filter id="b-sombra" x="-40%" y="-40%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#0B0610" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#b-fundo)"/>
+
+  <g filter="url(#b-blur)" opacity="0.5">
+    <circle cx="880" cy="200" r="180" fill="#C026D3" opacity="0.4"/>
+    <circle cx="240" cy="300" r="150" fill="#7E22CE" opacity="0.35"/>
+  </g>
+
+  <!-- Tampo da bancada, em perspectiva rasa. -->
+  <path d="M0,640 L1200,590 L1200,900 L0,900 Z" fill="url(#b-tampo)"/>
+  <path d="M0,640 L1200,590" stroke="#EE5BFF" stroke-width="2" opacity="0.35"/>
+
+  <!-- ============ Vidros de esmalte ============ -->
+  <g filter="url(#b-sombra)">
+    <!-- Vidro alto -->
+    <g transform="translate(330 640)">
+      <rect x="-56" y="-150" width="112" height="150" rx="14" fill="url(#b-vidro1)"/>
+      <rect x="-56" y="-150" width="34" height="150" rx="14" fill="#FFFFFF" opacity="0.22"/>
+      <rect x="-30" y="-206" width="60" height="58" rx="8" fill="#1B0729"/>
+      <rect x="-30" y="-206" width="18" height="58" rx="8" fill="#FFFFFF" opacity="0.14"/>
+      <rect x="-40" y="-64" width="80" height="4" rx="2" fill="#FFFFFF" opacity="0.25"/>
+    </g>
+
+    <!-- Vidro baixo, atrás -->
+    <g transform="translate(470 630)">
+      <rect x="-48" y="-116" width="96" height="116" rx="12" fill="url(#b-vidro2)"/>
+      <rect x="-48" y="-116" width="28" height="116" rx="12" fill="#FFFFFF" opacity="0.2"/>
+      <rect x="-26" y="-164" width="52" height="50" rx="7" fill="#1B0729"/>
+    </g>
+
+    <!-- Vidro deitado, aberto -->
+    <g transform="translate(700 656) rotate(-8)">
+      <rect x="-44" y="-88" width="88" height="88" rx="11" fill="url(#b-vidro1)" opacity="0.92"/>
+      <rect x="-44" y="-88" width="26" height="88" rx="11" fill="#FFFFFF" opacity="0.2"/>
+      <!-- pincel apoiado -->
+      <g transform="translate(70 -30) rotate(58)">
+        <rect x="-8" y="-96" width="16" height="100" rx="8" fill="url(#b-metal)"/>
+        <path d="M-9,4 C-9,38 -5,60 0,70 C5,60 9,38 9,4 Z" fill="#3B075A"/>
+        <path d="M-6,20 C-6,46 -3,62 0,68 C3,62 6,46 6,20 Z" fill="url(#b-vidro1)"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- ============ Alicate de cutícula ============ -->
+  <g transform="translate(920 700) rotate(-14)" filter="url(#b-sombra)">
+    <path d="M-120,-10 C-70,-30 -20,-26 10,-8 L54,14 L46,30 L4,10
+             C-22,-2 -66,-6 -112,10 Z" fill="url(#b-metal)"/>
+    <path d="M-120,26 C-70,46 -20,42 10,24 L54,2 L46,-14 L4,6
+             C-22,18 -66,22 -112,6 Z" fill="url(#b-metal)" opacity="0.85"/>
+    <circle cx="-4" cy="8" r="9" fill="#3B075A"/>
+  </g>
+
+  <!-- ============ Lixa ============ -->
+  <g transform="translate(560 760) rotate(6)" filter="url(#b-sombra)">
+    <rect x="-160" y="-22" width="320" height="44" rx="22" fill="#2A0F3E"/>
+    <rect x="-150" y="-14" width="300" height="28" rx="14" fill="#B48FCC" opacity="0.55"/>
+    <g stroke="#FCF9FF" stroke-opacity="0.22" stroke-width="1.5">
+      <path d="M-130,-8 L-130,8 M-100,-8 L-100,8 M-70,-8 L-70,8 M-40,-8 L-40,8
+               M-10,-8 L-10,8 M20,-8 L20,8 M50,-8 L50,8 M80,-8 L80,8 M110,-8 L110,8"/>
+    </g>
+  </g>
+
+  <!-- ============ Palito ============ -->
+  <g transform="translate(240 780) rotate(-24)" filter="url(#b-sombra)">
+    <path d="M-140,0 L120,-7 L140,0 L120,7 Z" fill="#D8BFA8" opacity="0.9"/>
+  </g>
+
+  <!-- Fio de luz no tampo. -->
+  <path d="M-20,700 C300,660 700,690 1220,640" stroke="#EE5BFF" stroke-width="2"
+        fill="none" opacity="0.2"/>
+
+  <g fill="#EE5BFF">
+    <circle cx="1080" cy="520" r="3" opacity="0.6"/>
+    <circle cx="140" cy="480" r="2.5" opacity="0.5"/>
+  </g>
+</svg>

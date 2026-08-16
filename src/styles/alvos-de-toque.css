@@ -1,0 +1,198 @@
+/* ===========================================================================
+   ALVOS DE TOQUE
+   Importado por último de propósito: estas regras existem para VENCER as
+   dimensões declaradas antes, e só tratam de área clicável.
+
+   O PROBLEMA ENCONTRADO
+
+   A auditoria acusava "1 alvo < 32px" em toda página, inclusive em telas que
+   ninguém havia tocado (/entrar, 404). Sinal de elemento global. O
+   diagnóstico (`node scripts/diag-alvos-toque.mjs`) apontou seis:
+
+     18px  a "Ver o site →"        rodapé do menu do painel
+     21px  a "← design system"     faixa do mostruário (só amostra)
+     22px  a "Como funciona"       navegação do cabeçalho público
+     22px  a "Entrar"              navegação do cabeçalho público
+     27px  a.topo__marca           nome do site no cabeçalho
+     28px  button.menu__recolher   recolher a barra lateral
+
+   Mais 20 itens entre 32 e 43px, quase todos `.menu__item`.
+
+   A META
+
+   44×44 px em tudo que é botão, ícone, item de menu ou ação administrativa.
+   Link dentro de parágrafo fica de fora: inflar a caixa de um link em texto
+   corrido quebra a entrelinha e piora a leitura — para esses, o alvo cresce
+   pelo espaçamento vertical do próprio parágrafo.
+
+   COMO, SEM SACRIFICAR O LAYOUT
+
+   Onde o tamanho visual pode crescer, cresce (padding e min-height). Onde ele
+   NÃO pode — o botão de recolher é um quadradinho de 28px por desenho —, a
+   área de toque é expandida por um pseudo-elemento invisível centrado. O
+   dedo ganha 44px; o olho continua vendo 28px; o layout não muda um pixel.
+   =========================================================================== */
+
+:root {
+  /* Recomendação de alvo confortável em toque. */
+  --alvo-confortavel: 2.75rem; /* 44px */
+}
+
+/* ---------------------------------------------------------------------------
+   Expansor de área — a técnica usada onde o tamanho visual é intocável.
+   --------------------------------------------------------------------------- */
+
+.alvo-expandido {
+  position: relative;
+}
+
+.alvo-expandido::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(100%, var(--alvo-confortavel));
+  height: max(100%, var(--alvo-confortavel));
+  /* Invisível e sem afetar o fluxo: só recebe o toque. */
+}
+
+/* ---------------------------------------------------------------------------
+   Cabeçalho público — o achado que aparecia em toda página
+   --------------------------------------------------------------------------- */
+
+.topo__nav a,
+.topo__marca {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-confortavel);
+}
+
+/* O botão do menu mobile já é grande; garantir não custa nada. */
+.barra-mobile__botao {
+  min-width: var(--alvo-confortavel);
+  min-height: var(--alvo-confortavel);
+}
+
+/* ---------------------------------------------------------------------------
+   Barra lateral — aluna e painel
+   --------------------------------------------------------------------------- */
+
+.menu__item {
+  /* Era 2.375rem (38px). Oito itens ganham 6px cada: cabe. */
+  min-height: var(--alvo-confortavel);
+}
+
+/*
+   Recolher a barra: 28×28 é o desenho e assim fica. O toque passa a 44×44
+   pelo expansor — sem deslocar o título ao lado.
+*/
+.menu__recolher {
+  position: relative;
+}
+
+.menu__recolher::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--alvo-confortavel);
+  height: var(--alvo-confortavel);
+}
+
+/* "Ver o site →" no rodapé do painel: 18px era o pior caso da auditoria. */
+.menu__extra a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-confortavel);
+}
+
+/* ---------------------------------------------------------------------------
+   Ações do painel de formação
+   --------------------------------------------------------------------------- */
+
+.aula-linha__seta,
+.aula-linha__mover,
+.botao--pequeno,
+.botao--texto {
+  min-height: var(--alvo-confortavel);
+}
+
+/*
+   `.botao--pequeno` mantém a aparência compacta: o que cresce é a caixa de
+   toque, não a fonte nem o preenchimento horizontal.
+*/
+.botao--pequeno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------------------------
+   Faixa do mostruário — harness de revisão, não faz parte do site
+   --------------------------------------------------------------------------- */
+
+.mostruario-faixa a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alvo-confortavel);
+}
+
+/* ---------------------------------------------------------------------------
+   Caixa de marcar — 24×24 por padrão do navegador, pequeno demais para o dedo.
+
+   O quadrado continua com o tamanho que o desenho pede; o alvo cresce pelo
+   espaçamento ao redor, sem empurrar o texto do rótulo.
+   --------------------------------------------------------------------------- */
+
+.consentimento input[type='checkbox'],
+.campo input[type='checkbox'],
+.campo input[type='radio'] {
+  width: 1.25rem;
+  height: 1.25rem;
+  /* A margem negativa devolve o espaço visual que o padding tomaria. */
+  padding: var(--space-3);
+  margin: calc(var(--space-3) * -1);
+  margin-inline-end: 0;
+  box-sizing: content-box;
+  flex: none;
+}
+
+.consentimento {
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--alvo-confortavel);
+}
+
+/* ---------------------------------------------------------------------------
+   Link em texto corrido: NÃO recebe caixa maior.
+
+   Aumentar a altura de um link dentro de parágrafo empurra as linhas vizinhas
+   e estraga a leitura. O alvo aqui vem do espaçamento do próprio texto, que
+   já usa entrelinha 1.6.
+   --------------------------------------------------------------------------- */
+
+p a,
+li a,
+.prose a,
+.lead a,
+.campo__dica a,
+.consentimento a {
+  min-height: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Ponteiro fino (mouse) pode ter alvos menores sem prejuízo.
+   A regra acima vale para todos; esta devolve compacidade a quem usa mouse,
+   onde a precisão é alta e a densidade ajuda.
+   --------------------------------------------------------------------------- */
+
+@media (pointer: fine) {
+  .botao--pequeno,
+  .botao--texto,
+  .aula-linha__seta,
+  .aula-linha__mover {
+    min-height: 2.25rem;
+  }
+}

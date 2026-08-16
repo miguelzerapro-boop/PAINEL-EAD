@@ -1,0 +1,584 @@
+/* ===========================================================================
+   LAYOUTS
+   Composicoes de pagina. Cada uma tem densidade propria: a regra da direcao
+   escolhida proibe duas secoes seguidas com o mesmo ritmo.
+   =========================================================================== */
+
+/*
+ * Itens de grid e de flex nascem com `min-width: auto`, o que os impede de
+ * encolher abaixo do proprio conteudo minimo — e faz a coluna estourar o
+ * contêiner. Foi a causa de uma rolagem horizontal de 4px em 360px na area
+ * da aluna (ver docs/validacao/06-visual.md).
+ */
+.heroi__grade > *,
+.editorial > *,
+.vitrine > *,
+.checkout > *,
+.aluna > *,
+.aluna__blocos > *,
+.aluna__continuar > *,
+.aula > *,
+.rodape__grade > * {
+  min-width: 0;
+}
+
+/* --- Cabecalho do site ---------------------------------------------------- */
+
+/* Fundo OPACO de propósito: `backdrop-filter` sobre fundo translúcido é o
+   primeiro passo do glassmorphism, proibido no escopo — e prejudica o
+   contraste do texto quando algo colorido rola por baixo. */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface-main);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.topo__interno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 3.75rem;
+}
+
+.topo__marca {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.topo__nav {
+  display: none;
+  align-items: center;
+  gap: var(--space-5);
+  font-size: var(--size-small);
+}
+
+.topo__cta-mobile {
+  padding-inline: var(--space-4);
+  font-size: var(--size-small);
+}
+
+@media (min-width: 768px) {
+  .topo__nav {
+    display: flex;
+  }
+  .topo__cta-mobile {
+    display: none;
+  }
+}
+
+/* --- Heroi da landing: assimetrico, nunca centralizado -------------------- */
+
+.heroi {
+  padding-block: clamp(2.5rem, 1.5rem + 6vw, 5.5rem) var(--space-7);
+}
+
+.heroi__grade {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .heroi__grade {
+    grid-template-columns: 7fr 5fr;
+    align-items: end;
+    gap: var(--space-8);
+  }
+}
+
+.heroi__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 40, 'WONK' 0;
+  max-width: 14ch;
+}
+
+.heroi__apoio {
+  margin-block-start: var(--space-4);
+  max-width: var(--measure-lead);
+  font-size: var(--size-body-lg);
+  color: var(--text-secondary);
+}
+
+.heroi__trilho {
+  margin-block-start: var(--space-7);
+}
+
+/* --- Faixa invertida ------------------------------------------------------ */
+
+.faixa-escura {
+  background: var(--surface-strong);
+  color: var(--text-inverse);
+}
+
+.faixa-escura .lead,
+.faixa-escura .palheta__meta {
+  color: color-mix(in srgb, var(--text-inverse) 72%, transparent);
+}
+
+/* --- Grade editorial de duas colunas -------------------------------------- */
+
+.editorial {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .editorial {
+    grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+}
+
+.editorial__rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+  padding-block-start: 0.35em;
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+/* --- Vitrine de cursos ---------------------------------------------------- */
+
+.vitrine {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .vitrine {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .vitrine {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  /* Quebra a monotonia: o primeiro item ocupa duas colunas. */
+  .vitrine > :first-child {
+    grid-column: span 2;
+  }
+}
+
+/* --- Quiz ----------------------------------------------------------------- */
+
+.quiz {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz__corpo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding-block: var(--space-7);
+}
+
+.quiz__pergunta {
+  width: 100%;
+  max-width: var(--width-text);
+  margin-inline: auto;
+}
+
+.quiz__enunciado {
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  line-height: var(--leading-title);
+  font-weight: 600;
+  margin-block: var(--space-3) var(--space-6);
+  max-width: 18ch;
+}
+
+.quiz__opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.quiz__rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-start: var(--space-6);
+}
+
+.quiz__marcadores {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.quiz__marcador {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50% 50% 2px 2px / 40% 40% 2px 2px;
+  border: var(--rail-width) solid var(--rail-color);
+  background: transparent;
+}
+
+.quiz__marcador[data-done='true'] {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.quiz__marcador[data-current='true'] {
+  border-color: var(--brand-accent);
+  background: var(--brand-accent);
+}
+
+/* --- Formulario centrado (login, checkout, ultimo passo do quiz) ---------- */
+
+.formulario {
+  width: 100%;
+  max-width: var(--width-form);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --- Checkout ------------------------------------------------------------- */
+
+.checkout {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-7);
+}
+
+@media (min-width: 900px) {
+  .checkout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+    gap: var(--space-8);
+    align-items: start;
+  }
+}
+
+.checkout__resumo {
+  position: sticky;
+  top: 5rem;
+  padding: var(--space-5);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+}
+
+.checkout__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-block-start: var(--space-4);
+  margin-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border-subtle);
+  font-size: var(--size-h3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Area da aluna -------------------------------------------------------- */
+
+.aluna {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-6) var(--space-8);
+}
+
+.aluna__saudacao {
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+}
+
+.aluna__continuar {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface-strong);
+  color: var(--text-inverse);
+  border-radius: var(--radius-control);
+}
+
+@media (min-width: 768px) {
+  .aluna__continuar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: var(--space-6);
+  }
+}
+
+.aluna__blocos {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 900px) {
+  .aluna__blocos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Tela da aula --------------------------------------------------------- */
+
+.aula {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-5) var(--space-8);
+}
+
+@media (min-width: 1024px) {
+  .aula {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+.aula__player {
+  aspect-ratio: 16 / 9;
+  background: var(--surface-strong);
+  border-radius: var(--radius-media);
+  overflow: hidden;
+}
+
+.aula__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  margin-block-start: var(--space-5);
+}
+
+.aula__secao {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--rail-width) solid var(--rail-color);
+}
+
+.aula__secao > h2 {
+  font-family: var(--font-text);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  margin-block-end: var(--space-3);
+}
+
+.aula__lista {
+  position: sticky;
+  top: 4.5rem;
+  max-height: calc(100dvh - 6rem);
+  overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--surface-soft);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+}
+
+@media (max-width: 1023px) {
+  .aula__lista {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* --- Admin: bandeja de instrumentos --------------------------------------- */
+
+.admin {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .admin {
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+}
+
+.bandeja {
+  background: var(--brand-secondary);
+  color: var(--text-inverse);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* No celular a bandeja vira uma régua horizontal rolável, em vez de empurrar
+   o conteúdo do painel para baixo de uma lista de 18 itens. */
+@media (max-width: 899px) {
+  .bandeja {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: var(--space-3) var(--space-4);
+  }
+  .bandeja::-webkit-scrollbar {
+    display: none;
+  }
+  .bandeja__grupo {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .bandeja__rotulo {
+    padding-block-end: 0;
+    white-space: nowrap;
+  }
+  .bandeja__link {
+    white-space: nowrap;
+  }
+}
+
+.bandeja__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* 55% ficava em ~4,4:1 sobre o verde-tinta — abaixo do mínimo para texto
+   pequeno. A 72% passa de 6:1. */
+.bandeja__rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: color-mix(in srgb, var(--text-inverse) 72%, transparent);
+  padding-block-end: var(--space-2);
+}
+
+.bandeja__link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  font-size: var(--size-small);
+  min-height: var(--target-min);
+  display: flex;
+  align-items: center;
+}
+
+.bandeja__link:hover,
+.bandeja__link[aria-current='page'] {
+  background: color-mix(in srgb, var(--text-inverse) 12%, transparent);
+}
+
+.admin__conteudo {
+  padding: var(--space-6) var(--space-5) var(--space-9);
+  background: var(--surface-main);
+}
+
+.admin__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  margin-block-end: var(--space-5);
+}
+
+/* Lista do admin: linha, nao cartao. */
+.lista-admin {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.lista-admin__linha {
+  display: grid;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  border-block-end: 1px solid var(--border-subtle);
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.lista-admin__linha:last-child {
+  border-block-end: 0;
+}
+
+.lista-admin__vazia {
+  padding: var(--space-6);
+  color: var(--text-secondary);
+}
+
+/* Pre-visualizacao com troca de dispositivo */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+.preview__barra {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.preview__moldura {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  margin-inline: auto;
+  width: 100%;
+  transition: width var(--duration-base) var(--ease-out);
+  overflow: hidden;
+}
+
+.preview__moldura[data-device='tablet'] {
+  width: 48rem;
+  max-width: 100%;
+}
+
+.preview__moldura[data-device='mobile'] {
+  width: 24.375rem; /* 390px */
+  max-width: 100%;
+}
+
+.preview__quadro {
+  width: 100%;
+  height: min(70dvh, 44rem);
+  border: 0;
+}
+
+/* --- Rodape --------------------------------------------------------------- */
+
+.rodape {
+  background: var(--surface-strong);
+  color: var(--text-inverse);
+  padding-block: var(--space-7) var(--space-6);
+  margin-block-start: var(--section-y);
+}
+
+.rodape__grade {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .rodape__grade {
+    grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+    gap: var(--space-7);
+  }
+}
+
+.rodape__legal {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid color-mix(in srgb, var(--text-inverse) 18%, transparent);
+  font-size: var(--size-small);
+  color: color-mix(in srgb, var(--text-inverse) 68%, transparent);
+}
+
