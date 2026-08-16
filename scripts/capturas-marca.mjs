@@ -62,6 +62,30 @@ for (const tela of TELAS) {
     // e a assinatura sai com a métrica errada.
     await aba.evaluate(() => document.fonts.ready)
 
+    /*
+     * ACORDAR AS IMAGENS PREGUIÇOSAS.
+     *
+     * `fullPage: true` fotografa a página inteira mas NÃO rola por ela, então
+     * as imagens abaixo da dobra com `loading="lazy"` nunca são pedidas — e
+     * saem como retângulo vazio na captura. Foi o que aconteceu com a foto da
+     * bancada: o site estava certo (`naturalWidth=662`), a captura é que
+     * mentia.
+     *
+     * Rolar até o fim e voltar resolve. O `scrollTo(0,0)` no fim importa: sem
+     * ele o cabeçalho fixo aparece no meio da imagem.
+     */
+    await aba.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 600) {
+        window.scrollTo(0, y)
+        await new Promise((r) => setTimeout(r, 100))
+      }
+      window.scrollTo(0, 0)
+      await new Promise((r) => setTimeout(r, 400))
+    })
+    await aba
+      .waitForFunction(() => [...document.images].every((i) => i.complete), { timeout: 15000 })
+      .catch(() => {})
+
     const medidas = await aba.evaluate(() => {
       const doc = document.documentElement
       const topo = document.querySelector('.topo')
