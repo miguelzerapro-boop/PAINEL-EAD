@@ -162,8 +162,9 @@ Defina também `CRON_SECRET` — sem ele a rota recusa qualquer chamada.
 **Projeto gratuito pausa depois de 1 semana sem uso.** Péssimo para um site
 que fica no ar esperando visita.
 
-Neste projeto isso se resolve sozinho: o cron toca o banco a cada 15 minutos,
-e isso conta como atividade. O projeto não pausa. Sem custo.
+Neste projeto isso se resolve sozinho: o cron toca o banco uma vez por dia, e
+isso conta como atividade. Uma visita diária já afasta a pausa por
+inatividade de uma semana — com folga. O projeto não pausa. Sem custo.
 
 Se ainda assim pausar (cron desligado, por exemplo), é só entrar no painel do
 Supabase e restaurar — nenhum dado se perde.
