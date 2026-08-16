@@ -85,7 +85,15 @@ export async function listarPendencias(): Promise<Pendencia[]> {
     pendencias.push({
       id: `ajuste:${ajuste.key}`,
       titulo: ajuste.label,
-      descricao: `A configuração \`${ajuste.key}\` está vazia.`,
+      /*
+       * A DESCRIÇÃO FALA COM A RESPONSÁVEL, NÃO COM O PROGRAMADOR.
+       *
+       * Antes dizia: "A configuração `contact.whatsapp` está vazia." Quem lê
+       * isso precisa saber o que é uma "configuração", decorar o nome interno
+       * e adivinhar onde ele mora. O nome do campo já está no título logo
+       * acima — a descrição só precisa dizer o que fazer.
+       */
+      descricao: "Ainda não foi preenchido. Clique em Preencher para informar agora.",
       afeta:
         ajuste.key === 'contact.whatsapp'
           ? 'Todo botão de WhatsApp some do site enquanto isso.'
