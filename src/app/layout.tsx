@@ -40,13 +40,46 @@ const plexMono = IBM_Plex_Mono({
  * Enquanto nao houver, usamos um texto neutro e verdadeiro - nunca uma
  * promessa de curso inventada.
  */
+const DESCRICAO = 'Formação em manicure e nail design, organizada em capítulos por etapa.'
+
+/**
+ * A IMAGEM DE COMPARTILHAMENTO estava sendo gerada e guardada, mas nenhum
+ * metadata a usava — o projeto não tinha bloco `openGraph` em lugar nenhum.
+ * Sem ele, um link colado no WhatsApp aparece como um retângulo cinza com a
+ * URL, que é exatamente a aparência que a marca não pode ter.
+ *
+ * O arquivo mora em `public/` e no Storage. Aqui usamos o de `public/`: é o
+ * mesmo byte a byte, não custa uma consulta ao banco em toda página, e
+ * funciona mesmo se o CMS estiver fora do ar.
+ */
 export const metadata: Metadata = {
   title: {
     default: MARCA.nome,
     template: `%s | ${MARCA.nome}`,
   },
-  description: 'Plataforma de formacao profissional em manicure e nail design.',
+  description: DESCRICAO,
   robots: { index: false, follow: false }, // liberar quando o conteudo real for publicado
+  openGraph: {
+    type: 'website',
+    siteName: MARCA.nome,
+    title: MARCA.nome,
+    description: DESCRICAO,
+    locale: 'pt_BR',
+    images: [
+      {
+        url: '/marca/compartilhamento.png',
+        width: 1200,
+        height: 630,
+        alt: `${MARCA.nome} — formação em manicure e nail design`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: MARCA.nome,
+    description: DESCRICAO,
+    images: ['/marca/compartilhamento.png'],
+  },
 }
 
 export const viewport: Viewport = {
