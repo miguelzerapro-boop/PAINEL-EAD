@@ -1076,3 +1076,192 @@ button.lista__item:hover {
   border: 1px solid var(--palheta-bloqueado-linha);
   color: var(--palheta-bloqueado-texto);
 }
+
+/* ===========================================================================
+   MODO "VER COMO ALUNA" — barra e formação
+
+   A barra fica no topo do conteúdo, grudada, e some junto com o modo. Ela é
+   escura para não ser confundida com um aviso do sistema: é um estado de
+   quem navega, não um alerta sobre o conteúdo.
+   =========================================================================== */
+
+.barra-modo {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) clamp(1rem, 3vw, 2rem);
+  background: var(--purple-950);
+  color: var(--text-on-dark);
+  box-shadow: 0 6px 20px -12px rgba(11, 6, 16, 0.8);
+}
+
+.barra-modo__texto {
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.barra-modo__voltar {
+  min-height: var(--target-min);
+  padding-inline: var(--space-5);
+  font-size: var(--size-small);
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--lilac-300) 55%, transparent);
+  color: var(--text-on-dark);
+}
+
+.barra-modo__voltar:hover {
+  background: color-mix(in srgb, var(--neon-lilac) 18%, transparent);
+  border-color: var(--neon-lilac);
+  color: #ffffff;
+}
+
+/* --- A formação na área da aluna ------------------------------------------ */
+
+.formacao-aluna__topo {
+  max-inline-size: var(--measure-study);
+}
+
+.formacao-aluna__titulo {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.formacao-aluna__resumo {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-body-lg);
+  color: var(--text-secondary);
+}
+
+.formacao-aluna__resumo strong {
+  color: var(--brand-primary);
+}
+
+.formacao-aluna__barra {
+  margin-block-start: var(--space-4);
+  block-size: 0.5rem;
+  border-radius: var(--radius-rail);
+  background: var(--surface-purple);
+  overflow: hidden;
+}
+
+.formacao-aluna__barra > span {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--radius-rail);
+  background: linear-gradient(90deg, var(--purple-600), var(--neon-lilac));
+}
+
+.capitulos {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: var(--measure-study);
+}
+
+.capitulo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.capitulo[data-aberto='sim']:hover {
+  border-color: var(--brand-primary);
+}
+
+/*
+   O CAPÍTULO FECHADO NÃO É ERRO.
+
+   Fundo neutro, nunca vermelho, e o nome continua legível. Um bloco apagado
+   com cadeado faz a aluna achar que quebrou; dizer qual plano abre transforma
+   o bloqueio em informação — e em convite.
+*/
+.capitulo[data-aberto='nao'] {
+  background: var(--surface-soft);
+  border-style: dashed;
+}
+
+.capitulo__ordem {
+  font-size: var(--size-mono);
+  color: var(--brand-primary);
+}
+
+.capitulo[data-aberto='nao'] .capitulo__ordem {
+  color: var(--text-secondary);
+}
+
+.capitulo__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.capitulo__meta {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.capitulo__meta--fechado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.capitulo__acao {
+  min-height: var(--target-min);
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-control);
+  font-size: var(--size-small);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.capitulo__acao--aberto {
+  color: var(--brand-primary);
+}
+
+.capitulo__acao--fechado {
+  border: 1.5px solid var(--brand-primary);
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.capitulo__acao--fechado:hover {
+  background: var(--brand-primary);
+  color: var(--text-on-purple);
+}
+
+@media (max-width: 34rem) {
+  .capitulo {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--space-3);
+  }
+
+  .capitulo__acao {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

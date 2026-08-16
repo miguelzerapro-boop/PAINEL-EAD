@@ -126,12 +126,17 @@ export async function listarPendencias(): Promise<Pendencia[]> {
     const faltando = (bloco.missing_fields ?? []) as string[]
     pendencias.push({
       id: `bloco:${bloco.id}`,
-      titulo: `Bloco "${bloco.block_type}" incompleto`,
-      descricao: `Faltam os campos: ${faltando.join(', ')}.`,
-      afeta: `A página "${pagina?.name ?? '—'}" não exibe este bloco.`,
+      /*
+       * `block_type` e `missing_fields` são nomes internos: "hero",
+       * "media_id". Mostrá-los obriga a responsável a decorar o vocabulário
+       * do sistema para entender o que falta na própria página dela.
+       */
+      titulo: `${nomeDoBloco(bloco.block_type)} — falta preencher`,
+      descricao: `Ainda faltam: ${faltando.map(nomeDoCampo).join(', ')}.`,
+      afeta: `Enquanto isso, essa parte não aparece na página "${pagina?.name ?? 'do site'}".`,
       prioridade: 'importante',
       href: `/admin/paginas/${pagina?.key ?? ''}`,
-      acao: 'Completar bloco',
+      acao: 'Preencher',
     })
   }
 
@@ -187,15 +192,71 @@ export async function listarPendencias(): Promise<Pendencia[]> {
   for (const [grupo, info] of porGrupo) {
     pendencias.push({
       id: `fotos:${grupo}`,
-      titulo: `${info.total} foto(s) de "${grupo}" não produzidas`,
-      descricao: info.nomes.join(' · ') + (info.total > 3 ? ` e mais ${info.total - 3}` : ''),
-      afeta: 'As telas mostram um espaço reservado com as dimensões, em vez da imagem.',
+      titulo: `Ainda faltam ${info.total} foto${info.total > 1 ? 's' : ''} ${ondeAFotoEntra(grupo)}`,
+      descricao:
+        'Enquanto a foto não chega, a tela reserva o espaço dela — nada fica quebrado.',
+      afeta: info.nomes.join(' · ') + (info.total > 3 ? ` e mais ${info.total - 3}` : ''),
       prioridade: 'quando_puder',
       href: '/admin/midia',
-      acao: 'Ver a lista de produção',
-      responsavel: 'ensaio fotográfico',
+      acao: 'Adicionar fotos',
+      /*
+       * "responsável: ensaio fotográfico" saiu daqui. Era anotação de quem
+       * planejou o projeto, não informação para quem administra: a Katia não
+       * precisa saber que existe uma etapa chamada "ensaio fotográfico" para
+       * entender que faltam fotos.
+       */
     })
   }
 
   return pendencias.sort((a, b) => PESO[a.prioridade] - PESO[b.prioridade])
+}
+
+/* ---------------------------------------------------------------------------
+   TRADUÇÃO PARA PORTUGUÊS
+   Nomes internos viram frases. Quando aparecer um nome que ainda não está
+   mapeado, o texto degrada para algo legível em vez de vazar o identificador.
+   --------------------------------------------------------------------------- */
+
+const BLOCOS: Record<string, string> = {
+  hero: 'A abertura da página inicial',
+  cta: 'A chamada para ação',
+  faq: 'As perguntas frequentes',
+  testimonials: 'Os depoimentos',
+  pricing: 'A tabela de planos',
+  features: 'A lista de diferenciais',
+  content: 'Um trecho de texto do site',
+  media: 'Uma imagem do site',
+}
+
+function nomeDoBloco(tipo: string): string {
+  return BLOCOS[tipo] ?? 'Uma parte do site'
+}
+
+const CAMPOS: Record<string, string> = {
+  media_id: 'a imagem',
+  image_id: 'a imagem',
+  title: 'o título',
+  subtitle: 'o subtítulo',
+  body: 'o texto',
+  cta_label: 'o texto do botão',
+  cta_url: 'o destino do botão',
+  eyebrow: 'a linha de apoio',
+}
+
+function nomeDoCampo(campo: string): string {
+  return CAMPOS[campo] ?? campo.replace(/_/g, ' ')
+}
+
+const ONDE_A_FOTO_ENTRA: Record<string, string> = {
+  landing: 'da página inicial',
+  instrutora: 'da Katia',
+  detalhe: 'de detalhe das unhas',
+  ambiente: 'do estúdio',
+  portfolio: 'de trabalhos prontos',
+  ead: 'da área de estudos',
+  seo: 'para compartilhar em redes sociais',
+}
+
+function ondeAFotoEntra(grupo: string): string {
+  return ONDE_A_FOTO_ENTRA[grupo] ?? `de "${grupo}"`
 }

@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { FormacaoDaPrevia } from '@/components/aluna/formacao-da-previa'
 import { EstadoVazio } from '@/components/estados'
+import { previaAtiva } from '@/lib/admin/previa'
 import { Palheta, Trilho } from '@/components/palheta'
 import { listMyEnrollments } from '@/lib/content/catalog'
 import { formatDate } from '@/lib/format'
@@ -18,12 +20,26 @@ export default async function MeusCursosPage() {
   } = await db.auth.getUser()
   if (!user) redirect('/entrar?proximo=/aluna/cursos')
 
+  /*
+   * Modo de conferência: quem está olhando é da equipe e escolheu um plano.
+   * A tela mostra a formação daquele plano em vez da matrícula real — sem
+   * criar matrícula nenhuma. Ver `src/lib/admin/previa.ts`.
+   */
+  const previa = await previaAtiva()
+  if (previa) {
+    return (
+      <main id="conteudo" className="page section">
+        <FormacaoDaPrevia previa={previa} />
+      </main>
+    )
+  }
+
   const matriculas = await listMyEnrollments(user.id)
 
   return (
     <main id="conteudo" className="page section">
       <p className="eyebrow">Mostruário</p>
-      <h1>Meus cursos</h1>
+      <h1>Minha Formação</h1>
 
       {matriculas.length === 0 ? (
         <div style={{ marginBlockStart: 'var(--space-6)' }}>

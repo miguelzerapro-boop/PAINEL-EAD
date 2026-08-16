@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 
 import { BotaoWhatsApp } from '@/components/botao-whatsapp'
 import { MenuLateral, type GrupoDeMenu } from '@/components/menu-lateral'
+import { previaAtiva } from '@/lib/admin/previa'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -69,10 +70,36 @@ export default async function AlunaLayout({ children }: { children: React.ReactN
     },
   ]
 
+  /*
+   * A responsável pode estar CONFERINDO esta área em vez de estudar nela.
+   * Nesse caso a barra aparece no topo e devolve o caminho para o painel em um
+   * clique — sem logout, sem senha, sem trocar o papel de ninguém.
+   */
+  const previa = await previaAtiva()
+
   return (
     <div className="app-shell">
       <MenuLateral titulo={primeiroNome} grupos={grupos} progresso={progresso} />
-      <div className="app-shell__conteudo">{children}</div>
+      <div className="app-shell__conteudo">
+        {previa ? (
+          <div className="barra-modo" role="status">
+            <span className="barra-modo__texto">
+              Visualizando como aluna — plano <strong>{previa.nome}</strong>
+            </span>
+            {/*
+              `<a>` e não `<Link>`: o destino é um route handler que apaga o
+              cookie da prévia e redireciona. Navegação do lado do cliente não
+              aplicaria o `Set-Cookie` — a pessoa "voltaria" ao painel ainda em
+              modo de visualização.
+            */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a className="botao barra-modo__voltar" href="/admin/previa/entrar?sair=1">
+              Voltar ao painel
+            </a>
+          </div>
+        ) : null}
+        {children}
+      </div>
       {/* Suporte sem inbox interno: um clique abre a conversa no WhatsApp. */}
       <BotaoWhatsApp origem="aluna" />
     </div>

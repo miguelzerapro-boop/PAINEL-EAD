@@ -138,6 +138,22 @@ export default async function PreviaPage({
             ))}
           </div>
 
+          {/*
+            A LISTA ABAIXO É O RESUMO. O botão leva para a INTERFACE REAL.
+
+            Só resumir dentro do painel não responde à pergunta que a
+            responsável faz depois de cadastrar uma aula: "ficou bom para a
+            aluna?". Para responder isso é preciso sair do painel — menu
+            lateral do admin incluído — e ver a área de estudos como ela é.
+          */}
+          {atual ? (
+            <p style={{ marginBlockStart: 'var(--space-5)' }}>
+              <a className="botao botao--cta" href={`/admin/previa/entrar?plano=${atual.slug}`}>
+                Abrir a área da aluna como {atual.name}
+              </a>
+            </p>
+          ) : null}
+
           <p className="lead" style={{ marginBlock: 'var(--space-5) var(--space-4)' }}>
             Uma aluna do plano <strong>{atual?.name}</strong> vê{' '}
             <strong>

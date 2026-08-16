@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { FormacaoDaPrevia } from '@/components/aluna/formacao-da-previa'
 import { EstadoVazio } from '@/components/estados'
+import { previaAtiva } from '@/lib/admin/previa'
 import { listMyEnrollments } from '@/lib/content/catalog'
 import { um } from '@/lib/rel'
 import { createClient } from '@/lib/supabase/server'
@@ -34,6 +36,19 @@ export default async function AlunaPage() {
   ])
 
   const primeiroNome = (perfil.data?.display_name ?? perfil.data?.full_name ?? '').split(' ')[0]
+
+  /*
+   * Modo de conferência (ver `src/lib/admin/previa.ts`): a formação do plano
+   * escolhido ocupa o lugar da matrícula. Nada é criado no banco.
+   */
+  const previa = await previaAtiva()
+  if (previa) {
+    return (
+      <main id="conteudo" className="page section">
+        <FormacaoDaPrevia previa={previa} />
+      </main>
+    )
+  }
 
   if (matriculas.length === 0) {
     return (
