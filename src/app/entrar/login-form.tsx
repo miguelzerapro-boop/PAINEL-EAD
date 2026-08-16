@@ -18,6 +18,9 @@ import { getBrowserClient } from '@/lib/supabase/browser'
  * A senha nunca passa por aqui em texto para lugar nenhum além do Supabase,
  * que faz o hash. Não guardamos senha em tabela nossa.
  */
+/** Destino de quem clicou em "Entrar" sem vir de uma tela protegida. */
+const PADRAO = '/aluna'
+
 export function LoginForm({ proximo }: { proximo: string }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -33,7 +36,8 @@ export function LoginForm({ proximo }: { proximo: string }) {
     setEstado('entrando')
     setErro(null)
 
-    const { error } = await getBrowserClient().auth.signInWithPassword({
+    const cliente = getBrowserClient()
+    const { data, error } = await cliente.auth.signInWithPassword({
       email: email.trim().toLowerCase(),
       password: senha,
     })
@@ -49,10 +53,31 @@ export function LoginForm({ proximo }: { proximo: string }) {
       return
     }
 
+    /*
+     * PARA ONDE IR.
+     *
+     * Se a pessoa foi mandada para cá por uma tela protegida, volta para
+     * aquela tela — é o `proximo`. Se ela clicou em "Entrar" por conta
+     * própria, o destino depende de quem ela é: administradora vai para o
+     * painel, aluna vai para a área de estudos. Mandar a responsável do site
+     * para "você ainda não tem nenhum curso" era o comportamento anterior.
+     */
+    let destino = proximo
+
+    if (destino === PADRAO && data.user) {
+      const { data: perfil } = await cliente
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      if (perfil && ['admin', 'owner'].includes(perfil.role)) destino = '/admin'
+    }
+
     // `refresh` antes do `push` para o servidor já enxergar a sessão nova —
     // sem isso o middleware devolve para o login em uma volta.
     router.refresh()
-    router.push(proximo)
+    router.push(destino)
   }
 
   return (
