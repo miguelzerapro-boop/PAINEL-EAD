@@ -92,6 +92,19 @@ for (const [plano, esperado] of Object.entries(ESPERADO)) {
 
   await aba.goto(`${BASE}/admin/formacao/previa?plano=${plano}`, { waitUntil: 'load' })
 
+  /*
+   * Espera o Suspense resolver antes de procurar o botão. Sem isto, contra a
+   * URL pública (onde a primeira requisição paga o custo de acordar a função),
+   * o teste procurava numa tela que ainda mostrava "Carregando…" e concluía
+   * que o botão não existia. O botão existia.
+   */
+  await aba
+    .waitForFunction(
+      () => !((document.querySelector('main') ?? document.body).innerText ?? '').trim().startsWith('Carregando'),
+      { timeout: 45000 },
+    )
+    .catch(() => {})
+
   const entrar = aba.locator(`a[href="/admin/previa/entrar?plano=${plano}"]`)
   registrar('Painel oferece abrir a área da aluna', (await entrar.count()) > 0)
 
