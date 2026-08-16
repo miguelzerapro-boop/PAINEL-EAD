@@ -51,7 +51,7 @@ Cada linha abaixo é um `INSERT`/`UPDATE` realmente executado contra o PostgreSQ
 | Prazo de acesso "por dias" sem informar os dias | deve recusar | `courses_access_days_required` | `23514 · courses_access_days_required` | ✅ |
 | Progresso fora da faixa 0–100 | deve recusar | `23514` | `23514 · enrollments_progress_pct_check` | ✅ |
 | Duração de aula igual a zero | deve recusar | `23514` | `23514 · lessons_duration_seconds_check` | ✅ |
-| Trigger corrige course_id divergente da aula | verificação | `16470d11-1e09-4f4c-8038-e2573477e17e` | `16470d11-1e09-4f4c-8038-e2573477e17e` | ✅ |
+| Trigger corrige course_id divergente da aula | verificação | `0fbd3bbc-97d2-44f2-ac98-d09724249a3c` | `0fbd3bbc-97d2-44f2-ac98-d09724249a3c` | ✅ |
 
 ## Códigos do PostgreSQL
 

@@ -47,9 +47,9 @@ select public.set_user_role('outra@dominio.com', 'student'); -- revoga
 | --- | --- | --- | --- | --- |
 | Janela de bootstrap aberta quando não há administrador | `true` | `true` | ✅ | — |
 | Recusa e-mail sem conta | `true` | `true` | ✅ | Nenhuma conta encontrada para ninguem@homolog.local. Peça para a pessoa entrar uma vez pelo site e rode de novo. |
-| Bootstrap promove a primeira pessoa a owner | `"owner"` | `"owner"` | ✅ | "fdc3b89f-d1ee-4d17-b8ef-825b671b7427" |
+| Bootstrap promove a primeira pessoa a owner | `"owner"` | `"owner"` | ✅ | "1e08a567-271c-4400-96cb-430acd11fa11" |
 | O papel realmente persistiu no banco | `"owner"` | `"owner"` | ✅ | era exatamente aqui que a versão anterior falhava em silêncio |
-| Bootstrap ficou registrado na auditoria | `"bootstrap_first_admin"` | `"bootstrap_first_admin"` | ✅ | entity_id fdc3b89f-d1ee-4d17-b8ef-825b671b7427 |
+| Bootstrap ficou registrado na auditoria | `"bootstrap_first_admin"` | `"bootstrap_first_admin"` | ✅ | entity_id 1e08a567-271c-4400-96cb-430acd11fa11 |
 | Segunda chamada é recusada | `true` | `true` | ✅ | Já existe 1 administrador(es). Conceda acesso pelo painel, não por aqui. |
 | Janela fechada depois do bootstrap | `false` | `false` | ✅ | — |
 | Recusa quando chamada de uma sessão de navegador | `true` | `true` | ✅ | permission denied for function bootstrap_first_admin |

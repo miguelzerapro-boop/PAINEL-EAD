@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google'
 
+import { MARCA } from '@/lib/marca'
+
 import './globals.css'
 
 /**
@@ -39,16 +41,17 @@ const plexMono = IBM_Plex_Mono({
  */
 export const metadata: Metadata = {
   title: {
-    default: 'Escola de unhas',
-    template: '%s · Escola de unhas',
+    default: MARCA.nome,
+    template: `%s · ${MARCA.nome}`,
   },
   description: 'Plataforma de formacao profissional em manicure e nail design.',
   robots: { index: false, follow: false }, // liberar quando o conteudo real for publicado
 }
 
 export const viewport: Viewport = {
-  /* Igual a --surface-main: a barra do navegador continua a página. */
-  themeColor: '#FFFFFF',
+  /* Igual a --purple-950, o fundo do cabeçalho: a barra do navegador continua
+     a página em vez de emendar branco no topo escuro. */
+  themeColor: '#170524',
   width: 'device-width',
   initialScale: 1,
 }

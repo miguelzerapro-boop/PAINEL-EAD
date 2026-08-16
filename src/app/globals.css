@@ -11,6 +11,9 @@
 @import '../styles/formacao.css';
 @import '../styles/quiz.css';
 @import '../styles/quiz-escuro.css';
+@import '../styles/planos.css';
+/* Depois de layouts.css e mostruario.css: reescreve o cabeçalho claro. */
+@import '../styles/marca.css';
 @import '../styles/animacoes.css';
 /* Por último: estas regras precisam vencer as dimensões declaradas acima. */
 @import '../styles/alvos-de-toque.css';

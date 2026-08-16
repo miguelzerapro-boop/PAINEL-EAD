@@ -47,8 +47,22 @@ for (const vp of LARGURAS) {
   })
   const page = await context.newPage()
 
-  await page.goto(`${base}/estilo/telas/quiz`, { waitUntil: 'load', timeout: 30000 })
-  await page.waitForTimeout(800)
+  /*
+   * O QUIZ DE VERDADE, não a amostra.
+   *
+   * A amostra do mostruário só tem um bloco estático — medir contraste nela
+   * dá "tudo passa" sem ter olhado nada. O bug que motivou este script
+   * estava na pergunta real, que só aparece depois de clicar em começar.
+   */
+  await page.goto(`${base}/diagnostico`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.waitForTimeout(1500)
+
+  const comecar = page.getByRole('button', { name: /come|iniciar|diagn/i }).first()
+  if (await comecar.count()) {
+    await comecar.click()
+    await page.waitForSelector('.quiz__enunciado', { timeout: 20000 }).catch(() => {})
+    await page.waitForTimeout(1200)
+  }
 
   await page.screenshot({ path: path.join(SAIDA, `quiz-${vp.nome}.png`) })
   await page.screenshot({

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 import { createCheckout } from '@/lib/mercadopago/checkout'
+import { estadoDaVenda } from '@/lib/comercial/gate'
 import { ipDaRequisicao, limitar } from '@/lib/rate-limit'
 import { createClient } from '@/lib/supabase/server'
 
@@ -35,6 +36,22 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ message: 'Dados inválidos.' }, { status: 422 })
+  }
+
+  /*
+   * O PORTÃO DA VENDA, do lado do servidor.
+   *
+   * A tela de checkout já bloqueia o botão quando não dá para cobrar — mas
+   * botão desabilitado é enfeite: esta rota é pública e aceita POST de
+   * qualquer lugar. É aqui que a recusa vale.
+   *
+   * A visitante recebe a frase curta; o motivo detalhado fica no log, para a
+   * equipe saber o que configurar.
+   */
+  const venda = await estadoDaVenda(parsed.data.offerSlug)
+  if (!venda.podeCobrar) {
+    console.warn('[checkout] recusado:', parsed.data.offerSlug, '·', venda.paraEquipe)
+    return NextResponse.json({ message: venda.mensagem }, { status: 409 })
   }
 
   // O id do comprador vem SEMPRE da sessão, nunca do corpo da requisição.

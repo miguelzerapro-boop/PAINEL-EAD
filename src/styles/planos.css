@@ -1,0 +1,369 @@
+/* ===========================================================================
+   PLANOS E COMPARAÇÃO
+
+   Três cartões e uma tabela. O que decide se a página funciona:
+
+     1. NENHUM CARTÃO ESCONDE O QUE NÃO TEM. Os capítulos de fora aparecem
+        riscados no cartão mais barato. Mostrar só o que está incluído faz o
+        plano de R$ 29,90 parecer igual ao de R$ 54,90 — e a diferença só
+        aparecer depois da compra.
+
+     2. O DESTAQUE NÃO É MAIOR. O plano completo ganha borda e fundo, não
+        escala. Cartão ampliado desalinha a leitura dos preços.
+
+     3. A TABELA ROLA, NÃO ENCOLHE. Em 360px ela rola na horizontal com a
+        coluna do capítulo fixa. Os cartões acima já entregam preço,
+        capítulos e CTA sem rolagem nenhuma.
+   =========================================================================== */
+
+/* --- Primeira dobra ------------------------------------------------------- */
+
+.planos-capa {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--purple-950);
+  color: var(--text-inverse);
+  padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+}
+
+.planos-capa__grade {
+  display: grid;
+  gap: clamp(2rem, 1rem + 4vw, 3.5rem);
+  align-items: center;
+}
+
+.planos-capa__visual {
+  display: none;
+}
+
+.planos-capa__imagem {
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-foto);
+}
+
+@media (min-width: 62rem) {
+  .planos-capa__grade {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+
+  .planos-capa__visual {
+    display: block;
+  }
+}
+
+/* --- Cartões -------------------------------------------------------------- */
+
+.planos-grade {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .planos-grade {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+.plano {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-palheta);
+  min-width: 0;
+}
+
+/*
+   O destaque é de COR, não de tamanho: borda de marca, fundo levemente roxo e
+   uma sombra mais funda. Ampliar o cartão desalinharia os três preços, que é
+   justamente o que a visitante está comparando.
+*/
+.plano--destaque {
+  border-color: var(--brand-primary);
+  background: linear-gradient(180deg, var(--surface-purple), var(--surface-main) 42%);
+  box-shadow: var(--shadow-erguida);
+}
+
+.plano__etiqueta {
+  align-self: flex-start;
+  padding: 0.3rem var(--space-3);
+  border-radius: var(--radius-rail);
+  background: var(--brand-primary);
+  color: var(--text-on-purple);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+}
+
+.plano__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.plano__chamada {
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  margin: 0;
+}
+
+.plano__preco {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  padding-block: var(--space-3);
+  border-block: 1px solid var(--border-subtle);
+}
+
+.plano__valor {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 2.625rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.plano__pagamento {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.plano__contagem {
+  margin: 0;
+  font-size: var(--size-body);
+  color: var(--text-secondary);
+}
+
+.plano__contagem strong {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.plano__capitulos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  /* Empurra o CTA para a base: com três cartões de altura diferente, os
+     botões precisam alinhar. */
+  flex: 1;
+  align-content: start;
+}
+
+.plano__capitulo {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+/*
+   O capítulo de fora fica visível, em cinza e riscado. Some-lo faria os três
+   planos parecerem iguais — a diferença é justamente o que a página precisa
+   deixar claro ANTES da compra.
+*/
+.plano__capitulo--fora {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
+  text-decoration-thickness: 1px;
+}
+
+.marcador--sim {
+  color: var(--brand-primary);
+}
+
+.marcador--nao {
+  color: var(--border-strong);
+}
+
+.plano__cta {
+  inline-size: 100%;
+  margin-block-start: var(--space-2);
+}
+
+/* --- Comparação ----------------------------------------------------------- */
+
+.faixa-comparacao {
+  background: var(--surface-soft);
+  border-block: 1px solid var(--border-subtle);
+}
+
+.comparacao {
+  margin-block-start: var(--space-6);
+  overflow-x: auto;
+  /* Foco visível: o contêiner é focável para permitir rolagem por teclado. */
+  border-radius: var(--radius-cartao);
+}
+
+.comparacao:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+.comparacao__tabela {
+  inline-size: 100%;
+  min-inline-size: 32rem;
+  border-collapse: collapse;
+  background: var(--surface-main);
+  font-size: var(--size-small);
+}
+
+.comparacao__tabela th,
+.comparacao__tabela td {
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.comparacao__tabela thead th:first-child,
+.comparacao__tabela tbody th,
+.comparacao__tabela tfoot th {
+  text-align: start;
+  font-weight: 500;
+  /* Coluna do capítulo presa: rolando na horizontal, ainda se sabe qual
+     linha é qual. */
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--surface-main);
+  z-index: 1;
+}
+
+.comparacao__tabela thead th {
+  background: var(--surface-purple);
+  border-block-end: 2px solid var(--border-strong);
+  vertical-align: bottom;
+}
+
+.comparacao__plano {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+}
+
+.comparacao__preco {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  color: var(--brand-primary);
+  margin-block-start: var(--space-1);
+}
+
+.comparacao__tabela tbody tr:nth-child(even) th,
+.comparacao__tabela tbody tr:nth-child(even) td {
+  background: var(--surface-soft);
+}
+
+.comparacao__tabela tfoot th,
+.comparacao__tabela tfoot td {
+  border-block-end: none;
+  font-weight: 600;
+}
+
+.comparacao__total {
+  font-family: var(--font-mono);
+  color: var(--brand-primary);
+}
+
+/* --- O que a compra libera, no resumo do checkout -------------------------- */
+
+/*
+   A lista de capítulos no checkout não é enfeite: é o único lugar onde a
+   compradora confere, ANTES de pagar, exatamente o que este pacote destrava.
+   Sai da mesma tabela que a regra de acesso do banco consulta depois.
+*/
+.checkout__capitulos {
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.checkout__capitulos ul {
+  list-style: none;
+  margin: var(--space-3) 0 var(--space-4);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.checkout__capitulos li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.checkout__capitulos li::before {
+  content: '';
+  inline-size: 0.375rem;
+  block-size: 0.375rem;
+  margin-block-start: 0.5em;
+  border-radius: 50%;
+  background: var(--brand-primary);
+}
+
+/* --- Como funciona -------------------------------------------------------- */
+
+.passos {
+  list-style: none;
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-6);
+  counter-reset: passo;
+}
+
+@media (min-width: 60rem) {
+  .passos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-7);
+  }
+}
+
+.passo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  padding-block-start: var(--space-4);
+  border-block-start: 2px solid var(--border-subtle);
+}
+
+.passo__numero {
+  font-size: var(--size-h3);
+  font-weight: 600;
+  color: var(--brand-primary);
+  line-height: 1;
+}
+
+.passo__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  margin: 0;
+}
+
+.passo__texto {
+  margin-block-start: var(--space-2);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+}

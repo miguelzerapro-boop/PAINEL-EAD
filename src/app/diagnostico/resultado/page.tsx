@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 import { Palheta, Trilho } from '@/components/palheta'
 import { Rodape, Topo } from '@/components/site-chrome'
 import { EstadoVazio } from '@/components/estados'
+import { VisualizacaoDeEtapa } from '@/components/analytics/rastro'
+import { EVENTO } from '@/lib/analytics/eventos'
 import { um } from '@/lib/rel'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { verifyToken } from '@/lib/token'
@@ -32,7 +34,9 @@ export default async function ResultadoPage({
   const { d } = await searchParams
   const payload = d ? verifyToken<{ r: string }>(d) : null
 
-  if (!payload?.r) {
+  // `!d` entra na guarda junto com o token inválido: sem ele não há o que
+  // repassar adiante para a landing de planos.
+  if (!d || !payload?.r) {
     return (
       <>
         <Topo />
@@ -75,10 +79,30 @@ export default async function ResultadoPage({
   const acao = (resposta.resolved_action ?? {}) as { action?: string; url?: string; message?: string }
   const lead = um<{ name: string | null }>(resposta.leads)
 
-  const whatsapp = acao.action === 'whatsapp' ? await getWhatsAppTarget(acao.message) : null
+  /*
+   * Existe plano publicado com preço?
+   *
+   * É essa pergunta — e não o `resolved_action` gravado na resposta — que
+   * decide o destino do resultado. A ação foi resolvida no momento em que a
+   * pessoa respondeu o quiz; se um plano foi publicado depois, o link salvo
+   * continuaria mandando ela para o WhatsApp.
+   */
+  const { count: planosPublicados } = await db
+    .from('offers')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'published')
+    .not('price_cents', 'is', null)
+
+  const temPlanos = (planosPublicados ?? 0) > 0
+
+  const whatsapp = await getWhatsAppTarget(acao.message)
 
   return (
     <>
+      <VisualizacaoDeEtapa
+        evento={EVENTO.QUIZ_RESULT_VIEW}
+        props={{ quizOutcome: outcome?.key ?? null }}
+      />
       <Topo />
       <main id="conteudo">
         <section className="page" style={{ paddingBlockStart: 'var(--space-6)' }}>
@@ -102,7 +126,33 @@ export default async function ResultadoPage({
               ) : null}
 
               <div style={{ marginBlockStart: 'var(--space-6)', maxWidth: 'var(--measure-sales)' }}>
-                {acao.action === 'course' || acao.action === 'offer' || acao.action === 'page' ? (
+                {temPlanos ? (
+                  /*
+                   * Existe plano publicado com preço: o passo seguinte é ver
+                   * os planos, não abrir o WhatsApp. O token vai junto para a
+                   * landing saber de qual diagnóstico ela veio.
+                   *
+                   * O WhatsApp continua ali, mas como saída secundária — quem
+                   * quer conversar antes de comprar não fica sem caminho.
+                   */
+                  <>
+                    <Link className="botao botao--cta" href={`/planos?d=${encodeURIComponent(d)}`}>
+                      Ver planos e preços
+                    </Link>
+                    {whatsapp.available ? (
+                      <p style={{ marginBlockStart: 'var(--space-4)' }}>
+                        <a
+                          className="resultado__secundario"
+                          href={whatsapp.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Prefiro tirar uma dúvida no WhatsApp
+                        </a>
+                      </p>
+                    ) : null}
+                  </>
+                ) : acao.action === 'course' || acao.action === 'offer' || acao.action === 'page' ? (
                   <Link className="botao botao--primario" href={acao.url ?? '/cursos'}>
                     Ver o que está disponível
                   </Link>

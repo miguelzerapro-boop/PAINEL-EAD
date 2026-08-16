@@ -540,53 +540,22 @@
 
    A sequência abaixo alterna de verdade:
 
+     0 cabeçalho        ESCURO   roxo profundo + logo (marca.css)
      1 herói            ESCURO   fotografia + roxo profundo
-     2 o jeito comum    CLARO    branco com roxo no contraste
+     2 assinatura       CLARO    a marca, em branco levemente roxo
      3 como funciona    CLARO    branco com elementos roxos
      4 momentos         ESCURO   o diferencial
      5 acabamento       ESCURO   fotografia
      6 bancada          CLARO    fotografia sobre branco
      7 fechamento       QUASE-PRETO + neon
+
+   O cabeçalho entrou nessa conta: sendo escuro, ele emenda com o herói em vez
+   de cortar a página com uma barra branca antes da primeira dobra.
+
+   A posição 2 era o contraste "antes / aqui". Foi removida — o argumento se
+   repetia na seção 3, e a marca não aparecia em lugar nenhum. Hoje é a
+   assinatura institucional, estilizada em marca.css.
    --------------------------------------------------------------------------- */
-
-/* 2 — o contraste "antes / aqui" sai do roxo chapado e vai para o branco. */
-.faixa-marca {
-  background: var(--surface-main);
-  color: var(--text-primary);
-  border-block: 1px solid var(--border-subtle);
-}
-
-.faixa-marca .contraste__rotulo {
-  color: var(--text-secondary);
-}
-
-.faixa-marca .contraste__frase {
-  color: var(--text-primary);
-}
-
-/* O lado "aqui" é o que ganha o roxo — é o argumento da marca. */
-.faixa-marca .contraste__lado[data-tom='depois'] .contraste__rotulo {
-  color: var(--brand-action-texto);
-  font-weight: 600;
-}
-
-.faixa-marca .contraste__lado[data-tom='depois'] {
-  position: relative;
-}
-
-.faixa-marca .contraste__lado[data-tom='depois']::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: calc(var(--space-5) * -1);
-  inline-size: 3px;
-  border-radius: var(--radius-rail);
-  background: linear-gradient(to bottom, var(--lilac-400), var(--purple-600));
-}
-
-.faixa-marca .contraste__divisor {
-  background: var(--border-subtle);
-}
 
 /* 6 — a bancada vira faixa CLARA, para quebrar a corrida de escuros. */
 .faixa-foto--clara {

@@ -1,0 +1,295 @@
+/* ===========================================================================
+   A MARCA NO SITE
+
+   O diagnóstico: o topo era uma barra branca com o nome em texto e quatro
+   links soltos. Não havia logo em lugar nenhum do site, e o nome que aparecia
+   nem era o da empresa. Lia como painel administrativo, não como marca.
+
+   Três decisões:
+
+     1. O TOPO É ESCURO. Abre no roxo profundo da identidade e emenda com a
+        primeira dobra da landing, que já era escura — some a costura branca
+        que cortava a página em dois.
+
+     2. A LOGO É RECORTADA EM CÍRCULO. O arquivo enviado é um PNG quadrado de
+        fundo branco. O selo é um círculo centrado que não encosta na borda,
+        então `border-radius: 50%` come só os cantos brancos e deixa o anel
+        roxo intacto. É o que permite a mesma imagem servir no topo escuro, no
+        rodapé escuro e na faixa clara — sem pedir outro arquivo.
+
+     3. A ASSINATURA TEM DOIS PESOS. A logo já traz o nome escrito no anel;
+        repetir "Katia Franck Nail's Studio" em corpo grande do lado seria
+        redundante. Serifada para "Katia Franck", versalete miúdo para
+        "Nail's Studio".
+   =========================================================================== */
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  min-height: var(--target-min);
+}
+
+/*
+   O recorte circular. `object-fit: cover` junto com o raio garante que, se um
+   dia entrar um arquivo não-quadrado, ele seja cortado no centro em vez de
+   deformar o selo.
+*/
+.marca__selo {
+  flex: none;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Anel de luz: separa o selo branco do fundo escuro sem desenhar borda. */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 6px 18px -8px rgba(11, 6, 16, 0.7);
+  transition: box-shadow var(--duration-base) var(--ease-out);
+}
+
+.marca:hover .marca__selo {
+  box-shadow: 0 0 0 1px var(--neon-lilac), var(--glow-neon-forte);
+}
+
+.marca__nome {
+  display: grid;
+  line-height: 1.08;
+}
+
+.marca__nome-principal {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  /* "Katia Franck" quebrando em duas linhas some com o alinhamento da barra.
+     Cabe inteiro em 360px ao lado do selo e do botão de menu. */
+  white-space: nowrap;
+}
+
+.marca__nome-apoio {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--lilac-300);
+  margin-block-start: 0.2rem;
+}
+
+/* Versão grande, para a faixa institucional da landing. */
+.marca--grande {
+  gap: var(--space-5);
+}
+
+.marca--grande .marca__selo {
+  inline-size: clamp(5.5rem, 3rem + 9vw, 8.5rem);
+  block-size: clamp(5.5rem, 3rem + 9vw, 8.5rem);
+}
+
+.marca--grande .marca__nome-principal {
+  font-size: var(--size-h2);
+}
+
+.marca--grande .marca__nome-apoio {
+  font-size: var(--size-mono);
+  letter-spacing: 0.2em;
+}
+
+/* ---------------------------------------------------------------------------
+   CABEÇALHO
+   --------------------------------------------------------------------------- */
+
+/*
+   Fundo OPACO de propósito: `backdrop-filter` sobre fundo translúcido é o
+   primeiro passo do glassmorphism, proibido no escopo — e prejudica o
+   contraste do texto quando algo colorido rola por baixo.
+
+   Estas regras vêm depois de layouts.css no globals.css e reescrevem o topo
+   claro anterior.
+*/
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--purple-950);
+  color: var(--text-on-dark);
+  border-block-end: 1px solid rgba(232, 121, 249, 0.18);
+}
+
+/* Fio de neon rente à base. É o único ornamento do cabeçalho. */
+.topo::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--neon-lilac) 55%, transparent) 30%,
+    color-mix(in srgb, var(--neon-lilac) 55%, transparent) 70%,
+    transparent
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.topo__interno {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 4.5rem;
+}
+
+.topo__nav {
+  display: none;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: var(--size-small);
+}
+
+.topo__nav a:not(.botao) {
+  color: color-mix(in srgb, var(--text-on-dark) 88%, transparent);
+  text-decoration: none;
+  padding-block: var(--space-2);
+  /* Sublinhado que cresce do centro. Sem deslocar layout no hover. */
+  background-image: linear-gradient(var(--neon-lilac), var(--neon-lilac));
+  background-repeat: no-repeat;
+  background-position: 50% 100%;
+  background-size: 0 1.5px;
+  transition:
+    background-size var(--duration-base) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.topo__nav a:not(.botao):hover,
+.topo__nav a:not(.botao):focus-visible {
+  color: #ffffff;
+  background-size: 100% 1.5px;
+}
+
+/* O CTA do topo é menor que o da página: aqui ele acompanha, não comanda. */
+.topo__cta {
+  min-height: var(--target-min);
+  padding-inline: var(--space-5);
+  font-size: var(--size-small);
+}
+
+@media (min-width: 62rem) {
+  .topo__nav {
+    display: flex;
+  }
+}
+
+/* --- Menu de celular sobre o topo escuro ---------------------------------- */
+
+.topo .nav-mobile__botao {
+  border-color: color-mix(in srgb, var(--lilac-300) 45%, transparent);
+  color: var(--text-on-dark);
+}
+
+.topo .nav-mobile__botao:hover {
+  border-color: var(--neon-lilac);
+}
+
+.topo .nav-mobile__painel {
+  background: var(--purple-900);
+  border-color: rgba(232, 121, 249, 0.22);
+}
+
+.topo .nav-mobile__link {
+  color: var(--text-on-dark);
+}
+
+.topo .nav-mobile__link:hover {
+  background: color-mix(in srgb, var(--neon-lilac) 16%, transparent);
+}
+
+/*
+   O menu lateral do site vinha escondendo o `.nav-mobile` a partir de 768px,
+   mas a nova barra tem cinco itens e não cabe nessa largura. O ponto de troca
+   passa a ser 62rem, o mesmo de `.topo__nav`.
+*/
+@media (min-width: 768px) and (max-width: 61.999rem) {
+  .topo .nav-mobile {
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FAIXA INSTITUCIONAL DA LANDING
+
+   Substitui o bloco "O jeito comum | Aqui", que era duas colunas de texto com
+   um risco no meio: ocupava uma dobra inteira para dizer o que a seção "Como
+   funciona" logo abaixo já mostrava em etapas.
+
+   No lugar entra a marca — que até agora não aparecia em nenhum ponto da
+   página fora do cabeçalho.
+   --------------------------------------------------------------------------- */
+
+.assinatura-marca {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgba(198, 60, 255, 0.16), transparent 70%),
+    var(--surface-soft);
+  border-block: 1px solid var(--border-subtle);
+  padding-block: clamp(2.75rem, 1.5rem + 4vw, 4.5rem);
+}
+
+.assinatura-marca__grade {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: center;
+  text-align: center;
+}
+
+.assinatura-marca .marca__nome-apoio {
+  /* Sobre fundo claro o lilás claro não passa em contraste. */
+  color: var(--brand-primary);
+}
+
+.assinatura-marca__texto {
+  font-size: var(--size-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+  max-inline-size: var(--measure-sales);
+  margin-inline: auto;
+  text-wrap: pretty;
+}
+
+/* Dois fios curtos que emolduram a assinatura sem virar caixa. */
+.assinatura-marca__fio {
+  inline-size: 4rem;
+  block-size: 1px;
+  background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+}
+
+@media (min-width: 48rem) {
+  .assinatura-marca__grade {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    text-align: start;
+    align-items: center;
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+  }
+
+  .assinatura-marca__texto {
+    margin-inline: 0;
+  }
+
+  .assinatura-marca__fio {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   RODAPÉ
+   --------------------------------------------------------------------------- */
+
+.rodape .marca__nome-apoio {
+  color: var(--lilac-300);
+}

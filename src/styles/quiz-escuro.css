@@ -942,3 +942,81 @@
 .quiz-erro__titulo {
   color: #ff9d9d;
 }
+
+/* ===========================================================================
+   PROGRESSO — correção de dois erros meus
+
+   1. Escrevi `data-estado='feita'`. O componente emite `concluida`,
+      `atual` e `futura`. A regra de etapa cumprida nunca casou com nada.
+
+   2. As regras de quiz.css usam `.quiz-trilho__etapa[data-estado='x']
+      .quiz-trilho__amostra` — especificidade 0,2,1. Minha regra genérica
+      `.quiz-trilho__amostra` (0,1,0) perdia, e a altura de 4px nunca valia.
+      Resultado na tela: um círculo magenta solto, sem relação com barra.
+
+   Abaixo, os seletores têm a MESMA especificidade das regras originais e
+   vêm depois — então vencem por ordem, não por acidente.
+   =========================================================================== */
+
+.quiz-trilho {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-block-start: 0;
+}
+
+/* A trilha original desenhava uma linha por cima. Não faz mais sentido: cada
+   etapa virou um segmento com a sua própria cor. */
+.quiz-trilho::before {
+  display: none;
+}
+
+.quiz-trilho__etapa {
+  flex: 1 1 0;
+  min-width: 0;
+  display: block;
+  position: relative;
+}
+
+.quiz-trilho__gancho {
+  display: none;
+}
+
+.quiz-trilho__amostra,
+.quiz-trilho__etapa[data-estado='concluida'] .quiz-trilho__amostra,
+.quiz-trilho__etapa[data-estado='atual'] .quiz-trilho__amostra,
+.quiz-trilho__etapa[data-estado='futura'] .quiz-trilho__amostra {
+  display: block;
+  inline-size: 100%;
+  width: 100%;
+  height: 5px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  /* O rótulo não cabe num fio de 5px — e não precisa: "Pergunta 1 de 7"
+     ao lado já diz onde a pessoa está. */
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.quiz-trilho__amostra svg {
+  display: none;
+}
+
+.quiz-trilho__etapa[data-estado='futura'] .quiz-trilho__amostra {
+  background: var(--quiz-border);
+}
+
+.quiz-trilho__etapa[data-estado='concluida'] .quiz-trilho__amostra {
+  background: var(--quiz-purple);
+}
+
+.quiz-trilho__etapa[data-estado='atual'] .quiz-trilho__amostra {
+  background: linear-gradient(90deg, var(--quiz-lilac), var(--quiz-neon));
+  box-shadow: 0 0 10px -1px rgba(238, 91, 255, 0.65);
+}

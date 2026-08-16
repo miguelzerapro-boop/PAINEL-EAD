@@ -623,6 +623,25 @@
   line-height: 1.45;
 }
 
+/*
+   Saída secundária do resultado. Quando existe plano publicado, o botão cheio
+   vai para os planos e o WhatsApp vira link de texto — dois botões sólidos
+   lado a lado dividiriam a atenção no ponto exato em que ela precisa de uma
+   direção só.
+*/
+.resultado__secundario {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--text-secondary);
+  font-size: var(--size-small);
+  text-underline-offset: 0.25em;
+}
+
+.resultado__secundario:hover {
+  color: var(--brand-primary);
+}
+
 /* Sem canal de WhatsApp configurado: orientação neutra, sem botão quebrado. */
 .resultado__sem-canal {
   margin-block-start: var(--space-5);

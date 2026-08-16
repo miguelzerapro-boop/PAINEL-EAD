@@ -334,11 +334,33 @@ const { rows: [aulaRascunho] } = await client.query(
   [cap1.id, cursoFormacao.id],
 )
 
-// Matrícula ativa só para a primeira aluna.
+/*
+ * Matrícula ativa só para a primeira aluna.
+ *
+ * Desde a migration 28 a formação trabalha com PACOTES: quem entrou por
+ * compra só abre os capítulos da oferta que pagou. Uma matrícula com
+ * `source='order'` e nenhum pedido é um estado que não existe em produção —
+ * o webhook cria os dois juntos —, e a regra corretamente nega acesso a ela.
+ *
+ * Este arquivo testa a regra de LIBERAÇÃO, não a de pacote (essa é o
+ * 11-pacotes). Então a matrícula recebe um pedido pago do plano Completo:
+ * assim o pacote não interfere e as asserções medem o que se propõem a
+ * medir.
+ */
+const { rows: [ofertaCompleta] } = await client.query(
+  `select id, price_cents, product_id from offers where slug = 'completo'`,
+)
+
+const { rows: [pedidoDaAluna] } = await client.query(
+  `insert into orders (user_id, offer_id, product_id, status, buyer_email, amount_cents)
+   values ($1, $2, $3, 'paid', 'aluna.matriculada@formacao.local', $4) returning id`,
+  [alunaMatriculada, ofertaCompleta.id, ofertaCompleta.product_id, ofertaCompleta.price_cents],
+)
+
 const { rows: [matricula] } = await client.query(
-  `insert into enrollments (user_id, course_id, status, starts_at)
-   values ($1, $2, 'active', now()) returning id`,
-  [alunaMatriculada, cursoFormacao.id],
+  `insert into enrollments (user_id, course_id, status, source, order_id, starts_at)
+   values ($1, $2, 'active', 'order', $3, now()) returning id`,
+  [alunaMatriculada, cursoFormacao.id, pedidoDaAluna.id],
 )
 
 // Objetos no bucket, no caminho real: {course_id}/{lesson_id}/{arquivo}

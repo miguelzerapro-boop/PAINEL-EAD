@@ -4,9 +4,10 @@ import type { Metadata } from 'next'
 import { RenderBloco } from '@/components/cms/blocos'
 import { ComposicaoVisual, VAGAS } from '@/components/composicao-visual'
 
-import { Rodape, Topo } from '@/components/site-chrome'
+import { Assinatura, Rodape, Topo } from '@/components/site-chrome'
 import { listPublishedCourses } from '@/lib/content/catalog'
 import { getPublicSettings, getPublishedPage } from '@/lib/cms/page'
+import { MARCA } from '@/lib/marca'
 import { formatWorkload } from '@/lib/format'
 import { createClient } from '@/lib/supabase/server'
 import { getWhatsAppTarget } from '@/lib/whatsapp'
@@ -20,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     typeof settings['seo.default_description'] === 'string' ? settings['seo.default_description'] : null
 
   return {
-    title: title ?? 'Escola de unhas',
+    title: title ?? MARCA.nome,
     description:
       description ??
       'Não é apenas aprender a fazer unhas. É construir uma profissão com direção.',
@@ -186,25 +187,25 @@ async function LandingPadrao({ revisao: _revisao }: { revisao: boolean }) {
       </section>
 
       {/* ================================================================== */}
-      {/* A DIFERENÇA — o argumento central, em faixa de marca               */}
+      {/* A MARCA — assinatura institucional                                 */}
       {/* ================================================================== */}
-      <section className="faixa-marca">
-        <div className="page contraste">
-          <div className="contraste__lado" data-tom="antes">
-            <p className="contraste__rotulo">O jeito comum</p>
-            <p className="contraste__frase">
-              Um monte de aula solta. Você assiste, gosta, e continua sem saber o que fazer
-              depois.
-            </p>
-          </div>
+      {/*
+        Aqui ficava o bloco "O jeito comum | Aqui": duas colunas de texto com
+        um risco no meio, ocupando uma dobra inteira para dizer o que a seção
+        "Como funciona", logo abaixo, já mostra em três etapas.
 
-          <div className="contraste__divisor" aria-hidden="true" />
+        No lugar entra a marca. Até então ela só existia no cabeçalho — quem
+        rolava a página não via mais nenhum sinal de quem assina o trabalho.
+      */}
+      <section className="assinatura-marca">
+        <div className="page assinatura-marca__grade">
+          <Assinatura href={null} tamanho="grande" />
 
-          <div className="contraste__lado" data-tom="depois">
-            <p className="contraste__rotulo">Aqui</p>
-            <p className="contraste__frase">
-              Primeiro a gente entende o seu momento. Depois você segue um caminho, com o
-              próximo passo sempre visível.
+          <div>
+            <span className="assinatura-marca__fio" aria-hidden="true" />
+            <p className="assinatura-marca__texto">
+              A formação é assinada por {MARCA.nome} — o mesmo cuidado do estúdio,
+              organizado em capítulos para você aprender no seu ritmo.
             </p>
           </div>
         </div>
