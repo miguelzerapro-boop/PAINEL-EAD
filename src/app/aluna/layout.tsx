@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { BotaoWhatsApp } from '@/components/botao-whatsapp'
 import { MenuLateral, type GrupoDeMenu } from '@/components/menu-lateral'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: { default: 'Minha área', template: '%s · Minha área' },
+  title: { default: 'Minha área', template: "%s | Katia Franck Nail's Studio" },
   robots: { index: false, follow: false },
 }
 
@@ -23,19 +24,18 @@ export default async function AlunaLayout({ children }: { children: React.ReactN
   } = await db.auth.getUser()
   if (!user) redirect('/entrar?proximo=/aluna')
 
-  const [perfil, matriculas, pendencias, naoLidas] = await Promise.all([
+  /*
+   * As contagens de Atividades e Mensagens não vêm mais: os dois itens saíram
+   * do menu. Manter as consultas seria pagar duas idas ao banco em toda tela
+   * da aluna para alimentar um contador que ninguém vê.
+   */
+  const [perfil, matriculas] = await Promise.all([
     db.from('profiles').select('full_name, display_name').eq('id', user.id).maybeSingle(),
     db
       .from('enrollments')
       .select('progress_pct')
       .eq('user_id', user.id)
       .in('status', ['active', 'completed']),
-    db
-      .from('activity_submissions')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .in('status', ['changes_requested', 'draft']),
-    db.rpc('unread_conversations', { p_user_id: user.id }),
   ])
 
   const cursos = matriculas.data ?? []
@@ -47,37 +47,23 @@ export default async function AlunaLayout({ children }: { children: React.ReactN
   const primeiroNome =
     (perfil.data?.display_name ?? perfil.data?.full_name ?? '').split(' ')[0] || 'Minha área'
 
+  /*
+   * O MENU DA ALUNA TAMBÉM ENCOLHEU: de 8 itens para 3.
+   *
+   * Comunidade e Mensagens saíram porque não vão ser usadas agora — e menu
+   * apontando para tela vazia é pior do que menu sem o item. Atividades,
+   * Biblioteca e Certificados saíram porque ainda não há conteúdo que os
+   * alimente; voltam quando houver.
+   *
+   * As rotas continuam de pé. O suporte agora é o botão de WhatsApp, que
+   * aparece flutuando em toda a área.
+   */
   const grupos: GrupoDeMenu[] = [
     {
       rotulo: 'Estudar',
       itens: [
         { href: '/aluna', rotulo: 'Início', icone: 'inicio' },
-        { href: '/aluna/cursos', rotulo: 'Meus cursos', icone: 'cursos' },
-        {
-          href: '/aluna/atividades',
-          rotulo: 'Atividades',
-          icone: 'atividades',
-          contador: pendencias.count || null,
-        },
-        { href: '/aluna/biblioteca', rotulo: 'Biblioteca', icone: 'biblioteca' },
-      ],
-    },
-    {
-      rotulo: 'Conversar',
-      itens: [
-        { href: '/aluna/comunidade', rotulo: 'Comunidade', icone: 'comunidade' },
-        {
-          href: '/aluna/mensagens',
-          rotulo: 'Mensagens',
-          icone: 'mensagens',
-          contador: (naoLidas.data as number | null) || null,
-        },
-      ],
-    },
-    {
-      rotulo: 'Conta',
-      itens: [
-        { href: '/aluna/certificados', rotulo: 'Certificados', icone: 'certificado' },
+        { href: '/aluna/cursos', rotulo: 'Minha Formação', icone: 'cursos' },
         { href: '/aluna/perfil', rotulo: 'Meu perfil', icone: 'perfil' },
       ],
     },
@@ -87,6 +73,8 @@ export default async function AlunaLayout({ children }: { children: React.ReactN
     <div className="app-shell">
       <MenuLateral titulo={primeiroNome} grupos={grupos} progresso={progresso} />
       <div className="app-shell__conteudo">{children}</div>
+      {/* Suporte sem inbox interno: um clique abre a conversa no WhatsApp. */}
+      <BotaoWhatsApp origem="aluna" />
     </div>
   )
 }

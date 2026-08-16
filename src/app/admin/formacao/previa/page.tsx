@@ -5,30 +5,30 @@ import type { Metadata } from 'next'
 import { Aviso } from '@/components/estados'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-export const metadata: Metadata = { title: 'Visualizar como aluna' }
+export const metadata: Metadata = { title: 'Ver como aluna' }
 export const dynamic = 'force-dynamic'
 
 /**
- * VISUALIZAR COMO ALUNA — prévia por plano.
+ * VER COMO ALUNA — a área de estudos vista pela ótica de cada plano.
  *
- * Para mostrar a formação a um cliente sem que exista nenhuma aluna matriculada
- * ainda. Escolhe-se um plano e a tela mostra o que uma aluna daquele pacote
- * veria: quais capítulos abrem e quais ficam fechados.
+ * Serve para conferir uma aula recém-cadastrada, uma capa nova ou o que fica
+ * bloqueado em cada pacote, e para apresentar o sistema sem que exista
+ * nenhuma aluna matriculada.
  *
  * O QUE ESTA TELA NÃO FAZ, de propósito:
  *
- *   · não cria matrícula;
- *   · não cria pedido nem pagamento;
- *   · não concede direito nenhum a conta nenhuma;
+ *   · não cria matrícula, pedido nem pagamento;
+ *   · não altera o plano de ninguém;
+ *   · não grava progresso;
+ *   · não libera conteúdo de forma permanente;
  *   · não troca a sessão de quem está olhando.
  *
- * É LEITURA. A lista de aberto/fechado é calculada de `offer_module_access` —
- * a MESMA tabela que `user_has_module_access()` consulta no banco para decidir
- * o acesso de verdade. Se a prévia e o acesso real divergirem um dia, é
- * porque a tabela mudou, e os dois mudam junto.
+ * É LEITURA. O aberto/fechado sai de `offer_module_access` — a MESMA tabela
+ * que `user_has_module_access()` consulta no banco para decidir o acesso de
+ * verdade. Se um dia divergirem, é porque a tabela mudou, e os dois mudam
+ * junto. Nada de capítulo escrito à mão aqui.
  *
- * O middleware já barra quem não é admin em todo /admin. Não há caminho para
- * uma aluna abrir isto.
+ * O middleware já barra quem não é admin em todo /admin.
  */
 export default async function PreviaPage({
   searchParams,
@@ -63,8 +63,6 @@ export default async function PreviaPage({
   const abertos = new Set((liberados ?? []).map((l) => l.module_id))
   const capitulos = modulos ?? []
 
-  // Quantas aulas cada capítulo já tem. Zero é o estado real hoje, e a tela
-  // diz isso em vez de fingir conteúdo.
   const { data: aulas } = await db.from('lessons').select('id, module_id')
   const aulasPorModulo = new Map<string, number>()
   for (const a of aulas ?? []) {
@@ -72,17 +70,42 @@ export default async function PreviaPage({
   }
 
   const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+  const quantosAbertos = capitulos.filter((c) => abertos.has(c.id)).length
 
   return (
     <>
-      <p className="eyebrow">Conteúdo</p>
-      <h1>Visualizar como aluna</h1>
+      {/*
+        A BARRA DE PREVIEW.
+
+        Fica no topo, fixa, e diz em uma frase o que a pessoa está vendo. O
+        botão de voltar é a peça central: sem ele a saída seria o botão do
+        navegador ou digitar /admin na barra de endereço — que é exatamente o
+        tipo de coisa que faz alguém achar que "ficou preso" no sistema.
+      */}
+      <div className="barra-previa" role="status">
+        <span className="barra-previa__texto">
+          Você está vendo a plataforma como uma aluna
+          {atual ? (
+            <>
+              {' '}
+              do plano <strong>{atual.name}</strong>
+            </>
+          ) : null}
+          .
+        </span>
+        <Link className="botao botao--secundario barra-previa__voltar" href="/admin">
+          Voltar ao painel
+        </Link>
+      </div>
+
+      <p className="eyebrow">Conferir</p>
+      <h1>Ver como aluna</h1>
 
       <div style={{ marginBlock: 'var(--space-5)' }}>
-        <Aviso titulo="Isto é uma prévia">
-          Nenhuma matrícula, pedido ou pagamento é criado aqui, e nenhuma conta ganha acesso.
-          A lista abaixo é calculada da mesma tabela que o banco usa para liberar capítulo de
-          verdade.
+        <Aviso titulo="Isto é só uma visualização">
+          Nada é criado nem alterado aqui: nenhuma matrícula, nenhum pedido, nenhum pagamento,
+          e nenhuma conta ganha acesso. É a mesma informação que o sistema usa para liberar os
+          capítulos de verdade.
         </Aviso>
       </div>
 
@@ -90,11 +113,15 @@ export default async function PreviaPage({
         <div className="vazio-explicado">
           <p className="vazio-explicado__titulo">Nenhum plano publicado.</p>
           <p className="vazio-explicado__texto">
-            A prévia aparece assim que existir ao menos uma oferta publicada com preço.
+            A visualização aparece assim que existir ao menos um plano publicado com preço.
           </p>
         </div>
       ) : (
         <>
+          <p className="lead" style={{ maxWidth: 'var(--measure-study)' }}>
+            Escolha o plano para ver o que uma aluna dele enxerga.
+          </p>
+
           <div className="previa__abas" role="group" aria-label="Escolha o plano">
             {planos.map((p) => (
               <Link
@@ -104,7 +131,9 @@ export default async function PreviaPage({
                 aria-current={p.id === atual?.id ? 'true' : undefined}
               >
                 <span className="previa__aba-nome">{p.name}</span>
-                <span className="previa__aba-preco mono">{brl.format((p.price_cents ?? 0) / 100)}</span>
+                <span className="previa__aba-preco mono">
+                  {brl.format((p.price_cents ?? 0) / 100)}
+                </span>
               </Link>
             ))}
           </div>
@@ -112,7 +141,7 @@ export default async function PreviaPage({
           <p className="lead" style={{ marginBlock: 'var(--space-5) var(--space-4)' }}>
             Uma aluna do plano <strong>{atual?.name}</strong> vê{' '}
             <strong>
-              {capitulos.filter((c) => abertos.has(c.id)).length} de {capitulos.length}
+              {quantosAbertos} de {capitulos.length}
             </strong>{' '}
             capítulos abertos.
           </p>
@@ -129,20 +158,16 @@ export default async function PreviaPage({
                   <div className="previa__corpo">
                     <p className="previa__nome">{c.name}</p>
                     <p className="previa__estado">
-                      {aberto ? (
-                        quantasAulas > 0 ? (
-                          `Aberto · ${quantasAulas} ${quantasAulas === 1 ? 'aula' : 'aulas'}`
-                        ) : (
-                          /*
-                           * Aberto e sem aula é o estado real hoje. Dizer
-                           * "Aberto" e mostrar uma lista vazia faria o cliente
-                           * achar que quebrou.
-                           */
-                          'Aberto · nenhuma aula cadastrada ainda'
-                        )
-                      ) : (
-                        `Fechado neste plano`
-                      )}
+                      {aberto
+                        ? quantasAulas > 0
+                          ? `Aberto · ${quantasAulas} ${quantasAulas === 1 ? 'aula' : 'aulas'}`
+                          : /*
+                             * Aberto e sem aula é o estado real hoje. Dizer só
+                             * "Aberto" e mostrar lista vazia faria parecer
+                             * defeito.
+                             */
+                            'Aberto · nenhuma aula cadastrada ainda'
+                        : 'Fechado neste plano'}
                     </p>
                   </div>
 
@@ -153,9 +178,7 @@ export default async function PreviaPage({
           </ol>
 
           <p className="palheta__meta" style={{ marginBlockStart: 'var(--space-6)' }}>
-            Para cadastrar aulas, abra{' '}
-            <Link href="/admin/formacao">a formação</Link>. Para mudar quais capítulos cada
-            plano libera, o ajuste é em <code>offer_module_access</code>.
+            Para cadastrar aulas, abra <Link href="/admin/formacao">a Formação</Link>.
           </p>
         </>
       )}

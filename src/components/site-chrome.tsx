@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { BotaoWhatsApp } from '@/components/botao-whatsapp'
 import { NavMobile, type ItemNav } from '@/components/nav-mobile'
 import { getPublicSettings } from '@/lib/cms/page'
 import { listPublishedCourses } from '@/lib/content/catalog'
@@ -170,6 +171,10 @@ export async function Rodape() {
           <p>© {ano} {nome ?? MARCA.nome}</p>
         </div>
       </div>
+
+      {/* Fica no rodapé por conveniência de montagem — visualmente ele flutua
+          fixo no canto, em toda página pública que tem rodapé. */}
+      <BotaoWhatsApp origem="site" />
     </footer>
   )
 }

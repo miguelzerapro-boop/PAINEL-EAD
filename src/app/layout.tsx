@@ -43,7 +43,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: {
     default: MARCA.nome,
-    template: `%s · ${MARCA.nome}`,
+    template: `%s | ${MARCA.nome}`,
   },
   description: 'Plataforma de formacao profissional em manicure e nail design.',
   robots: { index: false, follow: false }, // liberar quando o conteudo real for publicado

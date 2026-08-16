@@ -47,6 +47,8 @@ const TELAS = [
   { rota: '/admin/alunas', nome: 'Alunas' },
   { rota: '/admin/pedidos', nome: 'Pedidos' },
   { rota: '/admin/leads', nome: 'Leads' },
+  { rota: '/admin/vendas', nome: 'Vendas' },
+  { rota: '/admin/formacao/previa', nome: 'Ver como aluna' },
   { rota: '/admin/funil', nome: 'Funil' },
   { rota: '/admin/quiz', nome: 'Quiz' },
   { rota: '/admin/midia', nome: 'Mídia' },

@@ -5,7 +5,7 @@ import { MenuLateral, type GrupoDeMenu } from '@/components/menu-lateral'
 import { getContentGaps } from '@/lib/cms/page'
 
 export const metadata: Metadata = {
-  title: { default: 'Painel', template: '%s · Painel' },
+  title: { default: 'Painel', template: "%s | Painel · Katia Franck Nail's Studio" },
   robots: { index: false, follow: false },
 }
 
@@ -25,50 +25,47 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     (gaps?.demoStillPublished ? 1 : 0)
 
   const grupos: GrupoDeMenu[] = [
+    /*
+     * O MENU FOI CORTADO DE 21 ITENS PARA 9.
+     *
+     * A regra: fica no menu o que a responsável usa no dia a dia. O resto
+     * continua existindo — rota, banco e código intactos — mas deixa de
+     * disputar atenção. Um painel com 21 entradas obriga quem entra a
+     * aprender o sistema antes de conseguir fazer a tarefa mais simples.
+     *
+     * SAÍRAM DO MENU (as rotas continuam funcionando):
+     *
+     *   Cursos, Biblioteca      já vivem dentro de Formação — três nomes
+     *                           para a mesma coisa faziam a pessoa parar
+     *                           para descobrir a diferença
+     *   Instrutoras             o estúdio tem uma responsável só
+     *   Comunidade, Mensagens   não vão ser usadas agora; o suporte é o
+     *                           WhatsApp flutuante
+     *   Fotos e mídia, Páginas,
+     *   Perguntas frequentes,
+     *   Avisos                  configuração de site, não rotina
+     *   Leads, Ofertas, Pedidos reunidos em Vendas
+     *   LGPD                    fica linkada em Configurações
+     *
+     * Nada foi apagado. Ver docs/validacao/menu-admin.md.
+     */
     {
-      rotulo: 'Conteúdo',
+      rotulo: 'Painel',
       itens: [
-        { href: '/admin', rotulo: 'Pendências', icone: 'pendencias', contador: pendencias || null },
-        { href: '/admin/formacao', rotulo: 'Formação', icone: 'atividades' },
-        { href: '/admin/cursos', rotulo: 'Cursos', icone: 'cursos' },
-        { href: '/admin/biblioteca', rotulo: 'Biblioteca', icone: 'biblioteca' },
-        { href: '/admin/instrutoras', rotulo: 'Instrutoras', icone: 'pessoas' },
-        { href: '/admin/midia', rotulo: 'Fotos e mídia', icone: 'midia' },
-      ],
-    },
-    {
-      rotulo: 'Site',
-      itens: [
-        { href: '/admin/paginas', rotulo: 'Páginas', icone: 'paginas' },
-        { href: '/admin/faq', rotulo: 'Perguntas frequentes', icone: 'suporte' },
-        { href: '/admin/depoimentos', rotulo: 'Depoimentos', icone: 'comunidade' },
-      ],
-    },
-    {
-      rotulo: 'Pessoas',
-      itens: [
-        { href: '/admin/comunidade', rotulo: 'Comunidade', icone: 'comunidade' },
-        { href: '/admin/mensagens', rotulo: 'Mensagens', icone: 'mensagens' },
+        { href: '/admin', rotulo: 'Início', icone: 'inicio', contador: pendencias || null },
+        { href: '/admin/formacao', rotulo: 'Formação', icone: 'cursos' },
+        { href: '/admin/quiz', rotulo: 'Quiz', icone: 'atividades' },
         { href: '/admin/alunas', rotulo: 'Alunas', icone: 'pessoas' },
-        { href: '/admin/avisos', rotulo: 'Avisos', icone: 'pendencias' },
+        { href: '/admin/vendas', rotulo: 'Vendas', icone: 'ofertas' },
+        { href: '/admin/depoimentos', rotulo: 'Depoimentos', icone: 'comunidade' },
+        { href: '/admin/funil', rotulo: 'Relatórios', icone: 'atividades' },
+        { href: '/admin/ajustes', rotulo: 'Configurações', icone: 'ajustes' },
       ],
     },
     {
-      rotulo: 'Comercial',
+      rotulo: 'Conferir',
       itens: [
         { href: '/admin/formacao/previa', rotulo: 'Ver como aluna', icone: 'perfil' },
-        { href: '/admin/funil', rotulo: 'Funil', icone: 'atividades' },
-        { href: '/admin/quiz', rotulo: 'Diagnóstico', icone: 'atividades' },
-        { href: '/admin/leads', rotulo: 'Leads', icone: 'perfil' },
-        { href: '/admin/ofertas', rotulo: 'Ofertas', icone: 'ofertas' },
-        { href: '/admin/pedidos', rotulo: 'Pedidos', icone: 'ofertas' },
-      ],
-    },
-    {
-      rotulo: 'Sistema',
-      itens: [
-        { href: '/admin/ajustes', rotulo: 'Ajustes', icone: 'ajustes' },
-        { href: '/admin/lgpd', rotulo: 'LGPD', icone: 'certificado' },
       ],
     },
   ]

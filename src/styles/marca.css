@@ -293,3 +293,348 @@
 .rodape .marca__nome-apoio {
   color: var(--lilac-300);
 }
+
+/* ===========================================================================
+   SUPORTE FLUTUANTE (WHATSAPP)
+
+   Substitui a caixa de mensagens interna. Fica no canto, discreto: um círculo
+   com o ícone, e a frase "Precisa de ajuda?" só aparece no hover em telas
+   grandes — no celular ela ocuparia espaço útil sem necessidade.
+   =========================================================================== */
+
+.zap {
+  position: fixed;
+  inset-inline-end: clamp(0.75rem, 2vw, 1.5rem);
+  inset-block-end: clamp(0.75rem, 2vw, 1.5rem);
+  z-index: 40;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  min-block-size: var(--target-min);
+  min-inline-size: var(--target-min);
+  padding: 0.75rem;
+  border-radius: var(--radius-rail);
+
+  /* Verde do WhatsApp: aqui a cor da marca atrapalharia o reconhecimento. */
+  background: #1eb15a;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 8px 24px -8px rgba(11, 6, 16, 0.5), 0 2px 6px -2px rgba(11, 6, 16, 0.4);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.zap:hover,
+.zap:focus-visible {
+  background: #17924a;
+  box-shadow: 0 12px 30px -8px rgba(11, 6, 16, 0.55);
+}
+
+.zap__icone {
+  flex: none;
+}
+
+/* A frase aparece só quando há espaço e o ponteiro chega perto. */
+.zap__dica {
+  display: none;
+  font-size: var(--size-small);
+  font-weight: 600;
+  white-space: nowrap;
+  max-inline-size: 0;
+  overflow: hidden;
+  transition: max-inline-size var(--duration-base) var(--ease-out);
+}
+
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  .zap__dica {
+    display: block;
+  }
+
+  .zap:hover .zap__dica,
+  .zap:focus-visible .zap__dica {
+    max-inline-size: 10rem;
+    padding-inline-start: var(--space-2);
+  }
+}
+
+/* ===========================================================================
+   ENTRAR
+
+   Duas metades no desktop: marca sobre fotografia à esquerda, formulário à
+   direita. No celular a metade visual SAI — quem abre o login no telefone
+   quer digitar, e uma foto grande antes do formulário só empurra os campos
+   para fora da tela.
+   =========================================================================== */
+
+.entrar {
+  min-block-size: 100dvh;
+  display: grid;
+}
+
+@media (min-width: 60rem) {
+  .entrar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Lado da marca -------------------------------------------------------- */
+
+.entrar__marca {
+  display: none;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(2rem, 1rem + 4vw, 4rem);
+  align-content: end;
+  background: var(--purple-950);
+  color: var(--text-on-dark);
+}
+
+@media (min-width: 60rem) {
+  .entrar__marca {
+    display: grid;
+  }
+}
+
+.entrar__fundo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.entrar__foto {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* Véu roxo: sem ele o texto branco não passa em contraste sobre a foto. */
+.entrar__veu {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--purple-950) 55%, transparent),
+    color-mix(in srgb, var(--purple-950) 92%, transparent) 72%,
+    var(--purple-950)
+  );
+}
+
+.entrar__marca-conteudo {
+  position: relative;
+  z-index: 1;
+}
+
+.entrar__frase {
+  margin-block-start: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  line-height: var(--leading-title);
+  letter-spacing: -0.02em;
+  max-inline-size: 18ch;
+  text-wrap: balance;
+}
+
+/* --- Lado do formulário --------------------------------------------------- */
+
+.entrar__painel {
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 1rem + 3vw, 3rem);
+  background: var(--surface-main);
+}
+
+.entrar__caixa {
+  inline-size: 100%;
+  max-inline-size: var(--width-form);
+}
+
+.entrar__marca-mobile {
+  margin-block-end: var(--space-7);
+}
+
+@media (min-width: 60rem) {
+  .entrar__marca-mobile {
+    display: none;
+  }
+}
+
+.entrar__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-block-start: var(--space-2);
+}
+
+.entrar__apoio {
+  margin-block: var(--space-3) var(--space-6);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+}
+
+.entrar__assinatura-legal {
+  margin-block-start: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* No celular a marca fica em cima do formulário e o selo pode ser menor. */
+@media (max-width: 59.999rem) {
+  .entrar__marca-mobile .marca__selo {
+    inline-size: 3.25rem;
+    block-size: 3.25rem;
+  }
+}
+
+/* ===========================================================================
+   BARRA DE VISUALIZAÇÃO COMO ALUNA
+   =========================================================================== */
+
+.barra-previa {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-cartao);
+  background: var(--purple-950);
+  color: var(--text-on-dark);
+  box-shadow: var(--shadow-erguida);
+}
+
+.barra-previa__texto {
+  font-size: var(--size-small);
+  line-height: var(--leading-ui);
+}
+
+.barra-previa__voltar {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--lilac-300) 55%, transparent);
+  color: var(--text-on-dark);
+  min-height: var(--target-min);
+  padding-inline: var(--space-5);
+  font-size: var(--size-small);
+}
+
+.barra-previa__voltar:hover {
+  background: color-mix(in srgb, var(--neon-lilac) 18%, transparent);
+  border-color: var(--neon-lilac);
+  color: #ffffff;
+}
+
+/* ===========================================================================
+   VENDAS — cartões de número e planos
+   =========================================================================== */
+
+.cartoes-numero {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.cartao-numero {
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+.cartao-numero__valor {
+  display: block;
+  font-size: var(--size-h2);
+  font-weight: 600;
+  color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cartao-numero__rotulo {
+  display: block;
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.planos-admin {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.plano-admin {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+.plano-admin__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+}
+
+.plano-admin__preco {
+  font-size: var(--size-h3);
+  color: var(--brand-primary);
+}
+
+.plano-admin__capitulos {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.plano-admin .botao {
+  margin-block-start: var(--space-3);
+  justify-self: start;
+}
+
+/* Tabela que rola sozinha no celular sem levar a página junto. */
+.tabela-rolavel {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+}
+
+.tabela {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--surface-main);
+  font-size: var(--size-small);
+}
+
+.tabela th,
+.tabela td {
+  padding: var(--space-3) var(--space-4);
+  text-align: start;
+  border-block-end: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.tabela thead th {
+  background: var(--surface-soft);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tabela tbody tr:last-child th,
+.tabela tbody tr:last-child td {
+  border-block-end: none;
+}
