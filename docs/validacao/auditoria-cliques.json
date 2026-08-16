@@ -44,8 +44,8 @@
   {
     "rota": "/entrar",
     "status": 200,
-    "links": 11,
-    "botoes": 3,
+    "links": 3,
+    "botoes": 2,
     "mortos": []
   },
   {
@@ -86,15 +86,15 @@
   {
     "rota": "/admin",
     "status": 200,
-    "links": 11,
-    "botoes": 3,
+    "links": 3,
+    "botoes": 2,
     "mortos": []
   },
   {
     "rota": "/aluna",
     "status": 200,
-    "links": 11,
-    "botoes": 3,
+    "links": 3,
+    "botoes": 2,
     "mortos": []
   }
 ]
