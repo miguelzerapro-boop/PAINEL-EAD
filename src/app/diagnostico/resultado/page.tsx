@@ -173,14 +173,15 @@ export default async function ResultadoPage({
                 <li>Escolha o seu</li>
                 <li>Comece a estudar</li>
               </ol>
-            </aside>
-          </div>
-        </section>
 
-        <section className="section">
-          <div className="page editorial">
-            <div>
-              <div style={{ maxWidth: 'var(--measure-sales)' }}>
+              {/*
+                O CTA vive DENTRO do cartão de próximo passo.
+
+                Antes ele ficava numa seção solta abaixo, e sobrava meia tela
+                de branco entre o botão e o rodapé — a decisão mais importante
+                da página aparecia num vazio, longe do texto que a justifica.
+              */}
+              <div className="resultado__acao">
                 {temPlanos ? (
                   /*
                    * Existe plano publicado com preço: o passo seguinte é ver
@@ -277,7 +278,7 @@ export default async function ResultadoPage({
                   </>
                 )}
               </div>
-            </div>
+            </aside>
           </div>
         </section>
       </main>

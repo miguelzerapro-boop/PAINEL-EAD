@@ -852,3 +852,34 @@
 .fechamento-escuro__discreto:hover {
   color: var(--text-on-dark);
 }
+
+/* O CTA dentro do cartão escuro de próximo passo. */
+.resultado__acao {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid color-mix(in srgb, var(--lilac-300) 28%, transparent);
+}
+
+.resultado__acao .botao {
+  inline-size: 100%;
+}
+
+.resultado__acao .resultado__garantia {
+  color: color-mix(in srgb, var(--text-on-dark) 70%, transparent);
+  text-align: center;
+}
+
+.resultado__acao .resultado__secundario {
+  color: var(--lilac-300);
+}
+
+.resultado__acao .resultado__secundario:hover {
+  color: #ffffff;
+}
+
+/* Sem plano publicado: o texto de encaminhamento também vive no cartão. */
+.resultado__acao .resultado__sem-canal {
+  border-inline-start-color: var(--neon-lilac);
+  background: transparent;
+  color: color-mix(in srgb, var(--text-on-dark) 78%, transparent);
+}
