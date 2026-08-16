@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { LoginForm } from './login-form'
 import { Assinatura } from '@/components/site-chrome'
 import { ComposicaoVisual, VAGAS } from '@/components/composicao-visual'
-import { MARCA } from '@/lib/marca'
 
 export const metadata: Metadata = {
   title: 'Entrar',
@@ -11,21 +10,20 @@ export const metadata: Metadata = {
 }
 
 /**
- * ENTRADA POR E-MAIL E SENHA.
+ * ENTRAR — uma tela só, com a marca dentro dela.
  *
- * A versão anterior era um título e dois campos centrados num branco vazio —
- * lia como tela padrão de autenticação, de qualquer sistema. Nada ali dizia
- * de quem era a plataforma.
+ * A versão anterior era "foto de um lado, formulário branco do outro": duas
+ * metades que não se falavam, e no celular a metade da marca simplesmente
+ * sumia, sobrando um formulário genérico.
  *
- * Agora são duas metades: a marca à esquerda, sobre fotografia e roxo
- * profundo, e o formulário à direita. No celular a foto sai da frente e o
- * formulário sobe — quem abre o login no telefone quer digitar, não admirar a
- * composição.
+ * Agora é UMA composição. O fundo é a fotografia sob o roxo profundo, do lado
+ * a lado; o formulário flutua sobre ela num cartão claro. No celular a
+ * fotografia continua lá, atrás — o cartão só ocupa mais espaço. A pessoa vê
+ * a mesma tela nos dois lugares, não duas telas diferentes.
  *
- * A senha é criada na compra. Por isso não existe botão de cadastro aqui: um
- * "criar conta" nesta tela abriria caminho para conta sem compra, e a pessoa
- * chegaria numa área de estudos vazia sem entender por quê. O link leva para
- * os planos.
+ * A conta é criada na compra. Por isso não existe "criar conta" aqui: um
+ * cadastro livre nesta tela levaria a uma área de estudos vazia, sem que a
+ * pessoa entendesse por quê.
  */
 export default async function EntrarPage({
   searchParams,
@@ -36,47 +34,40 @@ export default async function EntrarPage({
 
   return (
     <main id="conteudo" className="entrar">
-      {/* ------------------------------------------------ lado da marca --- */}
-      <section className="entrar__marca" aria-hidden="true">
-        <div className="entrar__fundo">
-          <ComposicaoVisual
-            vaga={VAGAS.heroPrincipal}
-            mediaPath={null}
-            className="entrar__foto"
-            sizes="(max-width: 60rem) 0px, 50vw"
-            prioridade
-          />
-          <span className="entrar__veu" />
-          <span className="capa__luz capa__luz--alta" />
-        </div>
+      {/* --------------------------------------------------- o cenário --- */}
+      <div className="entrar__cena" aria-hidden="true">
+        <ComposicaoVisual
+          vaga={VAGAS.heroPrincipal}
+          mediaPath={null}
+          className="entrar__foto"
+          sizes="100vw"
+          prioridade
+        />
+        <span className="entrar__veu" />
+        <span className="entrar__brilho" />
+      </div>
 
-        <div className="entrar__marca-conteudo">
+      {/* --------------------------------------------------- o conteúdo -- */}
+      <div className="entrar__palco">
+        <header className="entrar__cabecalho">
           <Assinatura href="/" tamanho="grande" />
           <p className="entrar__frase">
-            A formação continua de onde você parou.
+            Sua formação continua
+            <br />
+            de onde você parou.
           </p>
-        </div>
-      </section>
+        </header>
 
-      {/* -------------------------------------------- lado do formulário --- */}
-      <section className="entrar__painel">
-        <div className="entrar__caixa">
-          {/* No celular o lado da marca some; a assinatura reaparece aqui. */}
-          <div className="entrar__marca-mobile">
-            <Assinatura href="/" />
-          </div>
-
-          <p className="eyebrow">Área da aluna</p>
+        <section className="entrar__cartao">
+          <p className="entrar__rotulo">Área da aluna</p>
           <h1 className="entrar__titulo">Entre na sua conta</h1>
           <p className="entrar__apoio">
             Use o e-mail e a senha que você criou ao escolher seu plano.
           </p>
 
           <LoginForm proximo={proximo ?? '/aluna'} />
-
-          <p className="entrar__assinatura-legal">{MARCA.nome}</p>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   )
 }

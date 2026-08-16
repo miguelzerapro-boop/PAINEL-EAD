@@ -2,44 +2,7 @@
   {
     "rota": "/",
     "largura": 1440,
-    "achados": [
-      {
-        "texto": "Em dúvida?",
-        "classe": "capa__chapeu",
-        "cor": "rgb(232, 121, 249)",
-        "fundo": "rgb(246, 235, 255)",
-        "tamanho": 14,
-        "razao": 2.14,
-        "limite": 4.5
-      },
-      {
-        "texto": "Seja qual for o seu ponto de partida",
-        "classe": "capa__chapeu",
-        "cor": "rgb(192, 38, 211)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 14,
-        "razao": 4.26,
-        "limite": 4.5
-      },
-      {
-        "texto": "Navegação",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 14,
-        "razao": 2.94,
-        "limite": 4.5
-      },
-      {
-        "texto": "Contato",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 14,
-        "razao": 2.94,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/diagnostico",
@@ -49,35 +12,7 @@
   {
     "rota": "/planos",
     "largura": 1440,
-    "achados": [
-      {
-        "texto": "Em dúvida?",
-        "classe": "capa__chapeu",
-        "cor": "rgb(232, 121, 249)",
-        "fundo": "rgb(246, 235, 255)",
-        "tamanho": 14,
-        "razao": 2.14,
-        "limite": 4.5
-      },
-      {
-        "texto": "Navegação",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 14,
-        "razao": 2.94,
-        "limite": 4.5
-      },
-      {
-        "texto": "Contato",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 14,
-        "razao": 2.94,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/checkout/completo",
@@ -147,44 +82,7 @@
   {
     "rota": "/",
     "largura": 390,
-    "achados": [
-      {
-        "texto": "Em dúvida?",
-        "classe": "capa__chapeu",
-        "cor": "rgb(232, 121, 249)",
-        "fundo": "rgb(246, 235, 255)",
-        "tamanho": 13,
-        "razao": 2.14,
-        "limite": 4.5
-      },
-      {
-        "texto": "Seja qual for o seu ponto de partida",
-        "classe": "capa__chapeu",
-        "cor": "rgb(192, 38, 211)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 13,
-        "razao": 4.26,
-        "limite": 4.5
-      },
-      {
-        "texto": "Navegação",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 13,
-        "razao": 2.94,
-        "limite": 4.5
-      },
-      {
-        "texto": "Contato",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 13,
-        "razao": 2.94,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/diagnostico",
@@ -194,35 +92,7 @@
   {
     "rota": "/planos",
     "largura": 390,
-    "achados": [
-      {
-        "texto": "Em dúvida?",
-        "classe": "capa__chapeu",
-        "cor": "rgb(232, 121, 249)",
-        "fundo": "rgb(246, 235, 255)",
-        "tamanho": 13,
-        "razao": 2.14,
-        "limite": 4.5
-      },
-      {
-        "texto": "Navegação",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 13,
-        "razao": 2.94,
-        "limite": 4.5
-      },
-      {
-        "texto": "Contato",
-        "classe": "eyebrow",
-        "cor": "rgb(103, 84, 112)",
-        "fundo": "rgb(11, 6, 16)",
-        "tamanho": 13,
-        "razao": 2.94,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/checkout/completo",
@@ -232,17 +102,7 @@
   {
     "rota": "/entrar",
     "largura": 390,
-    "achados": [
-      {
-        "texto": "Nail's Studio",
-        "classe": "marca__nome-apoio",
-        "cor": "rgb(232, 121, 249)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 11,
-        "razao": 2.46,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/admin",
@@ -252,80 +112,7 @@
   {
     "rota": "/admin/formacao",
     "largura": 390,
-    "achados": [
-      {
-        "texto": "01",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "02",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "03",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "04",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "05",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "06",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "07",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      },
-      {
-        "texto": "08",
-        "classe": "capitulo__ordem mono",
-        "cor": "rgb(198, 60, 255)",
-        "fundo": "rgb(255, 255, 255)",
-        "tamanho": 21,
-        "razao": 3.82,
-        "limite": 4.5
-      }
-    ]
+    "achados": []
   },
   {
     "rota": "/admin/formacao/aula/nova",
