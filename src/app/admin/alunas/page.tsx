@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { um, varios } from '@/lib/rel'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatDate, formatPhone, formatProgress } from '@/lib/format'
@@ -28,7 +30,11 @@ export default async function AlunasPage() {
             return (
               <div key={aluna.id} className="lista-admin__linha">
                 <div>
-                  <strong>{aluna.full_name ?? 'Sem nome'}</strong>
+                  {/* O nome abre a ficha: plano, capítulos, progresso e
+                      pagamento numa tela só. */}
+                  <Link href={`/admin/alunas/${aluna.id}`} style={{ fontWeight: 600 }}>
+                    {aluna.full_name ?? 'Sem nome'}
+                  </Link>
                   <p className="palheta__meta">
                     {aluna.email}
                     {aluna.phone ? ` · ${formatPhone(aluna.phone)}` : ''}

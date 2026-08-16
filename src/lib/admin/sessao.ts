@@ -23,7 +23,7 @@ export class SemPermissao extends Error {
   }
 }
 
-async function sessaoAtual(): Promise<Sessao> {
+export async function sessaoAtual(): Promise<Sessao> {
   const db = await createClient()
   const {
     data: { user },

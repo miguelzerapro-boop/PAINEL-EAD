@@ -49,7 +49,7 @@ export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> })
               const longo = item.key.startsWith('legal.') && item.key !== 'legal.tax_id'
 
               return (
-                <label className="campo" key={item.key}>
+                <label className="campo" key={item.key} id={`campo-${item.key}`}>
                   <span className="campo__rotulo">
                     {item.label}
                     {item.is_required ? ' *' : ''}

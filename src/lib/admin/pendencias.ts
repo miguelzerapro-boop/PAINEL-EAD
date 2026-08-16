@@ -101,7 +101,7 @@ export async function listarPendencias(): Promise<Pendencia[]> {
             ? 'A página legal correspondente mostra "documento não publicado".'
             : 'Blocos que dependem desta informação não vão ao ar.',
       prioridade: critico ? 'bloqueia' : 'importante',
-      href: '/admin/ajustes',
+      href: `/admin/ajustes#campo-${ajuste.key}`,
       acao: 'Preencher',
     })
   }

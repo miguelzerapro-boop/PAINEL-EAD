@@ -1,142 +1,120 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
-import { BotaoRemoverDemo } from './remover-demo'
-import { EstadoVazio } from '@/components/estados'
-import { formatDate } from '@/lib/format'
-import { listarPendencias, ROTULO_PRIORIDADE, type Prioridade } from '@/lib/admin/pendencias'
+import { ListaDePendencias } from './pendencias-lista'
+import { listarPendencias } from '@/lib/admin/pendencias'
+import { sessaoAtual } from '@/lib/admin/sessao'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
-
-const ORDEM: Prioridade[] = ['bloqueia', 'importante', 'quando_puder']
-
-const TITULO_DO_GRUPO: Record<Prioridade, string> = {
-  bloqueia: 'Bloqueia a publicação',
-  importante: 'Importante',
-  quando_puder: 'Quando puder',
-}
+export const metadata: Metadata = { title: 'Início' }
 
 /**
- * Primeira tela do painel.
+ * O INÍCIO DO PAINEL.
  *
- * Pendências como área de trabalho, não como contadores. Cada item diz o que
- * falta, o que quebra enquanto isso, e leva ao lugar que resolve.
+ * Antes esta tela era a lista de pendências — 22 itens de configuração, em
+ * ordem de gravidade, ocupando a primeira coisa que a responsável via ao
+ * entrar. Abrir o próprio painel e ser recebida por uma lista de problemas é
+ * desanimador, e pior: não é o que ela vem fazer aqui.
+ *
+ * A ordem agora é: como o negócio está, o que dá para fazer agora, e só então
+ * o que falta resolver.
  */
-export default async function AdminHome() {
+export default async function InicioPage() {
   const db = createAdminClient()
-  const [pendencias, alteracoes] = await Promise.all([
-    listarPendencias().catch(() => []),
-    db
-      .from('cms_revisions')
-      .select('id, entity_type, action, actor_name, note, created_at')
-      .order('created_at', { ascending: false })
-      .limit(6),
+
+  const [sessao, pendencias, alunas, pedidos, aulas] = await Promise.all([
+    sessaoAtual().catch(() => null),
+    listarPendencias(),
+    db.from('enrollments').select('id', { count: 'exact', head: true }),
+    db.from('orders').select('amount_cents, status'),
+    db.from('lessons').select('id', { count: 'exact', head: true }).eq('status', 'published'),
   ])
 
-  const porPrioridade = ORDEM.map((p) => ({
-    prioridade: p,
-    itens: pendencias.filter((x) => x.prioridade === p),
-  })).filter((g) => g.itens.length > 0)
+  const pagos = (pedidos.data ?? []).filter((p) => p.status === 'paid')
+  const faturado = pagos.reduce((s, p) => s + (p.amount_cents ?? 0), 0)
+  const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
+  const primeiroNome = (sessao?.nome ?? '').split(' ')[0]
   const bloqueiam = pendencias.filter((p) => p.prioridade === 'bloqueia').length
 
   return (
-    <div className="area area--larga">
-      <div className="area__topo">
-        <div>
-          <p className="titulo-apoio">Painel</p>
-          <h1 className="titulo-pagina">Pendências</h1>
-          <p className="lead">
-            {bloqueiam > 0
-              ? `${bloqueiam} ${bloqueiam === 1 ? 'item impede' : 'itens impedem'} o site de ir ao ar.`
-              : 'Nada impede o site de ir ao ar.'}
-          </p>
-        </div>
+    <>
+      <p className="eyebrow">Painel</p>
+      <h1 className="inicio__saudacao">
+        {primeiroNome ? `Olá, ${primeiroNome}` : 'Olá'}
+      </h1>
 
-        <div className="resumo" style={{ padding: 0 }}>
-          <div className="resumo__item">
-            <span className="resumo__valor">{pendencias.length}</span>
-            <span className="resumo__rotulo">no total</span>
-          </div>
-          <div className="resumo__item">
-            <span className="resumo__valor">{bloqueiam}</span>
-            <span className="resumo__rotulo">bloqueiam</span>
-          </div>
-        </div>
+      {/* --- Como o negócio está ------------------------------------------ */}
+      <div className="inicio__numeros">
+        <Link className="numero-cartao" href="/admin/alunas">
+          <span className="numero-cartao__valor mono">{alunas.count ?? 0}</span>
+          <span className="numero-cartao__rotulo">
+            {alunas.count === 1 ? 'aluna' : 'alunas'}
+          </span>
+        </Link>
+
+        <Link className="numero-cartao" href="/admin/vendas">
+          <span className="numero-cartao__valor mono">{brl.format(faturado / 100)}</span>
+          <span className="numero-cartao__rotulo">recebido</span>
+        </Link>
+
+        <Link className="numero-cartao" href="/admin/formacao">
+          <span className="numero-cartao__valor mono">{aulas.count ?? 0}</span>
+          <span className="numero-cartao__rotulo">
+            {aulas.count === 1 ? 'aula publicada' : 'aulas publicadas'}
+          </span>
+        </Link>
+
+        <a className="numero-cartao" href="#pendencias" data-alerta={bloqueiam > 0 ? 'sim' : undefined}>
+          <span className="numero-cartao__valor mono">{pendencias.length}</span>
+          <span className="numero-cartao__rotulo">
+            {pendencias.length === 1 ? 'pendência' : 'pendências'}
+          </span>
+        </a>
       </div>
 
-      <div className="pilha pilha--solta">
-        {pendencias.length === 0 ? (
-          <EstadoVazio
-            titulo="Nenhuma pendência"
-            texto="Todas as configurações obrigatórias estão preenchidas e não há bloco incompleto."
-            acao={{ label: 'Ver o site', href: '/' }}
-          />
-        ) : (
-          porPrioridade.map((grupo) => (
-            <section className="pilha pilha--junta" key={grupo.prioridade}>
-              <h2 className="titulo-secao">
-                {TITULO_DO_GRUPO[grupo.prioridade]}
-                <span className="selo" data-tom={ROTULO_PRIORIDADE[grupo.prioridade].tom}>
-                  {grupo.itens.length}
-                </span>
-              </h2>
+      {/* --- O que dá para fazer agora ------------------------------------ */}
+      <h2 className="titulo-secao" style={{ marginBlockStart: 'var(--space-8)' }}>
+        Ações rápidas
+      </h2>
 
-              <div className="lista">
-                {grupo.itens.map((item) => (
-                  <div className="lista__item" key={item.id}>
-                    <span className="lista__texto">
-                      <span className="lista__titulo">{item.titulo}</span>
-                      <span className="lista__meta">{item.descricao}</span>
-                      <span className="lista__meta" style={{ opacity: 0.8 }}>
-                        Afeta: {item.afeta}
-                      </span>
-                      {item.responsavel ? (
-                        <span className="lista__meta mono">responsável: {item.responsavel}</span>
-                      ) : null}
-                    </span>
+      <div className="acoes-rapidas">
+        <Link className="acao-rapida" href="/admin/formacao/aula/nova">
+          <span className="acao-rapida__sinal" aria-hidden="true">+</span>
+          <span>
+            <span className="acao-rapida__titulo">Nova aula</span>
+            <span className="acao-rapida__meta">Título, vídeo e capa numa tela só</span>
+          </span>
+        </Link>
 
-                    <span className="lista__fim">
-                      {item.id === 'demo' ? (
-                        <BotaoRemoverDemo />
-                      ) : (
-                        <Link className="botao botao--secundario" href={item.href}>
-                          {item.acao}
-                        </Link>
-                      )}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))
-        )}
+        <Link className="acao-rapida" href="/admin/quiz/pergunta/nova">
+          <span className="acao-rapida__sinal" aria-hidden="true">+</span>
+          <span>
+            <span className="acao-rapida__titulo">Nova pergunta</span>
+            <span className="acao-rapida__meta">Pergunta e respostas juntas</span>
+          </span>
+        </Link>
 
-        <section className="pilha pilha--junta">
-          <h2 className="titulo-secao">Últimas alterações</h2>
-          <div className="lista">
-            {alteracoes.data && alteracoes.data.length > 0 ? (
-              alteracoes.data.map((a) => (
-                <div key={a.id} className="lista__item">
-                  <span className="lista__texto">
-                    <span className="lista__titulo">
-                      {a.entity_type} · {a.action}
-                    </span>
-                    {a.note ? <span className="lista__meta">{a.note}</span> : null}
-                  </span>
-                  <span className="lista__fim mono">
-                    {a.actor_name ?? '—'} · {formatDate(a.created_at, 'short')}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="lista__meta" style={{ padding: 'var(--space-5)' }}>
-                Nenhuma alteração registrada ainda.
-              </p>
-            )}
-          </div>
-        </section>
+        <Link className="acao-rapida" href="/admin/depoimentos/novo">
+          <span className="acao-rapida__sinal" aria-hidden="true">+</span>
+          <span>
+            <span className="acao-rapida__titulo">Novo depoimento</span>
+            <span className="acao-rapida__meta">Aparece na landing quando publicado</span>
+          </span>
+        </Link>
+
+        <Link className="acao-rapida" href="/admin/formacao/previa">
+          <span className="acao-rapida__sinal" aria-hidden="true">→</span>
+          <span>
+            <span className="acao-rapida__titulo">Ver como aluna</span>
+            <span className="acao-rapida__meta">Confira como ficou a área de estudos</span>
+          </span>
+        </Link>
       </div>
-    </div>
+
+      {/* --- E só então o que falta --------------------------------------- */}
+      <ListaDePendencias pendencias={pendencias} />
+    </>
   )
 }
