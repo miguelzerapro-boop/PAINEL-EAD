@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { Aviso, EstadoVazio } from '@/components/estados'
 import { getFormacao } from '@/lib/content/formacao'
 
@@ -38,26 +39,38 @@ export default async function FormacaoPage() {
 
   return (
     <>
-      <div className="admin__cabecalho">
-        <div>
-          <p className="eyebrow">Conteúdo</p>
-          <h1 className="admin__titulo" style={{ marginBlockEnd: 0 }}>
-            {formacao.nome}
-          </h1>
-        </div>
-        <span className="etiqueta" data-tone={formacao.status === 'published' ? 'ok' : 'rascunho'}>
-          {rotuloStatus(formacao.status)}
-        </span>
-      </div>
+      <CabecalhoAdmin
+        titulo={formacao.nome}
+        descricao="Gerencie os capítulos e as aulas da sua formação."
+        selo={
+          <span className="etiqueta" data-tone={formacao.status === 'published' ? 'ok' : 'rascunho'}>
+            {rotuloStatus(formacao.status)}
+          </span>
+        }
+        acao={
+          <Link className="botao botao--primario" href="/admin/formacao/aula/nova">
+            + Nova aula
+          </Link>
+        }
+      />
 
-      <p className="lead" style={{ marginBlock: 'var(--space-4) var(--space-5)' }}>
-        {formacao.capitulos.length}{' '}
-        {formacao.capitulos.length === 1 ? 'capítulo' : 'capítulos'} ·{' '}
-        {totalAulas === 0
-          ? 'nenhuma aula cadastrada ainda'
-          : `${totalAulas} ${totalAulas === 1 ? 'aula' : 'aulas'}, ${totalPublicadas} ${
-              totalPublicadas === 1 ? 'publicada' : 'publicadas'
-            }`}
+      {/*
+        O resumo em números, numa linha só. Antes era um parágrafo do tamanho
+        do título dizendo a mesma coisa.
+      */}
+      <p className="resumo-linha">
+        <strong>{formacao.capitulos.length}</strong>{' '}
+        {formacao.capitulos.length === 1 ? 'capítulo' : 'capítulos'}
+        <span className="resumo-linha__sep" aria-hidden="true" />
+        {totalAulas === 0 ? (
+          <span className="resumo-linha__fraco">nenhuma aula cadastrada ainda</span>
+        ) : (
+          <>
+            <strong>{totalAulas}</strong> {totalAulas === 1 ? 'aula' : 'aulas'}
+            <span className="resumo-linha__sep" aria-hidden="true" />
+            <strong>{totalPublicadas}</strong> no ar
+          </>
+        )}
       </p>
 
       {formacao.status !== 'published' ? (
@@ -127,21 +140,32 @@ export default async function FormacaoPage() {
                   )}
                 </p>
 
-                <div className="capitulo__acoes">
-                  <Link
-                    className="botao botao--secundario botao--pequeno"
-                    href={`/admin/formacao/capitulo/${capitulo.id}`}
-                  >
-                    Gerenciar aulas
-                  </Link>
-                  <Link
-                    className="botao botao--primario botao--pequeno"
-                    href={`/admin/formacao/aula/nova?capitulo=${capitulo.id}`}
-                  >
-                    + Adicionar aula
-                  </Link>
-                </div>
               </div>
+
+              {/*
+                UMA ação por capítulo, não duas.
+                Antes eram "Gerenciar aulas" e "+ Adicionar aula" em cada
+                linha: com oito capítulos, dezesseis botões disputando a tela e
+                nenhum sendo o principal. Adicionar aula já está no cabeçalho;
+                aqui a ação é abrir.
+              */}
+              <Link className="capitulo__abrir" href={`/admin/formacao/capitulo/${capitulo.id}`}>
+                Abrir capítulo
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h9" />
+                  <path d="m8 4 4 4-4 4" />
+                </svg>
+              </Link>
             </li>
           ))}
         </ol>

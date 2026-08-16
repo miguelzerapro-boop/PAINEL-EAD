@@ -7,12 +7,35 @@ import type { ResultadoAcao } from '@/app/admin/tipos'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const NOMES_DE_GRUPO: Record<string, string> = {
-  site: 'Site',
-  contact: 'Contato',
-  legal: 'Dados legais',
-  seo: 'SEO',
-  checkout: 'Checkout',
+/**
+ * Nome e explicação de cada grupo.
+ *
+ * "Site", "SEO" e "Dados legais" eram rótulos de quem montou o banco. A
+ * responsável não procura por "SEO" — ela procura pelo que aparece quando
+ * alguém compartilha o link. Cada grupo agora diz o que é e para que serve.
+ */
+const GRUPOS: Record<string, { nome: string; ajuda: string }> = {
+  site: {
+    nome: 'Marca',
+    ajuda: 'Nome e logotipo que aparecem no site inteiro.',
+  },
+  contact: {
+    nome: 'Atendimento',
+    ajuda: 'Por onde as alunas falam com você. O WhatsApp alimenta o botão flutuante do site.',
+  },
+  legal: {
+    nome: 'Empresa e documentos',
+    ajuda:
+      'Dados de registro e os textos que viram as páginas de termos, privacidade e reembolso.',
+  },
+  seo: {
+    nome: 'Compartilhamento',
+    ajuda: 'O título, a descrição e a imagem que aparecem quando alguém manda o link.',
+  },
+  checkout: {
+    nome: 'Pagamento',
+    ajuda: 'Configuração da cobrança.',
+  },
 }
 
 export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> }) {
@@ -32,18 +55,12 @@ export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> })
       ) : null}
 
       {Object.entries(grupos).map(([grupo, itens]) => (
-        <fieldset key={grupo} style={{ border: 0, padding: 0, margin: 0 }}>
-          <legend className="eyebrow" style={{ paddingBlockEnd: 'var(--space-3)' }}>
-            {NOMES_DE_GRUPO[grupo] ?? grupo}
-          </legend>
-          <div
-            style={{
-              display: 'grid',
-              gap: 'var(--space-4)',
-              paddingBlockStart: 'var(--space-4)',
-              borderBlockStart: 'var(--rail-width) solid var(--rail-color)',
-            }}
-          >
+        <fieldset key={grupo} className="grupo-ajuste">
+          <legend className="grupo-ajuste__nome">{GRUPOS[grupo]?.nome ?? grupo}</legend>
+          {GRUPOS[grupo]?.ajuda ? (
+            <p className="grupo-ajuste__ajuda">{GRUPOS[grupo].ajuda}</p>
+          ) : null}
+          <div className="grupo-ajuste__campos">
             {itens.map((item) => {
               const vazioObrigatorio = item.is_required && !item.value
               const longo = item.key.startsWith('legal.') && item.key !== 'legal.tax_id'
@@ -76,7 +93,9 @@ export function FormularioAjustes({ grupos }: { grupos: Record<string, any[]> })
                     />
                   )}
                   {item.description ? <span className="campo__dica">{item.description}</span> : null}
-                  <span className="mono">{item.key}</span>
+                  {/* O nome interno da configuracao saiu daqui: `legal.tax_id`
+                      embaixo do campo "CNPJ ou CPF" nao ajuda quem preenche, e
+                      faz a tela parecer console de banco de dados. */}
                 </label>
               )
             })}

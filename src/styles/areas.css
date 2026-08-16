@@ -1907,3 +1907,324 @@ button.lista__item:hover {
     align-items: center;
   }
 }
+
+/* ===========================================================================
+   A CASCA DO PAINEL
+
+   O conteúdo não tinha respiro nem limite de leitura: encostava na barra
+   lateral e, nas telas em lista, esticava até a borda da janela. Um parágrafo
+   de 1.200px de largura ninguém lê.
+
+   `--admin-largura` é o limite de composição. Telas de tabela podem soltá-lo
+   pontualmente com `.solto`.
+   =========================================================================== */
+
+.app-shell__conteudo {
+  --admin-largura: 72rem;
+  padding: clamp(1.25rem, 1rem + 2vw, 2.75rem);
+  padding-block-end: var(--space-9);
+  background: var(--surface-soft);
+  min-block-size: 100dvh;
+}
+
+.app-shell__conteudo > * {
+  max-inline-size: var(--admin-largura);
+}
+
+/* Para tabelas largas, que ficam melhor usando a tela inteira. */
+.app-shell__conteudo > .solto {
+  max-inline-size: none;
+}
+
+/* ===========================================================================
+   CABEÇALHO PADRÃO DAS TELAS DO PAINEL
+   =========================================================================== */
+
+.cabecalho {
+  padding-block-end: var(--space-5);
+  margin-block-end: var(--space-6);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.cabecalho__trilha {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  margin-block-end: var(--space-3);
+}
+
+.cabecalho__linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.cabecalho__texto {
+  min-width: 0;
+}
+
+.cabecalho__titulo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cabecalho__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.cabecalho__descricao {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  max-inline-size: var(--measure-study);
+}
+
+.cabecalho__acao {
+  flex: none;
+}
+
+/* No celular a ação vira largura total: botão pequeno encostado na borda
+   direita é difícil de acertar com o polegar. */
+@media (max-width: 34rem) {
+  .cabecalho__acao,
+  .cabecalho__acao > .botao {
+    inline-size: 100%;
+  }
+}
+
+/* ===========================================================================
+   LISTA EDITORIAL DE CAPÍTULOS (painel)
+
+   Eram oito cartões de ~230px de altura, cada um com sombra, borda e dois
+   botões roxos — dezesseis botões numa tela cuja tarefa é escolher UM
+   capítulo. Vira lista: uma linha por capítulo, o número grande à esquerda
+   como âncora de leitura, e uma ação por linha.
+   =========================================================================== */
+
+.capitulos {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+  overflow: hidden;
+  gap: 0;
+}
+
+.capitulo {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  border: 0;
+  border-block-end: 1px solid var(--border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.capitulo:last-child {
+  border-block-end: none;
+}
+
+.capitulo:hover {
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--surface-soft);
+}
+
+/* O número é a âncora de leitura: "estou no 3". Tabular para alinhar. */
+.capitulo__ordem {
+  font-size: var(--size-h3);
+  opacity: 0.55;
+}
+
+.capitulo__corpo {
+  gap: var(--space-1);
+}
+
+.capitulo__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+}
+
+.capitulo__numeros {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+/* A ação é um link com seta, não um botão sólido: oito botões preenchidos
+   numa lista pesam mais que o conteúdo. */
+.capitulo__abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-min);
+  padding-inline: var(--space-3);
+  font-size: var(--size-small);
+  font-weight: 600;
+  color: var(--brand-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.capitulo:hover .capitulo__abrir svg {
+  translate: 3px 0;
+}
+
+.capitulo__abrir svg {
+  transition: translate var(--duration-fast) var(--ease-out);
+}
+
+@media (max-width: 40rem) {
+  .capitulo {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--space-3);
+    padding-inline: var(--space-5);
+  }
+
+  .capitulo__abrir {
+    grid-column: 2;
+    justify-self: start;
+    padding-inline: 0;
+  }
+}
+
+/* --- Resumo em uma linha -------------------------------------------------- */
+
+.resumo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-end: var(--space-6);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.resumo-linha strong {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.resumo-linha__sep {
+  inline-size: 3px;
+  block-size: 3px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.resumo-linha__fraco {
+  font-style: italic;
+}
+
+/* ===========================================================================
+   CONFIGURAÇÕES — grupos com contexto
+
+   Era uma coluna de vinte campos, cada um com o nome interno da configuração
+   impresso embaixo (`legal.tax_id`). A responsável precisava ler tudo para
+   achar o que queria mudar, e a tela parecia console de banco de dados.
+
+   Agora cada grupo tem nome de negócio e uma frase dizendo para que serve.
+   =========================================================================== */
+
+.grupo-ajuste {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+  padding: var(--space-6);
+  margin: 0;
+}
+
+.grupo-ajuste__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  padding: 0;
+}
+
+.grupo-ajuste__ajuda {
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  max-inline-size: var(--measure-study);
+}
+
+.grupo-ajuste__campos {
+  display: grid;
+  gap: var(--space-5);
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+/* Campo obrigatório ainda vazio: um fio âmbar à esquerda, não um alerta
+   vermelho. Falta preencher não é erro. */
+.grupo-ajuste__campos .campo:has([aria-invalid='true']) {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 3px solid var(--warning);
+}
+
+/* ===========================================================================
+   ESTADO VAZIO — uma linguagem só
+
+   Cada tela tinha o seu: umas com `<p>` solto, outras com caixa tracejada,
+   outras com "0 registros". Agora `.vazio-explicado` é o padrão, e ganha uma
+   ação opcional.
+   =========================================================================== */
+
+.vazio-explicado__acao {
+  margin-block-start: var(--space-4);
+}
+
+/* ===========================================================================
+   BADGES DE ESTADO
+
+   Discretos: contorno e texto, sem fundo saturado. Uma tabela de pedidos com
+   dez tarjas coloridas vira semáforo.
+   =========================================================================== */
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.15rem var(--space-3);
+  border-radius: var(--radius-rail);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-main);
+  font-size: var(--size-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.selo::before {
+  content: '';
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.selo[data-estado='pago'] {
+  border-color: color-mix(in srgb, var(--success) 45%, transparent);
+  color: var(--success);
+}
+
+.selo[data-estado='aguardando'] {
+  border-color: color-mix(in srgb, var(--warning) 45%, transparent);
+  color: var(--warning);
+}
+
+.selo[data-estado='cancelado'] {
+  border-color: color-mix(in srgb, var(--error) 40%, transparent);
+  color: var(--error);
+}

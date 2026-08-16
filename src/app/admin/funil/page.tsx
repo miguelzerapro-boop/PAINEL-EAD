@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { EVENTO, FUNIL, ROTULO, type NomeDeEvento } from '@/lib/analytics/eventos'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -74,13 +75,10 @@ export default async function FunilPage() {
 
   return (
     <>
-      <p className="eyebrow">Comercial</p>
-      <h1>Funil</h1>
-
-      <p className="lead" style={{ marginBlock: 'var(--space-4) var(--space-6)', maxWidth: 'var(--measure-study)' }}>
-        Cada etapa conta quantas vezes ela aconteceu. Os números são medidos no próprio
-        site — nenhum pixel de terceiro, nada sai do domínio.
-      </p>
+      <CabecalhoAdmin
+        titulo="Relatórios"
+        descricao="Quantas pessoas passaram por cada etapa, do quiz até a matrícula."
+      />
 
       {total === 0 ? (
         <div className="vazio-explicado" style={{ marginBlockEnd: 'var(--space-6)' }}>

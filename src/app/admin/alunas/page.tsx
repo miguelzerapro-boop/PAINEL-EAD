@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
+
 import { um, varios } from '@/lib/rel'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatDate, formatPhone, formatProgress } from '@/lib/format'
@@ -18,7 +20,10 @@ export default async function AlunasPage() {
 
   return (
     <>
-      <h1 className="admin__titulo">Alunas</h1>
+      <CabecalhoAdmin
+        titulo="Alunas"
+        descricao="Quem comprou, qual plano tem e quanto já avançou na formação."
+      />
 
       <div className="lista-admin">
         {alunas && alunas.length > 0 ? (

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { Aviso } from '@/components/estados'
 import { estadoDaVenda } from '@/lib/comercial/gate'
 import { getVitrine } from '@/lib/comercial/planos'
@@ -45,8 +46,10 @@ export default async function VendasPage() {
 
   return (
     <>
-      <p className="eyebrow">Painel</p>
-      <h1>Vendas</h1>
+      <CabecalhoAdmin
+        titulo="Vendas"
+        descricao="Quanto entrou, o que está à venda e quem comprou."
+      />
 
       {/*
         O estado do pagamento vem primeiro porque é a única coisa que impede
@@ -133,7 +136,11 @@ export default async function VendasPage() {
                     <span className="palheta__meta">{p.buyer_email}</span>
                   </td>
                   <td className="mono">{brl.format((p.amount_cents ?? 0) / 100)}</td>
-                  <td>{rotuloDoEstado(p.status)}</td>
+                  <td>
+                    <span className="selo" data-estado={tomDoEstado(p.status)}>
+                      {rotuloDoEstado(p.status)}
+                    </span>
+                  </td>
                   <td className="mono">
                     {new Date(p.created_at).toLocaleDateString('pt-BR')}
                   </td>
@@ -173,4 +180,17 @@ function rotuloDoEstado(estado: string | null): string {
     default:
       return 'Em análise'
   }
+}
+
+/**
+ * O tom do badge. Só três: pago, aguardando e cancelado.
+ *
+ * Uma cor por estado transformaria a tabela em semáforo — e "reembolsado" e
+ * "cancelado" pedem a mesma leitura de quem administra: não entrou dinheiro.
+ */
+function tomDoEstado(estado: string | null): string {
+  if (estado === 'paid') return 'pago'
+  if (estado === 'pending') return 'aguardando'
+  if (estado === 'refunded' || estado === 'cancelled' || estado === 'failed') return 'cancelado'
+  return 'aguardando'
 }
