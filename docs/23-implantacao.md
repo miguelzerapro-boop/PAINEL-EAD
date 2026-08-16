@@ -138,9 +138,22 @@ Se passar, o Storage está homologado.
 2. Cole as mesmas variáveis em **Settings → Environment Variables**.
 3. Deploy.
 
-O `vercel.json` já está no repositório com o cron de publicação agendada
-(a cada 15 min). Ele chama `/api/cron/publicar`, que publica conteúdo com
-data marcada e expira matrículas vencidas.
+O `vercel.json` já está no repositório com o cron de publicação agendada.
+Ele chama `/api/cron/publicar`, que publica conteúdo com data marcada e
+expira matrículas vencidas.
+
+**O plano Hobby da Vercel só permite cron DIÁRIO.** Por isso o agendamento é
+`0 9 * * *` — uma vez por dia, 6h no horário de Brasília.
+
+Consequência prática: conteúdo agendado para as 14h só entra no ar na manhã
+seguinte. Para publicação na hora marcada há dois caminhos:
+
+- **Vercel Pro** (US$ 20/mês) libera cron de 15 em 15 minutos;
+- **cron externo gratuito** (cron-job.org, por exemplo) chamando
+  `/api/cron/publicar` com o cabeçalho `Authorization: Bearer ${CRON_SECRET}`.
+
+Para o keep-alive do Supabase gratuito, o cron diário basta: uma visita por
+dia já evita a pausa por inatividade de uma semana.
 
 Defina também `CRON_SECRET` — sem ele a rota recusa qualquer chamada.
 
