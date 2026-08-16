@@ -836,3 +836,34 @@
     padding-inline: 0;
   }
 }
+
+/* --- Resumo em uma linha --------------------------------------------------
+   Substituiu um parágrafo do tamanho do título dizendo "8 capítulos ·
+   nenhuma aula cadastrada ainda". Os pontos separadores são elementos, não
+   caracteres: assim eles somem sozinhos quando a frase muda. */
+
+.resumo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-end: var(--space-6);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.resumo-linha strong {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.resumo-linha__sep {
+  inline-size: 3px;
+  block-size: 3px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.resumo-linha__fraco {
+  font-style: italic;
+}
