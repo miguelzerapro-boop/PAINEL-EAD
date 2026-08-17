@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 import { aulasDaPrevia, previaAtiva } from '@/lib/admin/previa'
+import { planoDaAluna } from '@/lib/aluna/plano'
 import { MARCA } from '@/lib/marca'
 import { createClient } from '@/lib/supabase/server'
 
@@ -13,13 +14,14 @@ export const metadata: Metadata = { title: 'Capítulo' }
 /**
  * UM CAPÍTULO NA ÁREA DA ALUNA.
  *
- * Hoje só responde no modo de conferência — é a tela que a responsável precisa
- * mostrar ao cliente. Para uma aluna matriculada de verdade o caminho continua
- * sendo `/aluna/curso/[slug]`, que não foi tocado nesta rodada.
+ * Responde nos dois casos: para a equipe conferindo um plano e para a aluna
+ * matriculada. Precisou passar a responder à aluna real porque "Minha
+ * Formação" aponta para cá — antes, quem tinha matrícula de verdade clicava
+ * num capítulo aberto e caía em 404.
  *
- * Capítulo FECHADO no plano em conferência devolve 404 em vez de mostrar a
- * lista: exibir as aulas de um capítulo bloqueado entregaria de graça o
- * conteúdo do pacote mais caro.
+ * Capítulo FECHADO devolve 404 em vez de mostrar a lista: exibir as aulas de
+ * um capítulo bloqueado entregaria de graça o conteúdo do pacote mais caro. O
+ * conjunto que decide isso vem do banco, nunca da tela.
  *
  * Continua sendo leitura. Abrir esta tela não grava progresso nenhum.
  */
@@ -37,9 +39,10 @@ export default async function CapituloDaAlunaPage({
   if (!user) redirect(`/entrar?proximo=/aluna/capitulo/${id}`)
 
   const previa = await previaAtiva()
-  if (!previa) notFound()
+  const direitos = previa ?? (await planoDaAluna(user.id))
+  if (!direitos) notFound()
 
-  const capitulo = await aulasDaPrevia(previa, id)
+  const capitulo = await aulasDaPrevia(direitos, id)
   if (!capitulo) notFound()
 
   return (

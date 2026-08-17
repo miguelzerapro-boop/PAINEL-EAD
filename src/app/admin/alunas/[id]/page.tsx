@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { planoDaAluna } from '@/lib/aluna/plano'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
@@ -42,22 +43,28 @@ export default async function AlunaPage({ params }: { params: Promise<{ id: stri
     db.from('lesson_progress').select('id, updated_at').eq('user_id', id).order('updated_at', { ascending: false }).limit(1),
   ])
 
-  /* --- Que plano ela tem, e o que ele abre -------------------------------- */
-  const pedidoPago = (pedidos ?? []).find((p) => p.status === 'paid')
-  const oferta = um<{ name: string; slug: string }>(pedidoPago?.offers)
+  /* --- Que plano ela tem, e o que ele abre --------------------------------
+   *
+   * Antes isto partia do PEDIDO PAGO. Funcionava para quem comprou e mentia
+   * para quem foi matriculada à mão: sem pedido, a ficha anunciava "nenhum
+   * capítulo foi liberado" — justamente enquanto a aluna via os oito na área
+   * dela. A ficha agora pergunta ao banco o que ela abre, que é a única
+   * resposta que coincide com a experiência dela.
+   */
+  const plano = await planoDaAluna(id)
 
   let capitulos: Array<{ nome: string; aberto: boolean }> = []
 
-  if (oferta?.slug) {
-    const { data: o } = await db.from('offers').select('id').eq('slug', oferta.slug).maybeSingle()
+  if (plano) {
     const { data: curso } = await db.from('courses').select('id').eq('slug', 'formacao').maybeSingle()
+    if (curso) {
+      const { data: modulos } = await db
+        .from('modules')
+        .select('id, name, position')
+        .eq('course_id', curso.id)
+        .order('position')
 
-    if (o && curso) {
-      const [{ data: modulos }, { data: acessos }] = await Promise.all([
-        db.from('modules').select('id, name, position').eq('course_id', curso.id).order('position'),
-        db.from('offer_module_access').select('module_id').eq('offer_id', o.id),
-      ])
-      const abertos = new Set((acessos ?? []).map((a) => a.module_id))
+      const abertos = new Set(plano.modulosAbertos)
       capitulos = (modulos ?? []).map((m) => ({ nome: m.name, aberto: abertos.has(m.id) }))
     }
   }
@@ -98,13 +105,19 @@ export default async function AlunaPage({ params }: { params: Promise<{ id: stri
         <section className="ficha__bloco">
           <h2 className="ficha__titulo">Plano e acesso</h2>
 
-          {oferta ? (
+          {plano ? (
             <dl className="ficha__dados">
-              <Dado rotulo="Plano" valor={oferta.name} />
+              <Dado
+                rotulo="Plano"
+                valor={plano.nome}
+                /* Sem oferta equivalente não se inventa um plano. */
+                vazio="Acesso liberado pela escola"
+              />
               <Dado
                 rotulo="Situação"
                 valor={matricula ? rotuloDaMatricula(matricula.status) : 'Sem matrícula'}
               />
+              <Dado rotulo="Origem da matrícula" valor={rotuloDaOrigem(plano.origem)} />
               <Dado rotulo="Matrícula em" valor={data(matricula?.created_at ?? null)} />
               <Dado
                 rotulo="Progresso"
@@ -113,7 +126,8 @@ export default async function AlunaPage({ params }: { params: Promise<{ id: stri
             </dl>
           ) : (
             <p className="ficha__vazio">
-              Esta pessoa ainda não tem compra aprovada, então nenhum capítulo foi liberado.
+              Esta pessoa ainda não está matriculada na formação, então nenhum capítulo foi
+              liberado.
             </p>
           )}
 
@@ -137,8 +151,22 @@ export default async function AlunaPage({ params }: { params: Promise<{ id: stri
         {/* --- Pagamentos --------------------------------------------------- */}
         <section className="ficha__bloco">
           <h2 className="ficha__titulo">Pagamentos</h2>
+          {/*
+            AUSÊNCIA DE PAGAMENTO NÃO É FALHA quando a matrícula foi concedida
+            pelo painel. A frase anterior — "nenhuma compra registrada" — servia
+            para quem deveria ter comprado e não comprou; aqui ela faria a
+            responsável procurar um pagamento que nunca existiu. O texto diz o
+            motivo, e o acesso fica explicado em vez de pendente.
+          */}
           {(pedidos ?? []).length === 0 ? (
-            <p className="ficha__vazio">Nenhuma compra registrada para esta pessoa.</p>
+            plano && plano.origem !== 'order' ? (
+              <p className="ficha__nota">
+                <strong>Matrícula manual.</strong> O acesso foi concedido pelo painel, sem
+                cobrança — não há pagamento a registrar.
+              </p>
+            ) : (
+              <p className="ficha__vazio">Nenhuma compra registrada para esta pessoa.</p>
+            )
           ) : (
             <ul className="ficha__pedidos" role="list">
               {(pedidos ?? []).map((p) => (
@@ -159,9 +187,9 @@ export default async function AlunaPage({ params }: { params: Promise<{ id: stri
         aprovado: abre a área real com os capítulos do PLANO dela. Continua
         sendo leitura — nada é criado, nenhum progresso é gravado.
       */}
-      {oferta?.slug ? (
+      {plano?.slug ? (
         <p style={{ marginBlockStart: 'var(--space-7)' }}>
-          <a className="botao botao--cta" href={`/admin/previa/entrar?plano=${oferta.slug}`}>
+          <a className="botao botao--cta" href={`/admin/previa/entrar?plano=${plano.slug}`}>
             Visualizar como esta aluna
           </a>
         </p>
@@ -199,6 +227,30 @@ function rotuloDaMatricula(status: string | null): string {
       return 'Expirada'
     default:
       return 'Pendente'
+  }
+}
+
+/**
+ * De onde veio a matrícula, em português.
+ *
+ * `enrollments.source` é o que distingue venda de concessão — por isso o
+ * rótulo aparece na ficha em vez de ficar só no banco. Quem olha precisa saber
+ * se aquele acesso passou pelo caixa.
+ */
+function rotuloDaOrigem(source: string | null): string {
+  switch (source) {
+    case 'order':
+      return 'Compra aprovada'
+    case 'manual':
+      return 'Manual (concedida pelo painel)'
+    case 'gift':
+      return 'Cortesia'
+    case 'import':
+      return 'Importada'
+    case 'demo':
+      return 'Demonstração'
+    default:
+      return 'Não informada'
   }
 }
 

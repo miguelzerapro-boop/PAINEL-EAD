@@ -1850,6 +1850,24 @@ button.lista__item:hover {
   line-height: var(--leading-body);
 }
 
+/*
+ * Explicação, não alerta.
+ *
+ * "Matrícula manual, sem cobrança" é uma informação completa — o acesso está
+ * resolvido. Se usasse `.ficha__vazio`, cinza e apagado como o texto de quem
+ * não comprou, a responsável leria como pendência e iria procurar o pagamento.
+ * Daí a faixa: mesma família da ficha, tom neutro, presença de fato consumado.
+ */
+.ficha__nota {
+  margin-block-start: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-inline-start: 3px solid var(--border-strong, var(--border));
+  border-radius: var(--radius-2);
+  background: var(--surface-2, var(--surface));
+  color: var(--text-primary);
+  line-height: var(--leading-body);
+}
+
 .ficha__capitulos {
   list-style: none;
   margin: var(--space-3) 0 0;

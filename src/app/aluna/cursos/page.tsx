@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { FormacaoDaPrevia } from '@/components/aluna/formacao-da-previa'
 import { EstadoVazio } from '@/components/estados'
 import { previaAtiva } from '@/lib/admin/previa'
+import { planoDaAluna } from '@/lib/aluna/plano'
 import { Palheta, Trilho } from '@/components/palheta'
 import { listMyEnrollments } from '@/lib/content/catalog'
 import { formatDate } from '@/lib/format'
@@ -21,15 +22,23 @@ export default async function MeusCursosPage() {
   if (!user) redirect('/entrar?proximo=/aluna/cursos')
 
   /*
-   * Modo de conferência: quem está olhando é da equipe e escolheu um plano.
-   * A tela mostra a formação daquele plano em vez da matrícula real — sem
-   * criar matrícula nenhuma. Ver `src/lib/admin/previa.ts`.
+   * Duas origens, uma tela só:
+   *
+   *   · conferência — a equipe escolheu um plano para olhar, e nada é criado
+   *     no banco (ver `src/lib/admin/previa.ts`);
+   *   · matrícula real — os capítulos vêm de `user_has_module_access()`, a
+   *     mesma função que a RLS usa para liberar aula.
+   *
+   * O Trilho abaixo continua para quem tem curso FORA da formação: ali a
+   * unidade é o curso, não o capítulo.
    */
   const previa = await previaAtiva()
-  if (previa) {
+  const plano = previa ?? (await planoDaAluna(user.id))
+
+  if (plano) {
     return (
       <main id="conteudo" className="page section">
-        <FormacaoDaPrevia previa={previa} />
+        <FormacaoDaPrevia previa={plano} />
       </main>
     )
   }

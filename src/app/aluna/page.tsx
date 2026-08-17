@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { FormacaoDaPrevia } from '@/components/aluna/formacao-da-previa'
 import { EstadoVazio } from '@/components/estados'
 import { previaAtiva } from '@/lib/admin/previa'
+import { planoDaAluna } from '@/lib/aluna/plano'
 import { listMyEnrollments } from '@/lib/content/catalog'
 import { um } from '@/lib/rel'
 import { createClient } from '@/lib/supabase/server'
@@ -38,13 +39,26 @@ export default async function AlunaPage() {
   const primeiroNome = (perfil.data?.display_name ?? perfil.data?.full_name ?? '').split(' ')[0]
 
   /*
-   * Modo de conferência (ver `src/lib/admin/previa.ts`): a formação do plano
-   * escolhido ocupa o lugar da matrícula. Nada é criado no banco.
+   * DE ONDE VEM O QUE ELA VÊ, nesta ordem:
+   *
+   *   1. modo de conferência (ver `src/lib/admin/previa.ts`) — a equipe
+   *      escolheu um plano para olhar, e nada é criado no banco;
+   *   2. a matrícula real dela, com os capítulos que o banco de fato libera.
+   *
+   * As duas desembocam na MESMA tela. Foi a decisão que faz a conferência
+   * valer alguma coisa: se a aluna real visse outro desenho, aprovar a prévia
+   * não diria nada sobre o que está no ar.
    */
   const previa = await previaAtiva()
-  if (previa) {
+  const plano = previa ?? (await planoDaAluna(user.id))
+
+  if (plano) {
+    /* Progresso só existe para matrícula de verdade; na prévia não há o que medir. */
+    const pct = previa ? 0 : Number(matriculas[0]?.progress_pct ?? 0)
+    const abertos = plano.modulosAbertos.length
+
     /*
-     * O INÍCIO DA ALUNA, no modo de conferência.
+     * O INÍCIO DA ALUNA.
      *
      * Ordem: quem ela é, o que ela tem, por onde começa, e a formação. O
      * progresso não é gráfico: é uma frase e uma barra. Ninguém estuda olhando
@@ -65,12 +79,16 @@ export default async function AlunaPage() {
         <section className="inicio-aluna__plano">
           <div>
             <p className="inicio-aluna__rotulo">Seu plano</p>
-            <p className="inicio-aluna__plano-nome">{previa.nome}</p>
+            {/*
+              Sem oferta equivalente o nome fica nulo. Dizer "acesso liberado
+              pela escola" é a verdade; escolher um plano no lugar seria dar à
+              aluna a impressão de ter comprado algo.
+            */}
+            <p className="inicio-aluna__plano-nome">
+              {plano.nome ?? 'Acesso liberado pela escola'}
+            </p>
             <p className="inicio-aluna__plano-meta">
-              {previa.modulosAbertos.length}{' '}
-              {previa.modulosAbertos.length === 1
-                ? 'capítulo disponível'
-                : 'capítulos disponíveis'}
+              {abertos} {abertos === 1 ? 'capítulo disponível' : 'capítulos disponíveis'}
             </p>
           </div>
 
@@ -80,19 +98,23 @@ export default async function AlunaPage() {
           */}
           <div className="inicio-aluna__comecar">
             <p className="inicio-aluna__comecar-titulo">
-              Sua formação está pronta para começar.
+              {pct > 0
+                ? `Você já concluiu ${Math.round(pct)}% da formação.`
+                : 'Sua formação está pronta para começar.'}
             </p>
             <p className="inicio-aluna__comecar-texto">
-              Escolha o primeiro capítulo e comece quando quiser.
+              {pct > 0
+                ? 'Retome de onde parou, no seu ritmo.'
+                : 'Escolha o primeiro capítulo e comece quando quiser.'}
             </p>
             <Link className="botao botao--cta" href="/aluna/cursos">
-              Começar formação
+              {pct > 0 ? 'Retomar formação' : 'Começar formação'}
             </Link>
           </div>
         </section>
 
         <h2 className="inicio-aluna__secao">Sua formação</h2>
-        <FormacaoDaPrevia previa={previa} limite={4} />
+        <FormacaoDaPrevia previa={plano} limite={4} />
       </main>
     )
   }

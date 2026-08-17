@@ -105,8 +105,14 @@ export type CapituloDaPrevia = {
 /**
  * A formação como a aluna deste plano veria: capítulos na ordem, com o que
  * abre e o que fica fechado.
+ *
+ * Recebe só `modulosAbertos` e não a prévia inteira: a mesma lista serve para
+ * a conferência da equipe e para a matrícula real de uma aluna, que chega por
+ * `planoDaAluna()`. O que muda é a origem do conjunto, não o desenho da tela.
  */
-export async function capitulosDaPrevia(previa: PreviaAtiva): Promise<CapituloDaPrevia[]> {
+export async function capitulosDaPrevia(direitos: {
+  modulosAbertos: string[]
+}): Promise<CapituloDaPrevia[]> {
   const admin = createAdminClient()
 
   const { data: curso } = await admin
@@ -127,7 +133,7 @@ export async function capitulosDaPrevia(previa: PreviaAtiva): Promise<CapituloDa
     porModulo.set(a.module_id, (porModulo.get(a.module_id) ?? 0) + 1)
   }
 
-  const abertos = new Set(previa.modulosAbertos)
+  const abertos = new Set(direitos.modulosAbertos)
 
   return (modulos ?? []).map((m) => ({
     id: m.id,
@@ -158,10 +164,15 @@ export type AulaDaPrevia = {
  * Continua sendo leitura: nada é gravado, nenhum progresso é registrado.
  */
 export async function aulasDaPrevia(
-  previa: PreviaAtiva,
+  direitos: { modulosAbertos: string[] },
   moduleId: string,
 ): Promise<{ nome: string; posicao: number; aulas: AulaDaPrevia[] } | null> {
-  if (!previa.modulosAbertos.includes(moduleId)) return null
+  /*
+   * A trava. Vale igual para a conferência da equipe e para a aluna real: o
+   * conjunto dela vem de `user_has_module_access()`, então um capítulo fora do
+   * pacote nunca chega aqui como aberto.
+   */
+  if (!direitos.modulosAbertos.includes(moduleId)) return null
 
   const admin = createAdminClient()
 

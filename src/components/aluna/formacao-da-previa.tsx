@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { capitulosDaPrevia, type PreviaAtiva } from '@/lib/admin/previa'
+import { capitulosDaPrevia } from '@/lib/admin/previa'
 import { MARCA } from '@/lib/marca'
 
 /**
@@ -10,6 +10,11 @@ import { MARCA } from '@/lib/marca'
  * Composição editorial, não grade de oito caixas iguais: número grande à
  * esquerda, capa, nome, o que tem dentro, e a ação. É como um sumário de
  * curso, que é o que a tela é.
+ *
+ * SERVE AOS DOIS CASOS. Recebe um conjunto de direitos, venha ele da prévia da
+ * equipe ou da matrícula real de uma aluna (`planoDaAluna()`). A aluna precisa
+ * ver exatamente a tela que foi conferida — se fossem dois componentes, a
+ * conferência deixaria de valer para o que está no ar.
  *
  * O CAPÍTULO FECHADO NÃO É ERRO. Aparece inteiro, com o nome legível e o
  * plano que o abre, em tom neutro. Um bloco apagado com cadeado faz a aluna
@@ -25,7 +30,7 @@ export async function FormacaoDaPrevia({
   /** No Início mostramos só os primeiros, com um link para a lista inteira. */
   limite,
 }: {
-  previa: PreviaAtiva
+  previa: { nome: string | null; modulosAbertos: string[] }
   nomeDoPlanoCompleto?: string
   limite?: number
 }) {
@@ -43,7 +48,18 @@ export async function FormacaoDaPrevia({
             <strong>
               {abertos} de {todos.length}
             </strong>{' '}
-            capítulos liberados no plano <strong>{previa.nome}</strong>.
+            {/*
+              Sem nome de plano — acesso concedido pela escola, por exemplo —
+              a frase termina antes de inventar um. Melhor dizer menos do que
+              rotular a aluna com um pacote que ela não comprou.
+            */}
+            {previa.nome ? (
+              <>
+                capítulos liberados no plano <strong>{previa.nome}</strong>.
+              </>
+            ) : (
+              'capítulos liberados na sua formação.'
+            )}
           </p>
 
           <div
