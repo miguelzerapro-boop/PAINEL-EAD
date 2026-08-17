@@ -136,6 +136,7 @@ export function EditorDePergunta({
     <div className="editor-pergunta">
       {/* ------------------------------------------------- o formulário --- */}
       <div className="editor-pergunta__campos">
+        <p className="editor-pergunta__coluna">Editar pergunta</p>
         <label className="campo">
           <span className="campo__rotulo">Pergunta</span>
           <input
@@ -284,9 +285,10 @@ export function EditorDePergunta({
 
       {/* ------------------------------------------------- o preview ----- */}
       <aside className="editor-pergunta__previa">
-        <p className="eyebrow">Como a aluna verá</p>
+        <p className="editor-pergunta__coluna">Prévia do quiz</p>
 
         <div className="previa-quiz">
+          <p className="previa-quiz__etapa mono">Pergunta {posicao + 1}</p>
           <p className="previa-quiz__pergunta">
             {prompt.trim() || 'Sua pergunta aparece aqui'}
           </p>
@@ -302,7 +304,7 @@ export function EditorDePergunta({
           </ul>
         </div>
 
-        <p className="campo__dica" style={{ marginBlockStart: 'var(--space-4)' }}>
+        <p className="editor-pergunta__nota">
           Escolha única: a aluna marca uma resposta e avança.
         </p>
       </aside>

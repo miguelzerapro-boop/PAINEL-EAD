@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { EditorDePergunta, type RespostaEditavel } from './editor'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -82,15 +83,11 @@ export default async function PerguntaPage({ params }: { params: Promise<{ id: s
 
   return (
     <>
-      <p className="admin__migalha">
-        <Link href="/admin/quiz">Diagnóstico</Link>
-      </p>
-
-      <h1 className="admin__titulo">{nova ? 'Nova pergunta' : 'Editar pergunta'}</h1>
-      <p className="lead" style={{ marginBlock: 'var(--space-3) var(--space-6)', maxWidth: 'var(--measure-study)' }}>
-        A pergunta e as respostas são salvas juntas. Do lado direito você vê exatamente como a
-        aluna enxerga.
-      </p>
+      <CabecalhoAdmin
+        trilha={<Link href="/admin/quiz">Diagnóstico</Link>}
+        titulo={nova ? 'Nova pergunta' : 'Editar pergunta'}
+        descricao="A pergunta e as respostas são salvas juntas. Ao lado, você vê exatamente como a aluna enxerga."
+      />
 
       <EditorDePergunta
         quizId={quiz.id}

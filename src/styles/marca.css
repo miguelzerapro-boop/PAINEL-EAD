@@ -1095,3 +1095,103 @@
     opacity: 1;
   }
 }
+
+/* ===========================================================================
+   CONSTRUTOR DE PERGUNTA
+
+   A divisão precisa PARECER intencional. Antes eram dois blocos lado a lado
+   sem nada dizendo o que era cada um; agora cada coluna tem rótulo, e a
+   prévia vive num painel escuro fixo — que é o estilo do quiz público, não do
+   painel. É esse contraste que faz o olho entender "aqui eu edito, ali eu
+   vejo".
+   =========================================================================== */
+
+.editor-pergunta {
+  gap: clamp(2rem, 1rem + 3vw, 3.5rem);
+}
+
+.editor-pergunta__coluna {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+  padding-block-end: var(--space-3);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.editor-pergunta__subtitulo {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-h4);
+}
+
+/* A resposta é um bloco compacto, não um cartão: com seis respostas, seis
+   molduras deixam a coluna pesada. */
+.resposta {
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-main);
+}
+
+.resposta:focus-within {
+  border-color: var(--brand-primary);
+}
+
+.resposta__numero {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: 50%;
+  background: var(--surface-purple);
+  color: var(--brand-primary);
+  font-size: var(--size-mono);
+}
+
+/* --- A prévia ------------------------------------------------------------- */
+
+.previa-quiz {
+  /* Um respiro maior: a prévia representa uma tela inteira, não um campo. */
+  padding: var(--space-6);
+  border-radius: var(--radius-cartao);
+  box-shadow: var(--shadow-erguida);
+}
+
+.previa-quiz__etapa {
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--quiz-lilac);
+  margin-block-end: var(--space-3);
+}
+
+.previa-quiz__pergunta {
+  font-size: var(--size-h3);
+}
+
+.previa-quiz__opcao {
+  min-block-size: var(--target-min);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+/* A primeira opção aparece "marcável": mostra à responsável como a seleção
+   se comporta, sem fingir que alguém já escolheu. */
+.previa-quiz__opcao:first-child {
+  border-color: color-mix(in srgb, var(--quiz-lilac) 55%, transparent);
+}
+
+.editor-pergunta__nota {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 63.999rem) {
+  /* No celular a prévia vai para baixo do editor, inteira — duas colunas
+     minúsculas não ajudariam ninguém. */
+  .editor-pergunta__previa {
+    padding-block-start: var(--space-6);
+    border-block-start: 1px solid var(--border-subtle);
+  }
+}
