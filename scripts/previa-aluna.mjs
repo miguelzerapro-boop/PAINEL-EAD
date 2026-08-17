@@ -128,8 +128,8 @@ for (const [plano, esperado] of Object.entries(ESPERADO)) {
   )
 
   /* A matriz 3/6/8, vinda de offer_module_access. */
-  const abertos = await aba.locator('.capitulo[data-aberto="sim"]').count()
-  const fechados = await aba.locator('.capitulo[data-aberto="nao"]').count()
+  const abertos = await aba.locator('.form-aluna__capitulo[data-aberto="sim"]').count()
+  const fechados = await aba.locator('.form-aluna__capitulo[data-aberto="nao"]').count()
   registrar(
     `Mostra ${esperado} capítulos abertos`,
     abertos === esperado,
@@ -138,7 +138,7 @@ for (const [plano, esperado] of Object.entries(ESPERADO)) {
 
   /* O bloqueio precisa convidar, não só travar. */
   if (fechados > 0) {
-    const texto = await aba.locator('.capitulo[data-aberto="nao"] .capitulo__meta').first().textContent()
+    const texto = await aba.locator('.form-aluna__capitulo[data-aberto="nao"] .form-aluna__meta').first().textContent()
     registrar(
       'Capítulo fechado diz qual plano o abre',
       /disponível no plano/i.test(texto ?? ''),

@@ -59,12 +59,23 @@ export default async function AlunaLayout({ children }: { children: React.ReactN
    * As rotas continuam de pé. O suporte agora é o botão de WhatsApp, que
    * aparece flutuando em toda a área.
    */
+  /*
+   * COMUNIDADE VOLTA — mas só aqui.
+   *
+   * Ela saiu dos dois menus numa rodada anterior. A decisão foi revista para
+   * a ALUNA: conviver com outras alunas faz parte da experiência de estudar.
+   * No painel ela continua fora — administrar comunidade não é rotina da
+   * responsável hoje.
+   *
+   * Mensagens continua fora dos dois: o suporte é o WhatsApp flutuante.
+   */
   const grupos: GrupoDeMenu[] = [
     {
       rotulo: 'Estudar',
       itens: [
         { href: '/aluna', rotulo: 'Início', icone: 'inicio' },
         { href: '/aluna/cursos', rotulo: 'Minha Formação', icone: 'cursos' },
+        { href: '/aluna/comunidade', rotulo: 'Comunidade', icone: 'comunidade' },
         { href: '/aluna/perfil', rotulo: 'Meu perfil', icone: 'perfil' },
       ],
     },
