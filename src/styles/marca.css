@@ -867,3 +867,231 @@
 .resumo-linha__fraco {
   font-style: italic;
 }
+
+/* ===========================================================================
+   ETAPAS DE UM FORMULÁRIO LONGO (Nova aula)
+
+   Quatro assuntos — informações, vídeo, capa, publicação — eram só campos
+   empilhados. Quem abria via um formulário comprido sem começo nem fim.
+
+   A numeração à esquerda ancora, o fio vertical liga. NÃO é um card por
+   etapa: quatro molduras empilhadas competiriam com o conteúdo delas.
+   =========================================================================== */
+
+.etapa {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.etapa__marca {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+.etapa__numero {
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--brand-primary);
+  color: var(--brand-primary);
+  font-size: var(--size-small);
+  font-weight: 600;
+}
+
+/* O fio some na última etapa — não há para onde continuar. */
+.etapa__fio {
+  inline-size: 1.5px;
+  block-size: 100%;
+  background: var(--border-subtle);
+}
+
+.etapa:last-of-type .etapa__fio {
+  display: none;
+}
+
+.etapa__corpo {
+  padding-block-end: var(--space-8);
+  min-width: 0;
+}
+
+.etapa__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.etapa__descricao {
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+  max-inline-size: var(--measure-study);
+}
+
+.etapa__campos {
+  display: grid;
+  gap: var(--space-5);
+  margin-block-start: var(--space-5);
+}
+
+/* Campo de texto não precisa de 900px: linha longa demais é mais difícil de
+   revisar do que de escrever. */
+.etapa__campos > .campo,
+.etapa__campos > .form-aula__linha {
+  max-inline-size: 34rem;
+}
+
+.etapa__campos > .consentimento {
+  max-inline-size: var(--measure-study);
+}
+
+@media (max-width: 34rem) {
+  .etapa {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  /* No celular o fio vertical não cabe: vira só o número acima do título. */
+  .etapa__marca {
+    justify-items: start;
+  }
+
+  .etapa__fio {
+    display: none;
+  }
+
+  .etapa__corpo {
+    padding-block-end: var(--space-7);
+  }
+}
+
+/* Ações do formulário: uma barra clara no fim, não botões soltos. */
+.form-aula__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+/* ===========================================================================
+   LISTA DE AULAS DO CAPÍTULO
+
+   A capa entra na linha: é o que a aluna vê, então é o que identifica a aula
+   de relance — mais rápido do que ler oito títulos parecidos.
+   =========================================================================== */
+
+.aulas-admin__lista {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+  overflow: hidden;
+}
+
+.aula-linha {
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-block-end: 1px solid var(--border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.aula-linha:last-child {
+  border-block-end: none;
+}
+
+.aula-linha:hover {
+  background: var(--surface-soft);
+}
+
+.aula-linha__capa {
+  inline-size: 5.5rem;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--surface-purple);
+  flex: none;
+}
+
+.aula-linha__capa img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* Sem capa o espaço continua reservado, para a lista não dançar quando uma
+   aula ganhar imagem. */
+.aula-linha__capa-vazia {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0 6px,
+      color-mix(in srgb, var(--brand-primary) 8%, transparent) 6px 12px
+    );
+}
+
+.aula-linha__titulo {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.aula-linha__titulo:hover {
+  color: var(--brand-primary);
+}
+
+.aula-linha__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+/* As ações só ganham cor no hover da linha: três botões roxos por aula, em
+   oito aulas, pesam mais que os títulos. */
+.aula-linha__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  opacity: 0.75;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.aula-linha:hover .aula-linha__acoes,
+.aula-linha:focus-within .aula-linha__acoes {
+  opacity: 1;
+}
+
+@media (max-width: 52rem) {
+  .aula-linha {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    row-gap: var(--space-3);
+  }
+
+  .aula-linha__capa {
+    inline-size: 4rem;
+  }
+
+  .aula-linha__acoes {
+    grid-column: 1 / -1;
+    opacity: 1;
+  }
+}

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 import { EnvioDeVideo, type VideoAtual } from '@/components/admin/envio-de-video'
+import { Etapa } from '@/components/admin/etapa'
 import { SeletorDeCapa } from '@/components/admin/seletor-de-capa'
 import { publicarAula, salvarAula } from '../../acoes'
 
@@ -159,6 +160,11 @@ export function FormularioDeAula({
         )}
       </div>
 
+      <Etapa
+        numero={1}
+        titulo="Informações da aula"
+        descricao="O nome que a aluna vê na lista do capítulo."
+      >
       <label className="campo">
         <span className="campo__rotulo">Capítulo</span>
         <select
@@ -204,8 +210,14 @@ export function FormularioDeAula({
         />
       </label>
 
+      </Etapa>
+
+      <Etapa
+        numero={2}
+        titulo="Vídeo da aula"
+        descricao="O arquivo vai direto do seu computador para o servidor de vídeo. Pode fechar a aba: o envio retoma de onde parou."
+      >
       <div className="campo">
-        <span className="campo__rotulo">Vídeo da aula</span>
         <EnvioDeVideo
           lessonId={lessonId}
           moduleId={moduleId}
@@ -234,17 +246,26 @@ export function FormularioDeAula({
         ) : null}
       </div>
 
-      {/*
-        A capa vem logo abaixo do vídeo, na MESMA tela. Antes ela exigiria
-        salvar a aula, procurá-la de novo, abrir a mídia e voltar — quatro
-        telas para um detalhe que se resolve em dois cliques aqui.
-      */}
+      </Etapa>
+
+      <Etapa
+        numero={3}
+        titulo="Capa da aula"
+        descricao="Opcional. É a imagem que identifica a aula na lista da aluna."
+      >
       <SeletorDeCapa
         lessonId={lessonId}
         arquivoDeVideo={arquivoDeVideo}
         capaAtual={aula?.capa ?? null}
       />
 
+      </Etapa>
+
+      <Etapa
+        numero={4}
+        titulo="Publicação"
+        descricao="Em rascunho, só você enxerga. Publicada, a aula aparece para quem tem acesso a este capítulo."
+      >
       <div className="form-aula__linha">
         <label className="campo">
           <span className="campo__rotulo">Ordem no capítulo</span>
@@ -316,6 +337,8 @@ export function FormularioDeAula({
           esteja publicada.
         </span>
       </label>
+
+      </Etapa>
 
       {aviso ? (
         <p

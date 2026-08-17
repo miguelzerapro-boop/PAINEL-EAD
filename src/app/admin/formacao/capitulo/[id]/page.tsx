@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { ListaDeAulas } from './lista'
 import { getCapituloComAulas, getFormacao } from '@/lib/content/formacao'
 
@@ -19,31 +20,51 @@ export default async function CapituloPage({ params }: { params: Promise<{ id: s
 
   return (
     <>
-      <p className="admin__migalha">
-        <Link href="/admin/formacao">{dados.cursoNome}</Link>
-      </p>
+      <CabecalhoAdmin
+        trilha={
+          <>
+            <Link href="/admin/formacao">{dados.cursoNome}</Link>
+            {numero > 0 ? ` · Capítulo ${String(numero).padStart(2, '0')}` : null}
+          </>
+        }
+        titulo={dados.capitulo.nome}
+        descricao="As aulas aparecem para a aluna na ordem desta lista."
+        selo={
+          <span
+            className="etiqueta"
+            data-tone={dados.capitulo.status === 'published' ? 'ok' : 'rascunho'}
+          >
+            {dados.capitulo.status === 'published' ? 'publicado' : 'rascunho'}
+          </span>
+        }
+        acao={
+          <Link
+            className="botao botao--primario"
+            href={`/admin/formacao/aula/nova?capitulo=${dados.capitulo.id}`}
+          >
+            + Nova aula
+          </Link>
+        }
+      />
 
-      <div className="admin__cabecalho">
-        <div>
-          {numero > 0 ? (
-            <p className="eyebrow mono">Capítulo {String(numero).padStart(2, '0')}</p>
+      {/*
+        Os números numa linha só. Antes eram três frases separadas por pontos
+        num parágrafo do tamanho do título.
+      */}
+      {dados.aulas.length > 0 ? (
+        <p className="resumo-linha">
+          <strong>{dados.aulas.length}</strong>{' '}
+          {dados.aulas.length === 1 ? 'aula' : 'aulas'}
+          <span className="resumo-linha__sep" aria-hidden="true" />
+          <strong>{dados.capitulo.aulas.publicadas}</strong> no ar
+          {dados.capitulo.aulas.rascunhos > 0 ? (
+            <>
+              <span className="resumo-linha__sep" aria-hidden="true" />
+              <strong>{dados.capitulo.aulas.rascunhos}</strong> em rascunho
+            </>
           ) : null}
-          <h1 className="admin__titulo" style={{ marginBlockEnd: 0 }}>
-            {dados.capitulo.nome}
-          </h1>
-        </div>
-        <span className="etiqueta" data-tone={dados.capitulo.status === 'published' ? 'ok' : 'rascunho'}>
-          {dados.capitulo.status === 'published' ? 'publicado' : 'rascunho'}
-        </span>
-      </div>
-
-      <p className="lead" style={{ marginBlock: 'var(--space-4) var(--space-6)' }}>
-        {dados.aulas.length === 0
-          ? 'Nenhuma aula cadastrada neste capítulo.'
-          : `${dados.aulas.length} ${dados.aulas.length === 1 ? 'aula' : 'aulas'} · ${
-              dados.capitulo.aulas.publicadas
-            } publicadas · ${dados.capitulo.aulas.rascunhos} rascunhos`}
-      </p>
+        </p>
+      ) : null}
 
       <ListaDeAulas
         moduleId={dados.capitulo.id}

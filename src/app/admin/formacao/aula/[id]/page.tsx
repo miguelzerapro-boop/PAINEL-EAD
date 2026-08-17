@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { CabecalhoAdmin } from '@/components/admin/cabecalho'
 import { FormularioDeAula } from './formulario'
 import { getAulaParaEdicao, getFormacao, proximaPosicao } from '@/lib/content/formacao'
 
@@ -43,13 +44,17 @@ export default async function AulaPage({
 
   return (
     <>
-      <p className="admin__migalha">
-        <Link href="/admin/formacao">{formacao.nome}</Link>
-        {' · '}
-        <Link href={`/admin/formacao/capitulo/${moduleIdInicial}`}>Capítulo</Link>
-      </p>
-
-      <h1 className="admin__titulo">{nova ? 'Adicionar aula' : 'Editar aula'}</h1>
+      <CabecalhoAdmin
+        trilha={
+          <>
+            <Link href="/admin/formacao">{formacao.nome}</Link>
+            {' · '}
+            <Link href={`/admin/formacao/capitulo/${moduleIdInicial}`}>Capítulo</Link>
+          </>
+        }
+        titulo={nova ? 'Adicionar aula' : 'Editar aula'}
+        descricao="Título, vídeo e capa numa tela só. A aula fica em rascunho até você publicar."
+      />
 
       <FormularioDeAula
         capitulos={formacao.capitulos.map((c, i) => ({

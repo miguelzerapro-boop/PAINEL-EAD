@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
-import { formatarBytes } from '@/lib/video/regras'
 import {
   arquivarOuExcluirAula,
   moverAulaDeCapitulo,
@@ -27,11 +26,16 @@ type Aula = {
   id: string
   titulo: string
   posicao: number
-  status: 'draft' | 'scheduled' | 'published' | 'archived'
+  status: "draft" | "scheduled" | "published" | "archived"
   temVideo: boolean
   videoNome: string | null
   videoBytes: number | null
   temHistorico: boolean
+  /** Quanto tempo a aula dura. O tamanho do arquivo em MB nao diz nada
+      para quem administra a formacao. */
+  duracaoSegundos: number | null
+  /** URL publica da capa, quando ja foi escolhida. */
+  capa: string | null
 }
 
 type CapituloOpcao = { id: string; nome: string; numero: number }
@@ -142,15 +146,24 @@ export function ListaDeAulas({
 
   if (ordem.length === 0) {
     return (
-      <div className="vazio">
-        <p className="vazio__titulo">Nenhuma aula neste capítulo</p>
-        <p className="vazio__texto">
-          Enquanto não houver aula cadastrada, este capítulo não mostra conteúdo nenhum para as
-          alunas — nem uma aula vazia, nem duração zerada.
+      /*
+       * Estado vazio com a mesma linguagem do resto do painel: o que não
+       * existe, o que fazer a respeito, e o botão que faz.
+       */
+      <div className="vazio-explicado">
+        <p className="vazio-explicado__titulo">Este capítulo ainda não possui aulas.</p>
+        <p className="vazio-explicado__texto">
+          Adicione a primeira aula para começar a montar este capítulo. Enquanto não houver
+          nenhuma, a aluna não vê conteúdo aqui — nem uma aula vazia, nem duração zerada.
         </p>
-        <Link className="botao botao--primario" href={`/admin/formacao/aula/nova?capitulo=${moduleId}`}>
-          + Adicionar aula
-        </Link>
+        <p className="vazio-explicado__acao">
+          <Link
+            className="botao botao--primario"
+            href={`/admin/formacao/aula/nova?capitulo=${moduleId}`}
+          >
+            + Adicionar primeira aula
+          </Link>
+        </p>
       </div>
     )
   }
@@ -209,6 +222,21 @@ export function ListaDeAulas({
               </button>
             </div>
 
+            {/*
+              A CAPA entra na lista. É o que a aluna vê, então é o que
+              identifica a aula de relance — mais rápido do que ler oito
+              títulos parecidos. Sem capa, o espaço 16:9 continua ali com o
+              selo da marca, para a lista não dançar.
+            */}
+            <div className="aula-linha__capa" aria-hidden="true">
+              {aula.capa ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={aula.capa} alt="" loading="lazy" />
+              ) : (
+                <span className="aula-linha__capa-vazia" />
+              )}
+            </div>
+
             <div className="aula-linha__corpo">
               <Link className="aula-linha__titulo" href={`/admin/formacao/aula/${aula.id}`}>
                 {aula.titulo}
@@ -218,14 +246,13 @@ export function ListaDeAulas({
                   {rotulo(aula.status)}
                 </span>
                 {aula.temVideo ? (
-                  <span className="mono">
-                    {aula.videoNome ?? 'vídeo'}
-                    {formatarBytes(aula.videoBytes) ? ` · ${formatarBytes(aula.videoBytes)}` : ''}
+                  <span>
+                    {formatarDuracao(aula.duracaoSegundos) ?? 'com vídeo'}
                   </span>
                 ) : (
                   <span className="aula-linha__sem-video">sem vídeo</span>
                 )}
-                {aula.temHistorico ? <span className="mono">com histórico de alunas</span> : null}
+                {aula.temHistorico ? <span>alunas já assistiram</span> : null}
               </p>
             </div>
 
@@ -352,4 +379,17 @@ function rotulo(status: string) {
     archived: 'arquivada',
   }
   return mapa[status] ?? status
+}
+
+/**
+ * Duração em minutos e segundos.
+ *
+ * Devolve `null` quando o dado não existe — a tela então diz "com vídeo" em
+ * vez de inventar "0:00", que faria parecer um vídeo vazio.
+ */
+function formatarDuracao(segundos: number | null): string | null {
+  if (!segundos || segundos <= 0) return null
+  const m = Math.floor(segundos / 60)
+  const s = Math.floor(segundos % 60)
+  return `${m}:${String(s).padStart(2, '0')}`
 }

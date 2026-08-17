@@ -149,6 +149,8 @@ export type AulaDoCapitulo = {
   videoBytes: number | null
   /** Alguma aluna já tem progresso nesta aula? Decide excluir vs. arquivar. */
   temHistorico: boolean
+  /** URL pública da capa, quando já foi escolhida. */
+  capa: string | null
 }
 
 export type CapituloComAulas = {
@@ -173,7 +175,7 @@ export async function getCapituloComAulas(moduleId: string): Promise<CapituloCom
   const { data: aulas } = await db
     .from('lessons')
     .select(
-      'id, title, description, position, status, is_free, duration_seconds, video_asset_id, media_assets:video_asset_id (path, byte_size)',
+      'id, title, description, position, status, is_free, duration_seconds, video_asset_id, media_assets:video_asset_id (path, byte_size), capa:video_thumbnail_id (bucket, path)',
     )
     .eq('module_id', moduleId)
     .order('position')
@@ -238,6 +240,7 @@ export async function getCapituloComAulas(moduleId: string): Promise<CapituloCom
         videoPath: midia?.path ?? null,
         videoNome: nomesDeArquivo.get(a.id) ?? null,
         videoBytes: midia?.byte_size ?? null,
+        capa: capaUrl(a.capa as { bucket?: string; path?: string } | null),
         temHistorico: comHistorico.has(a.id),
       }
     }),
