@@ -43,9 +43,56 @@ export default async function AlunaPage() {
    */
   const previa = await previaAtiva()
   if (previa) {
+    /*
+     * O INÍCIO DA ALUNA, no modo de conferência.
+     *
+     * Ordem: quem ela é, o que ela tem, por onde começa, e a formação. O
+     * progresso não é gráfico: é uma frase e uma barra. Ninguém estuda olhando
+     * painel de BI.
+     */
     return (
       <main id="conteudo" className="page section">
-        <FormacaoDaPrevia previa={previa} />
+        <header className="inicio-aluna">
+          <p className="inicio-aluna__chapeu">Sua área</p>
+          <h1 className="inicio-aluna__saudacao">
+            {primeiroNome ? `Olá, ${primeiroNome}` : 'Olá'}
+          </h1>
+          <p className="inicio-aluna__apoio">
+            Tudo o que você comprou fica aqui, no seu ritmo.
+          </p>
+        </header>
+
+        <section className="inicio-aluna__plano">
+          <div>
+            <p className="inicio-aluna__rotulo">Seu plano</p>
+            <p className="inicio-aluna__plano-nome">{previa.nome}</p>
+            <p className="inicio-aluna__plano-meta">
+              {previa.modulosAbertos.length}{' '}
+              {previa.modulosAbertos.length === 1
+                ? 'capítulo disponível'
+                : 'capítulos disponíveis'}
+            </p>
+          </div>
+
+          {/*
+            Sem progresso ainda: em vez de "0%" solto num cartão, uma frase que
+            diz o que fazer. Zero sem contexto parece defeito.
+          */}
+          <div className="inicio-aluna__comecar">
+            <p className="inicio-aluna__comecar-titulo">
+              Sua formação está pronta para começar.
+            </p>
+            <p className="inicio-aluna__comecar-texto">
+              Escolha o primeiro capítulo e comece quando quiser.
+            </p>
+            <Link className="botao botao--cta" href="/aluna/cursos">
+              Começar formação
+            </Link>
+          </div>
+        </section>
+
+        <h2 className="inicio-aluna__secao">Sua formação</h2>
+        <FormacaoDaPrevia previa={previa} limite={4} />
       </main>
     )
   }

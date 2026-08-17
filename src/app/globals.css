@@ -14,6 +14,8 @@
 @import '../styles/planos.css';
 /* Depois de layouts.css e mostruario.css: reescreve o cabeçalho claro. */
 @import '../styles/marca.css';
+/* Depois de areas.css e formacao.css, que também tocam nomes parecidos. */
+@import '../styles/aluna.css';
 @import '../styles/animacoes.css';
 /* Por último: estas regras precisam vencer as dimensões declaradas acima. */
 @import '../styles/alvos-de-toque.css';

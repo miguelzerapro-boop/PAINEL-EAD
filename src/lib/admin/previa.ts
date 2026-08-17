@@ -137,3 +137,70 @@ export async function capitulosDaPrevia(previa: PreviaAtiva): Promise<CapituloDa
     aulas: porModulo.get(m.id) ?? 0,
   }))
 }
+
+export type AulaDaPrevia = {
+  id: string
+  titulo: string
+  descricao: string | null
+  posicao: number
+  duracaoSegundos: number | null
+  temVideo: boolean
+  capa: string | null
+}
+
+/**
+ * As aulas de um capítulo, para a tela do capítulo na área da aluna.
+ *
+ * Só devolve o que a aluna daquele plano poderia ver: se o capítulo está
+ * FECHADO no plano em conferência, devolve `null` — mostrar a lista de aulas
+ * de um capítulo bloqueado entregaria de graça o conteúdo do pacote mais caro.
+ *
+ * Continua sendo leitura: nada é gravado, nenhum progresso é registrado.
+ */
+export async function aulasDaPrevia(
+  previa: PreviaAtiva,
+  moduleId: string,
+): Promise<{ nome: string; posicao: number; aulas: AulaDaPrevia[] } | null> {
+  if (!previa.modulosAbertos.includes(moduleId)) return null
+
+  const admin = createAdminClient()
+
+  const { data: modulo } = await admin
+    .from('modules')
+    .select('id, name, position')
+    .eq('id', moduleId)
+    .maybeSingle()
+
+  if (!modulo) return null
+
+  const { data: aulas } = await admin
+    .from('lessons')
+    .select(
+      'id, title, description, position, status, duration_seconds, video_asset_id, capa:video_thumbnail_id (bucket, path)',
+    )
+    .eq('module_id', moduleId)
+    // A aluna só vê aula publicada. Rascunho é trabalho em andamento.
+    .eq('status', 'published')
+    .order('position')
+
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+
+  return {
+    nome: modulo.name,
+    posicao: modulo.position,
+    aulas: (aulas ?? []).map((a) => {
+      const capa = a.capa as { bucket?: string; path?: string } | null
+      return {
+        id: a.id,
+        titulo: a.title,
+        descricao: a.description,
+        posicao: a.position,
+        duracaoSegundos: a.duration_seconds,
+        temVideo: Boolean(a.video_asset_id),
+        capa: capa?.path
+          ? `${base}/storage/v1/object/public/${capa.bucket ?? 'cms-media'}/${capa.path}`
+          : null,
+      }
+    }),
+  }
+}

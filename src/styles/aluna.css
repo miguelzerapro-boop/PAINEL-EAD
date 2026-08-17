@@ -1,0 +1,393 @@
+/* ===========================================================================
+   ÁREA DA ALUNA
+
+   Arquivo próprio, importado DEPOIS de formacao.css e areas.css — foi a ordem
+   de import que fez uma lista inteira do painel continuar com o estilo antigo
+   numa rodada anterior.
+
+   Todas as classes daqui são prefixadas (`inicio-aluna`, `form-aluna`,
+   `cap-aluna`, `perfil-aluna`). `.capitulo` e `.etapa` já existem em outras
+   áreas desta base e as duas já causaram colisão silenciosa.
+
+   A ÁREA É MAIS LEVE que a landing comercial: aqui a aluna passa tempo lendo.
+   Off-white para respirar, roxo só em identidade e ação, neon em nada.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   INÍCIO
+   --------------------------------------------------------------------------- */
+
+.inicio-aluna {
+  padding-block-end: var(--space-6);
+  border-block-end: 1px solid var(--border-subtle);
+  margin-block-end: var(--space-6);
+}
+
+.inicio-aluna__chapeu,
+.form-aluna__chapeu {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-secondary);
+}
+
+.inicio-aluna__saudacao {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.inicio-aluna__apoio {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+}
+
+/* O plano e o convite para começar, lado a lado. */
+.inicio-aluna__plano {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-purple);
+  margin-block-end: var(--space-8);
+}
+
+@media (min-width: 48rem) {
+  .inicio-aluna__plano {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: center;
+    gap: var(--space-7);
+  }
+}
+
+.inicio-aluna__rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--brand-primary);
+}
+
+.inicio-aluna__plano-nome {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.inicio-aluna__plano-meta {
+  margin-block-start: var(--space-1);
+  color: var(--text-secondary);
+}
+
+/*
+   Sem progresso ainda: em vez de "0%" solto num cartão, uma frase que diz o
+   que fazer. Zero sem contexto parece defeito.
+*/
+.inicio-aluna__comecar {
+  padding: var(--space-5);
+  border-radius: var(--radius-cartao);
+  background: var(--surface-main);
+}
+
+.inicio-aluna__comecar-titulo {
+  font-weight: 600;
+}
+
+.inicio-aluna__comecar-texto {
+  margin-block: var(--space-2) var(--space-4);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+  line-height: var(--leading-body);
+}
+
+.inicio-aluna__secao {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  margin-block-end: var(--space-4);
+}
+
+/* ---------------------------------------------------------------------------
+   MINHA FORMAÇÃO — lista editorial, não grade de oito caixas
+   --------------------------------------------------------------------------- */
+
+.form-aluna__topo {
+  padding-block-end: var(--space-6);
+  margin-block-end: var(--space-6);
+  border-block-end: 1px solid var(--border-subtle);
+  max-inline-size: var(--measure-study);
+}
+
+.form-aluna__titulo {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.form-aluna__resumo {
+  margin-block-start: var(--space-4);
+  font-size: var(--size-body-lg);
+  color: var(--text-secondary);
+}
+
+.form-aluna__resumo strong {
+  color: var(--brand-primary);
+}
+
+.form-aluna__barra {
+  margin-block-start: var(--space-4);
+  block-size: 0.5rem;
+  border-radius: var(--radius-rail);
+  background: var(--surface-purple);
+  overflow: hidden;
+}
+
+.form-aluna__barra > span {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--radius-rail);
+  background: var(--brand-primary);
+}
+
+.form-aluna__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-inline-size: var(--measure-study);
+}
+
+.form-aluna__capitulo {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.form-aluna__capitulo:last-child {
+  border-block-end: none;
+}
+
+.form-aluna__ordem {
+  font-size: var(--size-h4);
+  color: var(--text-secondary);
+}
+
+.form-aluna__capa {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--surface-purple);
+}
+
+.form-aluna__capa img {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+/* Fechado: tom neutro, nunca vermelho. Bloqueio não é erro. */
+.form-aluna__capitulo[data-aberto="nao"] .form-aluna__capa {
+  background: var(--palheta-bloqueado);
+}
+
+.form-aluna__capitulo[data-aberto="nao"] .form-aluna__capa img {
+  opacity: 0.45;
+}
+
+.form-aluna__nome {
+  font-family: var(--font-display);
+  font-size: var(--size-h4);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.form-aluna__capitulo[data-aberto="nao"] .form-aluna__nome {
+  color: var(--palheta-bloqueado-texto);
+}
+
+.form-aluna__meta {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.form-aluna__meta--fechado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.form-aluna__acao {
+  min-block-size: var(--target-min);
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-control);
+  font-size: var(--size-small);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--brand-primary);
+}
+
+.form-aluna__acao--planos {
+  border: 1.5px solid var(--brand-primary);
+}
+
+.form-aluna__acao--planos:hover {
+  background: var(--brand-primary);
+  color: var(--text-on-purple);
+}
+
+.form-aluna__acao--inerte {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.form-aluna__mais {
+  margin-block-start: var(--space-5);
+  font-size: var(--size-small);
+}
+
+@media (max-width: 40rem) {
+  .form-aluna__capitulo {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    row-gap: var(--space-3);
+  }
+
+  .form-aluna__acao {
+    grid-column: 2 / -1;
+    justify-self: start;
+    padding-inline: 0;
+  }
+
+  .form-aluna__acao--planos {
+    padding-inline: var(--space-4);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CAPÍTULO ABERTO
+   --------------------------------------------------------------------------- */
+
+.cap-aluna {
+  max-inline-size: var(--measure-study);
+}
+
+.cap-aluna__trilha {
+  font-size: var(--size-small);
+  margin-block-end: var(--space-4);
+}
+
+.cap-aluna__ordem {
+  font-size: var(--size-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--brand-primary);
+}
+
+.cap-aluna__titulo {
+  margin-block-start: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.cap-aluna__resumo {
+  margin-block-start: var(--space-3);
+  color: var(--text-secondary);
+}
+
+.cap-aluna__secao {
+  margin-block: var(--space-8) var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+}
+
+.cap-aluna__aulas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cap-aluna__aula {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--border-subtle);
+}
+
+.cap-aluna__aula:last-child {
+  border-block-end: none;
+}
+
+.cap-aluna__aula-ordem {
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+.cap-aluna__aula-capa {
+  inline-size: 6rem;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--surface-purple);
+}
+
+.cap-aluna__aula-capa img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* Sem capa, o selo entra menor e centrado — nunca imagem quebrada. */
+.cap-aluna__aula-capa img[src*="marca"] {
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.cap-aluna__aula-titulo {
+  font-weight: 600;
+  line-height: var(--leading-ui);
+}
+
+.cap-aluna__aula-meta {
+  margin-block-start: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 34rem) {
+  .cap-aluna__aula-capa {
+    inline-size: 4.5rem;
+  }
+}
