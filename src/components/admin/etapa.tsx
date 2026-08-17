@@ -23,16 +23,16 @@ export function Etapa({
   children: ReactNode
 }) {
   return (
-    <section className="etapa">
-      <div className="etapa__marca" aria-hidden="true">
-        <span className="etapa__numero mono">{numero}</span>
-        <span className="etapa__fio" />
+    <section className="passo-form">
+      <div className="passo-form__marca" aria-hidden="true">
+        <span className="passo-form__numero mono">{numero}</span>
+        <span className="passo-form__fio" />
       </div>
 
-      <div className="etapa__corpo">
-        <h2 className="etapa__titulo">{titulo}</h2>
-        {descricao ? <p className="etapa__descricao">{descricao}</p> : null}
-        <div className="etapa__campos">{children}</div>
+      <div className="passo-form__corpo">
+        <h2 className="passo-form__titulo">{titulo}</h2>
+        {descricao ? <p className="passo-form__descricao">{descricao}</p> : null}
+        <div className="passo-form__campos">{children}</div>
       </div>
     </section>
   )

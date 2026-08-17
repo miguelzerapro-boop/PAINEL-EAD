@@ -878,19 +878,19 @@
    etapa: quatro molduras empilhadas competiriam com o conteúdo delas.
    =========================================================================== */
 
-.etapa {
+.passo-form {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-5);
 }
 
-.etapa__marca {
+.passo-form__marca {
   display: grid;
   justify-items: center;
   gap: var(--space-3);
 }
 
-.etapa__numero {
+.passo-form__numero {
   display: grid;
   place-items: center;
   inline-size: 2rem;
@@ -903,22 +903,22 @@
 }
 
 /* O fio some na última etapa — não há para onde continuar. */
-.etapa__fio {
+.passo-form__fio {
   inline-size: 1.5px;
   block-size: 100%;
   background: var(--border-subtle);
 }
 
-.etapa:last-of-type .etapa__fio {
+.passo-form:last-of-type .passo-form__fio {
   display: none;
 }
 
-.etapa__corpo {
+.passo-form__corpo {
   padding-block-end: var(--space-8);
   min-width: 0;
 }
 
-.etapa__titulo {
+.passo-form__titulo {
   font-family: var(--font-display);
   font-size: var(--size-h3);
   font-weight: 600;
@@ -926,7 +926,7 @@
   line-height: 1.15;
 }
 
-.etapa__descricao {
+.passo-form__descricao {
   margin-block-start: var(--space-2);
   font-size: var(--size-small);
   color: var(--text-secondary);
@@ -934,7 +934,7 @@
   max-inline-size: var(--measure-study);
 }
 
-.etapa__campos {
+.passo-form__campos {
   display: grid;
   gap: var(--space-5);
   margin-block-start: var(--space-5);
@@ -942,31 +942,31 @@
 
 /* Campo de texto não precisa de 900px: linha longa demais é mais difícil de
    revisar do que de escrever. */
-.etapa__campos > .campo,
-.etapa__campos > .form-aula__linha {
+.passo-form__campos > .campo,
+.passo-form__campos > .form-aula__linha {
   max-inline-size: 34rem;
 }
 
-.etapa__campos > .consentimento {
+.passo-form__campos > .consentimento {
   max-inline-size: var(--measure-study);
 }
 
 @media (max-width: 34rem) {
-  .etapa {
+  .passo-form {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
 
   /* No celular o fio vertical não cabe: vira só o número acima do título. */
-  .etapa__marca {
+  .passo-form__marca {
     justify-items: start;
   }
 
-  .etapa__fio {
+  .passo-form__fio {
     display: none;
   }
 
-  .etapa__corpo {
+  .passo-form__corpo {
     padding-block-end: var(--space-7);
   }
 }

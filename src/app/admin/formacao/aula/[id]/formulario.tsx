@@ -163,7 +163,7 @@ export function FormularioDeAula({
       <Etapa
         numero={1}
         titulo="Informações da aula"
-        descricao="O nome que a aluna vê na lista do capítulo."
+        descricao="Em qual capítulo ela entra e como se chama."
       >
       <label className="campo">
         <span className="campo__rotulo">Capítulo</span>
