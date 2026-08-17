@@ -127,7 +127,17 @@ for (const [plano, esperado] of Object.entries(ESPERADO)) {
     (barra ?? '').trim(),
   )
 
-  /* A matriz 3/6/8, vinda de offer_module_access. */
+  /*
+   * A matriz 3/6/8, vinda de offer_module_access.
+   *
+   * Contada em "Minha Formação", não no Início: o Início mostra só os quatro
+   * primeiros capítulos, com um link para a lista inteira. Contando lá, o
+   * Completo aparecia como "4 de 8" e parecia matriz quebrada — era a tela
+   * errada.
+   */
+  await aba.goto(`${BASE}/aluna/cursos`, { waitUntil: 'load' })
+  await aba.waitForTimeout(1500)
+
   const abertos = await aba.locator('.form-aluna__capitulo[data-aberto="sim"]').count()
   const fechados = await aba.locator('.form-aluna__capitulo[data-aberto="nao"]').count()
   registrar(
